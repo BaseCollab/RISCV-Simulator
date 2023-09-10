@@ -3,10 +3,13 @@
 
 #include "constants.h"
 #include "csr.h"
+#include "mmu.h"
 
 #include <cstdint>
 
 namespace rvsim {
+
+using reg_t = uint64_t;
 
 class Hart {
 private:
@@ -19,8 +22,8 @@ public:
     Hart() = default;
     ~Hart() = default;
 
-    csr_t loadCSR(csr_idx_t index) const;
-    void storeCSR(csr_idx_t index, csr_t reg);
+    csr_t LoadCSR(csr_idx_t index) const;
+    void StoreCSR(csr_idx_t index, csr_t reg);
 };
 
 } // rvsim

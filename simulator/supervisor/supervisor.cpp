@@ -16,13 +16,16 @@ void Supervisor::initializeCSR(Hart *hart)
     csr_t satp_reg = 0;
     std::memcpy(&satp_reg, &satp, sizeof(csr_satp));
 
-    hart->storeCSR(CSR_SATP_IDX, satp_reg);
+    hart->StoreCSR(CSR_SATP_IDX, satp_reg);
+
+    // TODO: mapp all CSRs to physical memory as specification requires
 }
 
 int Supervisor::locateRootPageTable(Hart *hart, MemoryCtl *memory)
 {
-    //TODO: locate root virtual page table to root_page_number_, blocked
-    //TODO: by MemoryCtl interface (no write of the whole page)
+    // TODO: locate root virtual page table to root_page_number_, blocked
+    // TODO: by MemoryCtl interface (no write of the whole page)
+
     return 0;
 }
 
