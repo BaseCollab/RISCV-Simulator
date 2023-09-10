@@ -31,14 +31,12 @@ public:
     };
 
 private:
-
     Exception ValidatePTE(const pte_t &pte, MMU::Target target) const;
 
     // TODO: TLB implementation
 
 public:
-
-    MMU() = default;
+    MMU()  = default;
     ~MMU() = default;
 
     std::pair<paddr_t, Exception> VirtToPhysAddr(vaddr_t vaddr, Target target, const CSRs &csr_regs, MemoryCtl &memory);

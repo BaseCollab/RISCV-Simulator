@@ -17,11 +17,11 @@ private:
     csr_t csr_table_[N_CSR];
 
 public:
-    CSRs()  = default;
-    ~CSRs() = default;
-
     NO_COPY_SEMANTIC(CSRs);
     NO_MOVE_SEMANTIC(CSRs);
+
+    CSRs()  = default;
+    ~CSRs() = default;
 
     csr_t LoadCSR(csr_idx_t index) const
     {

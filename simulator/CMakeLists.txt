@@ -13,8 +13,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
 
 add_executable(simulator simulator.cpp)
 
-# add_subdirectory(memory)
+add_subdirectory(memory)
 add_subdirectory(supervisor)
-# add_subdirectory(hart)
-# add_subdirectory(mmu)
+add_subdirectory(hart)
+add_subdirectory(mmu)
 
