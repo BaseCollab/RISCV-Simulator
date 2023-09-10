@@ -9,18 +9,19 @@
 
 namespace rvsim {
 
-struct pte_t // Sv48 page table entry (PTE)
-{
+struct pte_t { // Sv48 page table entry (PTE)
     uint64_t n          : 1; // not implemented yet
     uint64_t pbmt       : 2; // not implemented yet
 
     uint64_t reserved_1 : 7;
 
     // PPN = Physical page number
-    uint64_t ppn_3      : 17;
-    uint64_t ppn_2      : 9;
-    uint64_t ppn_1      : 9;
-    uint64_t ppn_0      : 9;
+    uint64_t ppn        : 44;
+
+    // uint64_t ppn_3      : 17;
+    // uint64_t ppn_2      : 9;
+    // uint64_t ppn_1      : 9;
+    // uint64_t ppn_0      : 9;
 
     uint64_t rsw        : 2; // is reserved for use by supervisor software
 
@@ -34,17 +35,17 @@ struct pte_t // Sv48 page table entry (PTE)
     uint64_t v          : 1; // whether the PTE is valid
 };
 
-union paddr_t
-{
-    struct // Sv48 page table entry (PTE)
-    {
+union paddr_t {
+    struct { // Sv48 page table entry (PTE)
         uint64_t padding     : 8; // 64 - 56
 
         // PPN = Physical page number
-        uint64_t ppn_3       : 17;
-        uint64_t ppn_2       : 9;
-        uint64_t ppn_1       : 9;
-        uint64_t ppn_0       : 9;
+        uint64_t ppn         : 44;
+
+        // uint64_t ppn_3       : 17;
+        // uint64_t ppn_2       : 9;
+        // uint64_t ppn_1       : 9;
+        // uint64_t ppn_0       : 9;
 
         uint64_t page_offset : 12;
     } fields;
@@ -52,17 +53,15 @@ union paddr_t
     uint64_t value;
 };
 
-union vaddr_t
-{
-    struct // Sv48 page table entry (PTE)
-    {
+union vaddr_t {
+    struct { // Sv48 page table entry (PTE)
         uint64_t padding     : 16; // 64 - 48
 
         // PPN = Physical page number
-        uint64_t ppn_3       : 9;
-        uint64_t ppn_2       : 9;
-        uint64_t ppn_1       : 9;
-        uint64_t ppn_0       : 9;
+        uint64_t vpn_3       : 9;
+        uint64_t vpn_2       : 9;
+        uint64_t vpn_1       : 9;
+        uint64_t vpn_0       : 9;
 
         uint64_t page_offset : 12;
     } fields;
@@ -70,8 +69,7 @@ union vaddr_t
     uint64_t value;
 };
 
-struct vpt_t
-{
+struct vpt_t {
     pte_t vpt[1 << 9]; // sizeof_bits(vaddr_t(ppn_3))
 };
 

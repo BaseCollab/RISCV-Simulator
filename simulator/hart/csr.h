@@ -1,6 +1,7 @@
 #ifndef SIMULATOR_CSR_CSR_H
 #define SIMULATOR_CSR_CSR_H
 
+#include "macros.h"
 #include "constants.h"
 
 #include <cstdint>
@@ -8,8 +9,30 @@
 namespace rvsim {
 
 static constexpr size_t N_CSR = 4096;
-using csr_t = reg_t;
+using csr_t = uint64_t;
 using csr_idx_t = uint16_t;
+
+class CSRs {
+private:
+    csr_t csr_table_[N_CSR];
+
+public:
+    CSRs()  = default;
+    ~CSRs() = default;
+
+    NO_COPY_SEMANTIC(CSRs);
+    NO_MOVE_SEMANTIC(CSRs);
+
+    csr_t LoadCSR(csr_idx_t index) const
+    {
+        return csr_table_[index];
+    }
+
+    void StoreCSR(csr_idx_t index, csr_t reg)
+    {
+        csr_table_[index] = reg;
+    }
+};
 
 static constexpr csr_idx_t CSR_SATP_IDX = 0x180;
 

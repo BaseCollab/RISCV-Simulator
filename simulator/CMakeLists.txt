@@ -21,3 +21,4 @@ target_include_directories(simulator PUBLIC
 # add_subdirectory(memory)
 add_subdirectory(supervisor)
 add_subdirectory(hart)
+add_subdirectory(mmu)

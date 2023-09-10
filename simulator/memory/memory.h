@@ -3,6 +3,7 @@
 
 #include "macros.h"
 #include "constants.h"
+#include "vpt.h"
 
 #include <cstdint>
 #include <cstring>
@@ -27,17 +28,17 @@ public:
     ~Memory() = default;
 
     template<typename ValueType>
-    Error Store(paddr addr, ValueType value)
+    Error Store(paddr_t addr, ValueType value)
     {
-        memcpy(ram_ + addr, &value, sizeof(value));
+        memcpy(ram_ + addr.value, &value, sizeof(value));
         return Error::NONE;
     }
 
     template<typename ValueType>
-    std::pair<ValueType, Error> Load(paddr addr)
+    std::pair<ValueType, Error> Load(paddr_t addr)
     {
         ValueType value = 0;
-        memcpy(&value, ram_ + addr, sizeof(value));
+        memcpy(&value, ram_ + addr.value, sizeof(value));
         return std::make_pair<value, Error::NONE>;
     }
 

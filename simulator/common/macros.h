@@ -1,6 +1,8 @@
 #ifndef SIMULATOR_COMMON_MACROS_H
 #define SIMULATOR_COMMON_MACROS_H
 
+#include <cstdint>
+
 #define NO_COPY_CTOR(TypeName) TypeName(const TypeName &) = delete
 #define NO_COPY_OPERATOR(TypeName) TypeName &operator=(const TypeName &) = delete
 
