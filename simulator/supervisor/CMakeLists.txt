@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
-cmake_policy(SET CMP0079 NEW)
+cmake_minimum_required(VERSION 3.13)
 
 set(SOURCES supervisor.cpp)
 
