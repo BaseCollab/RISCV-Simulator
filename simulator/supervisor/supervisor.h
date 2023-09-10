@@ -4,6 +4,7 @@
 #include "macros.h"
 #include "constants.h"
 #include "hart.h"
+#include "memory_controller.h"
 #include "vpt.h"
 
 namespace rvsim {
@@ -12,11 +13,14 @@ class Supervisor {
 private:
     static constexpr reg_t root_page_number_ = 0;
 
+    void initializeCSR(Hart *hart);
+    int locateRootPageTable(Hart *hart, MemoryCtl *memory);
+
 public:
     NO_COPY_SEMANTIC(Supervisor);
     NO_MOVE_SEMANTIC(Supervisor);
 
-    Supervisor(Hart &hart);
+    Supervisor(Hart *hart, MemoryCtl *memory);
     ~Supervisor() = default;
 };
 

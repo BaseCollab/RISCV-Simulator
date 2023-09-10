@@ -15,8 +15,9 @@ add_executable(simulator simulator.cpp)
 target_include_directories(simulator PUBLIC
     ${SIMULATOR_ROOT}/common
     ${SIMULATOR_ROOT}/supervisor
-    ${SIMULATOR_ROOT}/har
+    ${SIMULATOR_ROOT}/hart
 )
 
 # add_subdirectory(memory)
-# add_subdirectory(supervisor)
+add_subdirectory(supervisor)
+add_subdirectory(hart)

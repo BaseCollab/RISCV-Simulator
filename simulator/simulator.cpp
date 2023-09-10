@@ -1,12 +1,15 @@
-#include "vpt.h"
-#include <iostream>
+#include "supervisor.h"
+#include "hart.h"
+#include "memory_controller.h"
 
 namespace rvsim {
 
 int Main(int argc, char *argv[])
 {
-    (void) argc;
-    (void) argv;
+    // Hart hart;
+    // MemoryCtl memory;
+    // Supervisor supervisor(&hart, &memory);
+
     return 0;
 }
 
