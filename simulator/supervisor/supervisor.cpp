@@ -10,7 +10,7 @@ Supervisor::Supervisor(CSRs *csr_regs, MemoryCtl *memory)
     locateRootPageTable(csr_regs, memory);
 }
 
-void Supervisor::initializeCSR(CSRs *csr_regs)
+void Supervisor::InitializeCSR(CSRs *csr_regs)
 {
     csr_satp satp = {.mode = 0x9, .asid = 0x0, .ppn = root_page_number_}; // 0x9 = Sv48
     csr_t satp_reg = 0;
@@ -21,7 +21,7 @@ void Supervisor::initializeCSR(CSRs *csr_regs)
     // TODO: map all CSRs to physical memory as specification requires
 }
 
-int Supervisor::locateRootPageTable(CSRs *csr_regs, MemoryCtl *memory)
+int Supervisor::LocateRootPageTable(CSRs *csr_regs, MemoryCtl *memory)
 {
     // TODO: locate root virtual page table to root_page_number_, blocked
     // TODO: by MemoryCtl interface (no write of the whole page)

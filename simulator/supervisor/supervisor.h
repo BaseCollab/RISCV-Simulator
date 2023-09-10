@@ -13,8 +13,8 @@ class Supervisor {
 private:
     static constexpr reg_t root_page_number_ = 0;
 
-    void initializeCSR(CSRs *csr_regs);
-    int locateRootPageTable(CSRs *csr_regs, MemoryCtl *memory);
+    void InitializeCSR(CSRs *csr_regs);
+    int LocateRootPageTable(CSRs *csr_regs, MemoryCtl *memory);
 
 public:
     NO_COPY_SEMANTIC(Supervisor);
