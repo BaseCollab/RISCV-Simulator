@@ -3,11 +3,13 @@
 
 #include "macros.h"
 #include "constants.h"
-#include "utils/stack.h"
+#include "vpt.h"
 
 #include <cstdint>
 #include <cstring>
+#include <optional>
 #include <utility>
+#include "utils/stack.h"
 
 namespace rvsim {
 
