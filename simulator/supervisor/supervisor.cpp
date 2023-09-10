@@ -26,6 +26,9 @@ int Supervisor::locateRootPageTable(CSRs *csr_regs, MemoryCtl *memory)
     // TODO: locate root virtual page table to root_page_number_, blocked
     // TODO: by MemoryCtl interface (no write of the whole page)
 
+    (void) csr_regs;
+    (void) memory;
+
     return 0;
 }
 

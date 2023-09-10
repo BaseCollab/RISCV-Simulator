@@ -1,6 +1,6 @@
-#include "supervisor.h"
-#include "hart.h"
-#include "memory_controller.h"
+#include "supervisor/supervisor.h"
+#include "hart/hart.h"
+#include "memory/memory_controller.h"
 
 namespace rvsim {
 
@@ -12,7 +12,7 @@ int Main(int argc, char *argv[])
 
     (void) argc;
     (void) argv;
-    
+
     return 0;
 }
 

@@ -1,14 +1,14 @@
 #ifndef SIMULATOR_COMMON_UTILS_STACK_H
 #define SIMULATOR_COMMON_UTILS_STACK_H
 
-#include "macros.h"
+#include "common/macros.h"
 
 #include <cstddef>
 #include <optional>
 
 namespace rvsim::utils {
 
-template<typename Type, size_t capacity> 
+template<typename Type, size_t capacity>
 class Stack {
 public:
     enum class Error {
@@ -54,7 +54,7 @@ public:
 
 private:
     Type data_[capacity];
-    size_t size_ {0};  
+    size_t size_ {0};
 };
 
 } // namespace rvsim::utils

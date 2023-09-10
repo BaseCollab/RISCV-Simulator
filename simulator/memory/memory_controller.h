@@ -1,8 +1,8 @@
 #ifndef SIMULATOR_MEMORY_MEMORY_CONTROLLER_H
 #define SIMULATOR_MEMORY_MEMORY_CONTROLLER_H
 
+#include "common/constants.h"
 #include "memory.h"
-#include "constants.h"
 #include "pages_controller.h"
 
 #include <cstddef>
@@ -18,7 +18,7 @@ public:
         STORE_BOUNDARY_CHK = 0,
         LOAD_BOUNDARY_CHK  = 1
     };
-    
+
     using PageError = PagesController::Error;
 
 public:
@@ -73,9 +73,9 @@ public:
     }
 
 private:
-    bool BoundaryCheck(paddr_t dst, int value_size) const
+    bool BoundaryCheck(paddr_t dst, size_t value_size) const
     {
-        return (dst + value_size < memory_.GetMemorySize());
+        return (dst.value + value_size < memory_.GetMemorySize());
     }
 
 private:

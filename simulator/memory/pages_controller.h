@@ -1,8 +1,8 @@
 #ifndef SIMULATOR_MEMORY_PAGES_CONTROLLER_H
 #define SIMULATOR_MEMORY_PAGES_CONTROLLER_H
 
+#include "common/constants.h"
 #include "memory.h"
-#include "constants.h"
 
 namespace rvsim {
 

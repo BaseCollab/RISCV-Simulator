@@ -1,10 +1,10 @@
 #ifndef SIMULATOR_SUPERVISOR_SUPERVISOR_H
 #define SIMULATOR_SUPERVISOR_SUPERVISOR_H
 
-#include "macros.h"
-#include "constants.h"
-#include "hart.h"
-#include "memory_controller.h"
+#include "common/macros.h"
+#include "common/constants.h"
+#include "hart/hart.h"
+#include "memory/memory_controller.h"
 #include "vpt.h"
 
 namespace rvsim {

@@ -1,8 +1,8 @@
 #ifndef SIMULATOR_CSR_CSR_H
 #define SIMULATOR_CSR_CSR_H
 
-#include "macros.h"
-#include "constants.h"
+#include "common/macros.h"
+#include "common/constants.h"
 
 #include <cstdint>
 

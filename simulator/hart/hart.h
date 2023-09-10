@@ -1,9 +1,9 @@
 #ifndef SIMULATOR_HART_HART_H
 #define SIMULATOR_HART_HART_H
 
-#include "constants.h"
+#include "common/constants.h"
+#include "mmu/mmu.h"
 #include "csr.h"
-#include "mmu.h"
 
 #include <cstdint>
 

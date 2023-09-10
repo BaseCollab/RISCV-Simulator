@@ -1,15 +1,15 @@
 #ifndef SIMULATOR_MEMORY_MEMORY_H
 #define SIMULATOR_MEMORY_MEMORY_H
 
-#include "macros.h"
-#include "constants.h"
-#include "vpt.h"
+#include "common/macros.h"
+#include "common/constants.h"
+#include "supervisor/vpt.h"
+#include "common/utils/stack.h"
 
 #include <cstdint>
 #include <cstring>
 #include <optional>
 #include <utility>
-#include "utils/stack.h"
 
 namespace rvsim {
 
@@ -26,7 +26,7 @@ public:
     template<typename ValueType>
     void Store(paddr_t dst, ValueType value)
     {
-        std::memcpy(ram_ + dst, &value, sizeof(value));
+        std::memcpy(ram_ + dst.value, &value, sizeof(value));
     }
 
     // Load ValueType value from src
@@ -34,20 +34,20 @@ public:
     ValueType Load(paddr_t src) const
     {
         ValueType value = 0;
-        std::memcpy(&value, ram_ + src, sizeof(value));
+        std::memcpy(&value, ram_ + src.value, sizeof(value));
         return value;
     }
 
     // Store src_size bytes from src to dst in ram_
     void Store(paddr_t dst, void *src, size_t src_size)
     {
-        std::memcpy(ram_ + dst, src, src_size);
+        std::memcpy(ram_ + dst.value, src, src_size);
     }
 
     // Load dst_size bytes from src ram_ to dst
     void Load(void *dst, size_t dst_size, paddr_t src) const
     {
-        std::memcpy(dst, ram_ + src, dst_size);
+        std::memcpy(dst, ram_ + src.value, dst_size);
     }
 
     static constexpr size_t GetMemorySize()
