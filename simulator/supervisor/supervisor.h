@@ -1,10 +1,10 @@
 #ifndef SIMULATOR_SUPERVISOR_SUPERVISOR_H
 #define SIMULATOR_SUPERVISOR_SUPERVISOR_H
 
-#include "macros.h"
-#include "constants.h"
-#include "hart.h"
-#include "memory_controller.h"
+#include "common/macros.h"
+#include "common/constants.h"
+#include "hart/hart.h"
+#include "memory/memory_controller.h"
 #include "vpt.h"
 
 namespace rvsim {
@@ -13,8 +13,8 @@ class Supervisor {
 private:
     static constexpr reg_t root_page_number_ = 0;
 
-    void initializeCSR(CSRs *csr_regs);
-    int locateRootPageTable(CSRs *csr_regs, MemoryCtl *memory);
+    void InitializeCSR(CSRs *csr_regs);
+    int LocateRootPageTable(CSRs *csr_regs, MemoryCtl *memory);
 
 public:
     NO_COPY_SEMANTIC(Supervisor);

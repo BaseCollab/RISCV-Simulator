@@ -35,6 +35,8 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, MMU::Targe
 {
     paddr_t paddr = {.value = 0};
 
+    (void) memory;
+
     pte_t pte_3;
     pte_t pte_2;
     pte_t pte_1;

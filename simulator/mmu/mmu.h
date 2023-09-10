@@ -1,11 +1,11 @@
 #ifndef SIMULATOR_MMU_MMU_H
 #define SIMULATOR_MMU_MMU_H
 
-#include "macros.h"
-#include "constants.h"
-#include "vpt.h"
-#include "csr.h"
-#include "memory_controller.h"
+#include "common/macros.h"
+#include "common/constants.h"
+#include "supervisor/vpt.h"
+#include "hart/csr.h"
+#include "memory/memory_controller.h"
 
 namespace rvsim {
 
@@ -31,14 +31,12 @@ public:
     };
 
 private:
-
     Exception ValidatePTE(const pte_t &pte, MMU::Target target) const;
 
     // TODO: TLB implementation
 
 public:
-
-    MMU() = default;
+    MMU()  = default;
     ~MMU() = default;
 
     std::pair<paddr_t, Exception> VirtToPhysAddr(vaddr_t vaddr, Target target, const CSRs &csr_regs, MemoryCtl &memory);

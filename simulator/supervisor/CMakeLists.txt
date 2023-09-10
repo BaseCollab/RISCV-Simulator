@@ -1,9 +1,8 @@
-cmake_minimum_required(VERSION 3.10)
-cmake_policy(SET CMP0079 NEW)
+cmake_minimum_required(VERSION 3.13)
 
 set(SOURCES supervisor.cpp)
 
 add_library(supervisor_impl OBJECT ${SOURCES})
-target_include_directories(supervisor_impl PUBLIC ${SIMULATOR_ROOT}/common ${SIMULATOR_ROOT}/hart ${SIMULATOR_ROOT}/memory)
+target_include_directories(supervisor_impl PUBLIC ${SIMULATOR_ROOT})
 
 target_link_libraries(simulator PUBLIC supervisor_impl)

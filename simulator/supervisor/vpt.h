@@ -1,8 +1,8 @@
 #ifndef SIMULATOR_VPT_VPT_H
 #define SIMULATOR_VPT_VPT_H
 
-#include "macros.h"
-#include "constants.h"
+#include "common/macros.h"
+#include "common/constants.h"
 
 #include <cstdint>
 #include <format>

@@ -1,9 +1,9 @@
 #ifndef SIMULATOR_HART_HART_H
 #define SIMULATOR_HART_HART_H
 
-#include "constants.h"
+#include "common/constants.h"
+#include "mmu/mmu.h"
 #include "csr.h"
-#include "mmu.h"
 
 #include <cstdint>
 
@@ -12,6 +12,7 @@ namespace rvsim {
 using reg_t = uint64_t;
 
 class Hart {
+private:
 public:
     CSRs csr_regs;
 
