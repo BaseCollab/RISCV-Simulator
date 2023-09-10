@@ -9,43 +9,56 @@
 #include <cstring>
 #include <optional>
 #include <utility>
+#include "utils/stack.h"
 
 namespace rvsim {
 
 // Class that simulate physical memory
 class Memory {
 public:
-    enum class Error
-    {
-        NONE = -1
-    };
-
-public:
     NO_COPY_SEMANTIC(Memory);
     NO_MOVE_SEMANTIC(Memory);
 
-    Memory() = default;
+    Memory()  = default;
     ~Memory() = default;
 
+    // Store ValueType value in dst
     template<typename ValueType>
-    Error Store(paddr_t addr, ValueType value)
+    void Store(paddr_t dst, ValueType value)
     {
-        memcpy(ram_ + addr.value, &value, sizeof(value));
-        return Error::NONE;
+        std::memcpy(ram_ + dst, &value, sizeof(value));
     }
 
+    // Load ValueType value from src
     template<typename ValueType>
-    std::pair<ValueType, Error> Load(paddr_t addr)
+    ValueType Load(paddr_t src) const
     {
         ValueType value = 0;
-        memcpy(&value, ram_ + addr.value, sizeof(value));
-        return std::make_pair<value, Error::NONE>;
+        std::memcpy(&value, ram_ + src, sizeof(value));
+        return value;
+    }
+
+    // Store src_size bytes from src to dst in ram_
+    void Store(paddr_t dst, void *src, size_t src_size)
+    {
+        std::memcpy(ram_ + dst, src, src_size);
+    }
+
+    // Load dst_size bytes from src ram_ to dst
+    void Load(void *dst, size_t dst_size, paddr_t src) const
+    {
+        std::memcpy(dst, ram_ + src, dst_size);
+    }
+
+    static constexpr size_t GetMemorySize()
+    {
+        return MEMORY_SIZE;
     }
 
 private:
-    static constexpr size_t MEMORY_SZ = 32 * MBYTE_SZ; // 1 << 25
+    static constexpr size_t MEMORY_SIZE = 32 * MBYTE_SIZE; // 1 << 25
 
-    uint8_t ram_[MEMORY_SZ];
+    uint8_t ram_[MEMORY_SIZE];
 };
 
 } // rvsim

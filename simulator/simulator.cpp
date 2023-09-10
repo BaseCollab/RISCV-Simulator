@@ -10,6 +10,9 @@ int Main(int argc, char *argv[])
     // MemoryCtl memory;
     // Supervisor supervisor(&hart, &memory);
 
+    (void) argc;
+    (void) argv;
+    
     return 0;
 }
 
