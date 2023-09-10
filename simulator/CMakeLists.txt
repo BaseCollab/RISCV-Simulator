@@ -12,5 +12,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -Werror -Wshadow
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
 
 add_executable(simulator simulator.cpp)
+target_include_directories(simulator PUBLIC
+    ${SIMULATOR_ROOT}/common
+    ${SIMULATOR_ROOT}/supervisor
+    ${SIMULATOR_ROOT}/har
+)
 
-add_subdirectory(memory)
+# add_subdirectory(memory)
+# add_subdirectory(supervisor)

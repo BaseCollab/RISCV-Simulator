@@ -1,3 +1,6 @@
+#include "vpt.h"
+#include <iostream>
+
 namespace rvsim {
 
 int Main(int argc, char *argv[])
