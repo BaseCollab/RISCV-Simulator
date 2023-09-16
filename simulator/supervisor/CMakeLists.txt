@@ -4,6 +4,3 @@ set(SOURCES supervisor.cpp)
 
 add_library(supervisor_impl OBJECT ${SOURCES})
 target_include_directories(supervisor_impl PUBLIC ${SIMULATOR_ROOT})
-
-target_link_libraries(simulator  PUBLIC supervisor_impl)
-target_link_libraries(unit_tests PUBLIC supervisor_impl)
