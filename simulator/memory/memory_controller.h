@@ -28,7 +28,7 @@ public:
     MemoryCtl() = default;
     ~MemoryCtl() = default;
 
-    template<typename ValueType>
+    template <typename ValueType>
     std::optional<Error> Store(addr_t dst, ValueType value)
     {
         if (!BoundaryCheck(dst, sizeof(ValueType))) {
@@ -38,7 +38,7 @@ public:
         memory_.Store<ValueType>(dst, value);
     }
 
-    template<typename ValueType>
+    template <typename ValueType>
     std::pair<ValueType, std::optional<Error>> Load(addr_t src) const
     {
         if (!BoundaryCheck(src, sizeof(ValueType))) {

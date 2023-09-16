@@ -22,14 +22,14 @@ public:
     ~Memory() = default;
 
     // Store ValueType value in dst
-    template<typename ValueType>
+    template <typename ValueType>
     void Store(addr_t dst, ValueType value)
     {
         std::memcpy(ram_ + dst, &value, sizeof(value));
     }
 
     // Load ValueType value from src
-    template<typename ValueType>
+    template <typename ValueType>
     ValueType Load(addr_t src) const
     {
         ValueType value = 0;

@@ -8,10 +8,12 @@ namespace rvsim {
 
 class PagesController {
 public:
+    // clang-format off
     enum class Error {
         NONE         = -1,
         OUT_OF_PAGES = 0
     };
+    // clang-format on
 
 public:
     NO_COPY_SEMANTIC(PagesController);
