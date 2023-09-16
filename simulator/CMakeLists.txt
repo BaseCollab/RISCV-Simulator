@@ -11,11 +11,22 @@ set(SIMULATOR_BINARY_ROOT ${CMAKE_CURRENT_BINARY_DIR})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -Werror -Wshadow")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
 
-add_executable(simulator simulator.cpp)
+add_subdirectory(memory)
+add_subdirectory(supervisor)
+add_subdirectory(hart)
+add_subdirectory(mmu)
 
-file(GLOB_RECURSE ALL_SOURCES_FILES *.cpp *.h)
+add_library(simulator_static STATIC)
+target_link_libraries(simulator_static PUBLIC
+    memory_impl
+    hart_impl
+    mmu_impl
+    supervisor_impl
+)
 
 # --------------------------clang-format--------------------------------------
+
+file(GLOB_RECURSE ALL_SOURCES_FILES *.cpp *.h)
 
 find_program(CLANG_FORMAT_EXECUTABLE NAMES clang-format-14 clang-format)
 
@@ -27,9 +38,20 @@ add_custom_target(clang-force-format
     ${ALL_SOURCES_FILES}
 )
 
-# -----------------------------------------------------------------------------
+# --------------------------google-tests--------------------------------------
 
-add_subdirectory(memory)
-add_subdirectory(supervisor)
-add_subdirectory(hart)
-add_subdirectory(mmu)
+enable_testing()
+find_package(GTest REQUIRED)
+
+add_executable(unit_tests)
+target_include_directories(unit_tests PUBLIC ${GTEST_INCLUDE_DIR})
+
+target_link_libraries(unit_tests PUBLIC simulator_static GTest::gtest_main)
+
+add_subdirectory(tests)
+
+# ----------------------------------------------------------------------------
+
+add_executable(simulator simulator.cpp)
+target_link_libraries(simulator PUBLIC simulator_static)
+

@@ -5,6 +5,7 @@
 
 #include <cstddef>
 #include <optional>
+#include <utility>
 
 namespace rvsim::utils {
 
