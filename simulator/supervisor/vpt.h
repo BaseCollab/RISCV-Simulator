@@ -5,10 +5,10 @@
 #include "common/constants.h"
 
 #include <cstdint>
-#include <format>
 
 namespace rvsim {
 
+// clang-format off
 struct pte_t { // Sv48 page table entry (PTE)
     uint64_t n          : 1; // not implemented yet
     uint64_t pbmt       : 2; // not implemented yet
@@ -76,6 +76,7 @@ struct vpt_t {
 static_assert(sizeof(paddr_t) == 8, "sizeof(paddr_t) != 8");
 static_assert(sizeof(vaddr_t) == 8, "sizeof(vaddr_t) != 8");
 static_assert(sizeof(pte_t)   == 8, "sizeof(pte_t) != 8");
+// clang-format off
 
 } // rvsim
 

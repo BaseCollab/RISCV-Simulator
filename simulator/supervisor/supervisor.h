@@ -24,6 +24,6 @@ public:
     ~Supervisor() = default;
 };
 
-} // rvsim
+} // namespace rvsim
 
 #endif // SIMULATOR_SUPERVISOR_SUPERVISOR_H

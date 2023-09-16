@@ -23,6 +23,6 @@ public:
     ~Hart() = default;
 };
 
-} // rvsim
+} // namespace rvsim
 
 #endif // SIMULATOR_HART_HART_H

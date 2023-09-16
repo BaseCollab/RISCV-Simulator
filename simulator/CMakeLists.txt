@@ -13,8 +13,23 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
 
 add_executable(simulator simulator.cpp)
 
+file(GLOB_RECURSE ALL_SOURCES_FILES *.cpp *.h)
+
+# --------------------------clang-format--------------------------------------
+
+find_program(CLANG_FORMAT_EXECUTABLE NAMES clang-format-14 clang-format)
+
+add_custom_target(clang-force-format
+    COMMAND ${CLANG_FORMAT_EXECUTABLE}
+    -i
+    -style=file
+    --verbose
+    ${ALL_SOURCES_FILES}
+)
+
+# -----------------------------------------------------------------------------
+
 add_subdirectory(memory)
 add_subdirectory(supervisor)
 add_subdirectory(hart)
 add_subdirectory(mmu)
-

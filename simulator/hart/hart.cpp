@@ -2,4 +2,4 @@
 
 namespace rvsim {
 
-} // rvsim
+} // namespace rvsim
