@@ -9,7 +9,7 @@ namespace rvsim {
 class PagesController {
 public:
     enum class Error {
-        NONE = -1,
+        NONE         = -1,
         OUT_OF_PAGES = 0
     };
 
@@ -39,18 +39,8 @@ public:
         return {idx, std::nullopt};
     }
 
-    size_t GetPageSize() const
-    {
-        return PAGE_SIZE;
-    }
-
 private:
-    // TODO(R.Glaz): move PAGE_SIZE to hart
-    static constexpr size_t PAGE_SIZE = 4 * KBYTE_SIZE;
-
-    static constexpr size_t PAGES_NMB = Memory::GetMemorySize() / PAGE_SIZE;
-
-    static_assert(PAGES_NMB == 8192); // 1 << 13
+    static constexpr size_t PAGES_NMB = Memory::GetMemorySize() / PPAGE_SIZE;
 
 private:
     // For each pages we save state, 0 - page is clean, 1 - page is not clean

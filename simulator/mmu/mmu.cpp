@@ -35,8 +35,6 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, MMU::Targe
 {
     paddr_t paddr = {.value = 0};
 
-    (void)memory;
-
     pte_t pte_3;
     pte_t pte_2;
     pte_t pte_1;
@@ -45,10 +43,11 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, MMU::Targe
     MMU::Exception exception;
 
     csr_t satp_reg = csr_regs.LoadCSR(CSR_SATP_IDX);
-    csr_satp satp;
+    csr_satp_t satp;
     std::memcpy(&satp_reg, &satp, sizeof(satp_reg));
 
     // read to pte_3 from // memory.load(satp.ppn * PAGE_SIZE + vaddr.fields.vpn_3, sizeof(pte_t));
+    memory.Load(&pte_3, sizeof(pte_3), satp.ppn * VPAGE_SIZE + vaddr.fields.vpn_3);
 
     if (pte_3.x == 0 && pte_3.w == 0 && pte_3.r == 0) // pointer to next level
     {

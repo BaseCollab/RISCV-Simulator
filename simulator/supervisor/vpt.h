@@ -37,46 +37,52 @@ struct pte_t { // Sv48 page table entry (PTE)
 
 union paddr_t {
     struct { // Sv48 page table entry (PTE)
-        uint64_t padding     : 8; // 64 - 56
+        addr_t padding     : 8; // 64 - 56
 
         // PPN = Physical page number
-        uint64_t ppn         : 44;
+        addr_t ppn         : 44;
 
-        // uint64_t ppn_3       : 17;
-        // uint64_t ppn_2       : 9;
-        // uint64_t ppn_1       : 9;
-        // uint64_t ppn_0       : 9;
+        // addr_t ppn_3       : 17;
+        // addr_t ppn_2       : 9;
+        // addr_t ppn_1       : 9;
+        // addr_t ppn_0       : 9;
 
-        uint64_t page_offset : 12;
+        addr_t page_offset : 12;
     } fields;
 
-    uint64_t value;
+    addr_t value;
 };
 
 union vaddr_t {
     struct { // Sv48 page table entry (PTE)
-        uint64_t padding     : 16; // 64 - 48
+        addr_t padding     : 16; // 64 - 48
 
         // PPN = Physical page number
-        uint64_t vpn_3       : 9;
-        uint64_t vpn_2       : 9;
-        uint64_t vpn_1       : 9;
-        uint64_t vpn_0       : 9;
+        addr_t vpn_3       : 9;
+        addr_t vpn_2       : 9;
+        addr_t vpn_1       : 9;
+        addr_t vpn_0       : 9;
 
-        uint64_t page_offset : 12;
+        addr_t page_offset : 12;
     } fields;
 
-    uint64_t value;
+    addr_t value;
 };
 
 struct vpt_t {
     pte_t vpt[1 << 9]; // sizeof_bits(vaddr_t(ppn_3))
 };
 
+<<<<<<< HEAD
 static_assert(sizeof(paddr_t) == 8, "sizeof(paddr_t) != 8");
 static_assert(sizeof(vaddr_t) == 8, "sizeof(vaddr_t) != 8");
 static_assert(sizeof(pte_t)   == 8, "sizeof(pte_t) != 8");
 // clang-format off
+=======
+static_assert(sizeof(paddr_t) == 8, "sizeof(paddr_t) != sizeof(addr_t)");
+static_assert(sizeof(vaddr_t) == 8, "sizeof(vaddr_t) != sizeof(addr_t)");
+static_assert(sizeof(pte_t)   == 8, "sizeof(pte_t) != sizeof(uint64_t)");
+>>>>>>> 70cd0b7 (Update registers naming, fix type dependencies resolution error)
 
 } // rvsim
 
