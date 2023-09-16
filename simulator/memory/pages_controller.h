@@ -33,7 +33,7 @@ public:
         }
 
         auto [idx, err] = clean_pages_stack_.Pop();
-        (void) err;
+        (void)err;
 
         pages_states_[idx] = 1;
         return {idx, std::nullopt};

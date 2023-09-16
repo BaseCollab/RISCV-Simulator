@@ -19,18 +19,18 @@ public:
     NO_COPY_SEMANTIC(Memory);
     NO_MOVE_SEMANTIC(Memory);
 
-    Memory()  = default;
+    Memory() = default;
     ~Memory() = default;
 
     // Store ValueType value in dst
-    template<typename ValueType>
+    template <typename ValueType>
     void Store(paddr_t dst, ValueType value)
     {
         std::memcpy(ram_ + dst.value, &value, sizeof(value));
     }
 
     // Load ValueType value from src
-    template<typename ValueType>
+    template <typename ValueType>
     ValueType Load(paddr_t src) const
     {
         ValueType value = 0;
@@ -61,6 +61,6 @@ private:
     uint8_t ram_[MEMORY_SIZE];
 };
 
-} // rvsim
+} // namespace rvsim
 
 #endif // SIMULATOR_MEMORY_MEMORY_H

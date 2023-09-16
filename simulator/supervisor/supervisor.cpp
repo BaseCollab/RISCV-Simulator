@@ -6,8 +6,8 @@ namespace rvsim {
 
 Supervisor::Supervisor(CSRs *csr_regs, MemoryCtl *memory)
 {
-    initializeCSR(csr_regs);
-    locateRootPageTable(csr_regs, memory);
+    InitializeCSR(csr_regs);
+    LocateRootPageTable(csr_regs, memory);
 }
 
 void Supervisor::InitializeCSR(CSRs *csr_regs)
@@ -26,10 +26,10 @@ int Supervisor::LocateRootPageTable(CSRs *csr_regs, MemoryCtl *memory)
     // TODO: locate root virtual page table to root_page_number_, blocked
     // TODO: by MemoryCtl interface (no write of the whole page)
 
-    (void) csr_regs;
-    (void) memory;
+    (void)csr_regs;
+    (void)memory;
 
     return 0;
 }
 
-} // rvsim
+} // namespace rvsim

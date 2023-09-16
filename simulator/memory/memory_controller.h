@@ -14,9 +14,9 @@ namespace rvsim {
 class MemoryCtl {
 public:
     enum class Error {
-        NONE               = -1,
+        NONE = -1,
         STORE_BOUNDARY_CHK = 0,
-        LOAD_BOUNDARY_CHK  = 1
+        LOAD_BOUNDARY_CHK = 1
     };
 
     using PageError = PagesController::Error;
@@ -25,10 +25,10 @@ public:
     NO_COPY_SEMANTIC(MemoryCtl);
     NO_MOVE_SEMANTIC(MemoryCtl);
 
-    MemoryCtl()  = default;
+    MemoryCtl() = default;
     ~MemoryCtl() = default;
 
-    template<typename ValueType>
+    template <typename ValueType>
     std::optional<Error> Store(paddr_t dst, ValueType value)
     {
         if (!BoundaryCheck(dst, sizeof(ValueType))) {
@@ -38,7 +38,7 @@ public:
         memory_.Store<ValueType>(dst, value);
     }
 
-    template<typename ValueType>
+    template <typename ValueType>
     std::pair<ValueType, std::optional<Error>> Load(paddr_t src) const
     {
         if (!BoundaryCheck(src, sizeof(ValueType))) {

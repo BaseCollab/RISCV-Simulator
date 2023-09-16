@@ -7,7 +7,7 @@
 namespace rvsim {
 
 static constexpr size_t HWORD_SIZE = 2;
-static constexpr size_t WORD_SIZE  = 4;
+static constexpr size_t WORD_SIZE = 4;
 static constexpr size_t DWORD_SIZE = 8;
 
 static constexpr size_t BITS_PER_BYTE = 8;

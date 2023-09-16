@@ -11,8 +11,8 @@ namespace rvsim {
 
 class MMU {
 public:
-    enum class Exception
-    {
+    // clang-format off
+    enum class Exception {
         NONE                = -1,
         INVALID_PAGE_ENTRY  = 1,
         INVALID_PAGE_SIZE   = 2, // not all types of memory are supported (such as superpages)
@@ -22,13 +22,13 @@ public:
         PAGE_ACCESS_EXECUTE = 6,
     };
 
-    enum class Target
-    {
+    enum class Target {
         NONE    = -1,
         READ    = 1,
         WRITE   = 2,
         EXECUTE = 3,
     };
+    // clang-format off
 
 private:
     Exception ValidatePTE(const pte_t &pte, MMU::Target target) const;
@@ -36,12 +36,12 @@ private:
     // TODO: TLB implementation
 
 public:
-    MMU()  = default;
+    MMU() = default;
     ~MMU() = default;
 
     std::pair<paddr_t, Exception> VirtToPhysAddr(vaddr_t vaddr, Target target, const CSRs &csr_regs, MemoryCtl &memory);
 };
 
-} // rvsim
+} // namespace rvsim
 
 #endif // SIMULATOR_MMU_MMU_H

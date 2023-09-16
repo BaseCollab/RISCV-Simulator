@@ -8,7 +8,7 @@
 
 namespace rvsim::utils {
 
-template<typename Type, size_t capacity>
+template <typename Type, size_t capacity>
 class Stack {
 public:
     enum class Error {
@@ -21,7 +21,7 @@ public:
     NO_COPY_SEMANTIC(Stack);
     NO_MOVE_SEMANTIC(Stack);
 
-    Stack()  = default;
+    Stack() = default;
     ~Stack() = default;
 
     std::optional<Error> Push(Type value)
