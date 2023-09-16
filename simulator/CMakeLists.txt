@@ -44,7 +44,6 @@ enable_testing()
 find_package(GTest REQUIRED)
 
 add_executable(unit_tests)
-target_include_directories(unit_tests PUBLIC ${GTEST_INCLUDE_DIR})
 
 target_link_libraries(unit_tests PUBLIC simulator_static GTest::gtest_main)
 
