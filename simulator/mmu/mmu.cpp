@@ -46,7 +46,6 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, MMU::Targe
     csr_satp_t satp;
     std::memcpy(&satp_reg, &satp, sizeof(satp_reg));
 
-    // read to pte_3 from // memory.load(satp.ppn * PAGE_SIZE + vaddr.fields.vpn_3, sizeof(pte_t));
     memory.Load(&pte_3, sizeof(pte_3), satp.ppn * VPAGE_SIZE + vaddr.fields.vpn_3);
 
     if (pte_3.x == 0 && pte_3.w == 0 && pte_3.r == 0) // pointer to next level
@@ -55,7 +54,7 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, MMU::Targe
         if (exception != MMU::Exception::NONE)
             return std::make_pair(paddr, exception);
 
-        // read to pte_2 from // memory.load(pte_3.ppn * PAGE_SIZE + vaddr.fields.vpn_2, sizeof(pte_t));
+        memory.Load(&pte_2, sizeof(pte_2), pte_3.ppn * VPAGE_SIZE + vaddr.fields.vpn_2);
 
         if (pte_2.x == 0 && pte_2.w == 0 && pte_2.r == 0) // pointer to next level
         {
@@ -63,7 +62,7 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, MMU::Targe
             if (exception != MMU::Exception::NONE)
                 return std::make_pair(paddr, exception);
 
-            // read to pte_1 from // memory.load(pte_2.ppn * PAGE_SIZE + vaddr.fields.vpn_2, sizeof(pte_t));
+            memory.Load(&pte_1, sizeof(pte_1), pte_2.ppn * VPAGE_SIZE + vaddr.fields.vpn_1);
 
             if (pte_1.x == 0 && pte_1.w == 0 && pte_1.r == 0) // pointer to next level
             {
@@ -71,7 +70,7 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, MMU::Targe
                 if (exception != MMU::Exception::NONE)
                     return std::make_pair(paddr, exception);
 
-                // read to pte_0 from // memory.load(pte_1.ppn * PAGE_SIZE + vaddr.fields.vpn_2, sizeof(pte_t));
+                memory.Load(&pte_0, sizeof(pte_0), pte_1.ppn * VPAGE_SIZE + vaddr.fields.vpn_0);
 
                 exception = ValidatePTE(pte_0, target);
                 if (exception != MMU::Exception::NONE)
