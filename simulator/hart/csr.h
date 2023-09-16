@@ -8,9 +8,11 @@
 
 namespace rvsim {
 
+// clang-format off
 static constexpr size_t N_CSR = 4096;
 using csr_t     = uint64_t;
 using csr_idx_t = uint16_t;
+// clang-format off
 
 class CSRs {
 private:

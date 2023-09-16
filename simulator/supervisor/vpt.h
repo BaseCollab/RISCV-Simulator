@@ -73,16 +73,10 @@ struct vpt_t {
     pte_t vpt[1 << 9]; // sizeof_bits(vaddr_t(ppn_3))
 };
 
-<<<<<<< HEAD
-static_assert(sizeof(paddr_t) == 8, "sizeof(paddr_t) != 8");
-static_assert(sizeof(vaddr_t) == 8, "sizeof(vaddr_t) != 8");
-static_assert(sizeof(pte_t)   == 8, "sizeof(pte_t) != 8");
-// clang-format off
-=======
 static_assert(sizeof(paddr_t) == 8, "sizeof(paddr_t) != sizeof(addr_t)");
 static_assert(sizeof(vaddr_t) == 8, "sizeof(vaddr_t) != sizeof(addr_t)");
 static_assert(sizeof(pte_t)   == 8, "sizeof(pte_t) != sizeof(uint64_t)");
->>>>>>> 70cd0b7 (Update registers naming, fix type dependencies resolution error)
+// clang-format off
 
 } // rvsim
 
