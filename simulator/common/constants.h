@@ -24,18 +24,6 @@ static constexpr size_t BITS_PER_BYTE = 8;
 static constexpr size_t KBYTE_SIZE = (1 << 10);
 static constexpr size_t MBYTE_SIZE = (1 << 20);
 
-static constexpr size_t VPAGE_SIZE = 4 * KBYTE_SIZE;
-static constexpr size_t PPAGE_SIZE = VPAGE_SIZE;
-
-using addr_t = dword_t;
-
-enum class Mode : uint8_t {
-    USER_MODE       = 0,
-    SUPERVISOR_MODE = 1,
-    // RESERVED        = 2,
-    MACHINE_MODE    = 3
-};
-
 // clang-format on
 
 } // namespace rvsim

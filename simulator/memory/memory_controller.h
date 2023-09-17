@@ -2,6 +2,7 @@
 #define SIMULATOR_MEMORY_MEMORY_CONTROLLER_H
 
 #include "common/constants.h"
+#include "common/config.h"
 #include "memory.h"
 #include "pages_controller.h"
 

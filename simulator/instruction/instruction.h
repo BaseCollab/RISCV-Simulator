@@ -3,6 +3,8 @@
 
 #include "common/constants.h"
 #include "common/macros.h"
+#include "common/config.h"
+#include "instruction_id.h"
 
 #include <cstdint>
 

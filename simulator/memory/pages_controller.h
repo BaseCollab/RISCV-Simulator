@@ -2,6 +2,7 @@
 #define SIMULATOR_MEMORY_PAGES_CONTROLLER_H
 
 #include "common/constants.h"
+#include "common/config.h"
 #include "memory.h"
 
 namespace rvsim {

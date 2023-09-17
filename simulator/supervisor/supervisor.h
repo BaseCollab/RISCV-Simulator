@@ -3,6 +3,7 @@
 
 #include "common/macros.h"
 #include "common/constants.h"
+#include "common/config.h"
 #include "hart/hart.h"
 #include "memory/memory_controller.h"
 #include "vpt.h"
