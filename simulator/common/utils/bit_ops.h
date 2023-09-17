@@ -38,6 +38,20 @@ constexpr dword_t Clamp(dword_t value)
     return value > max ? max : value < min ? min : value;
 }
 
+template <bit_size_t old_size, bit_size_t new_size>
+constexpr dword_t SignExtend(dword_t value)
+{
+    static_assert(new_size > old_size);
+    static_assert(new_size <= BitSizeof<DWord>());
+    static_assert(old_size > 0);
+
+    bit_size_t shift = new_size - old_size;
+    dowrd_t sign = GetBits<old_size - 1, old_size - 1>(value);
+    dword_t mask = ((dword_t{1} << shift) - sign) << old_size;
+
+    return GetBits<new_size - 1, 0>(mask | value);
+}
+
 dword_t Ones   (bit_size_t high, bit_size_t low);
 dword_t GetBits(bit_size_t high, bit_size_t low, dword_t value);
 
