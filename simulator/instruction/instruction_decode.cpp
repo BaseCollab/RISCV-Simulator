@@ -653,6 +653,8 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 0) {
             id_ = InsnId::LB;
 
+            attributes_.is_load = true;
+
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
             imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
@@ -662,6 +664,8 @@ void Insn::Decode(insn_size_t insn)
 
         if (var_bits_1 == 1) {
             id_ = InsnId::LH;
+
+            attributes_.is_load = true;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -673,6 +677,8 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 2) {
             id_ = InsnId::LW;
 
+            attributes_.is_load = true;
+
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
             imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
@@ -682,6 +688,8 @@ void Insn::Decode(insn_size_t insn)
 
         if (var_bits_1 == 3) {
             id_ = InsnId::LD;
+
+            attributes_.is_load = true;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -693,6 +701,8 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 4) {
             id_ = InsnId::LBU;
 
+            attributes_.is_load = true;
+
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
             imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
@@ -703,6 +713,8 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 5) {
             id_ = InsnId::LHU;
 
+            attributes_.is_load = true;
+
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
             imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
@@ -712,6 +724,8 @@ void Insn::Decode(insn_size_t insn)
 
         if (var_bits_1 == 6) {
             id_ = InsnId::LWU;
+
+            attributes_.is_load = true;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -730,6 +744,8 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 0) {
             id_ = InsnId::SB;
 
+            attributes_.is_store = true;
+
             rs1_ |= (bitops::GetBits<19, 15>(insn));
             rs2_ |= (bitops::GetBits<24, 20>(insn));
             imm_ |= (bitops::GetBits<11, 7>(insn));
@@ -740,6 +756,8 @@ void Insn::Decode(insn_size_t insn)
 
         if (var_bits_1 == 1) {
             id_ = InsnId::SH;
+
+            attributes_.is_store = true;
 
             rs1_ |= (bitops::GetBits<19, 15>(insn));
             rs2_ |= (bitops::GetBits<24, 20>(insn));
@@ -752,6 +770,8 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 2) {
             id_ = InsnId::SW;
 
+            attributes_.is_store = true;
+
             rs1_ |= (bitops::GetBits<19, 15>(insn));
             rs2_ |= (bitops::GetBits<24, 20>(insn));
             imm_ |= (bitops::GetBits<11, 7>(insn));
@@ -762,6 +782,8 @@ void Insn::Decode(insn_size_t insn)
 
         if (var_bits_1 == 3) {
             id_ = InsnId::SD;
+
+            attributes_.is_store = true;
 
             rs1_ |= (bitops::GetBits<19, 15>(insn));
             rs2_ |= (bitops::GetBits<24, 20>(insn));
@@ -1172,11 +1194,15 @@ void Insn::Decode(insn_size_t insn)
                 if (var_bits_3 == 64) {
                     id_ = InsnId::SRET;
 
+                    attributes_.mode = Mode::SUPERVISOR_MODE;
+
                     return;
                 }
 
                 if (var_bits_3 == 160) {
                     id_ = InsnId::WFI;
+
+                    attributes_.mode = Mode::MACHINE_MODE;
 
                     return;
                 }
@@ -1188,6 +1214,8 @@ void Insn::Decode(insn_size_t insn)
 
             if (var_bits_2 == 24) {
                 id_ = InsnId::MRET;
+
+                attributes_.mode = Mode::MACHINE_MODE;
 
                 return;
             }
@@ -1201,6 +1229,8 @@ void Insn::Decode(insn_size_t insn)
             if (var_bits_2 == 9) {
                 id_ = InsnId::SFENCE_VMA;
 
+                attributes_.mode = Mode::SUPERVISOR_MODE;
+
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
                 rs2_ |= (bitops::GetBits<24, 20>(insn));
 
@@ -1210,6 +1240,8 @@ void Insn::Decode(insn_size_t insn)
             if (var_bits_2 == 17) {
                 id_ = InsnId::HFENCE_VVMA;
 
+                attributes_.mode = Mode::HYPERVISOR_MODE;
+
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
                 rs2_ |= (bitops::GetBits<24, 20>(insn));
 
@@ -1218,6 +1250,8 @@ void Insn::Decode(insn_size_t insn)
 
             if (var_bits_2 == 49) {
                 id_ = InsnId::HFENCE_GVMA;
+
+                attributes_.mode = Mode::HYPERVISOR_MODE;
 
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
                 rs2_ |= (bitops::GetBits<24, 20>(insn));
@@ -2295,6 +2329,8 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 2) {
             id_ = InsnId::FSW;
 
+            attributes_.is_store = true;
+
             rs1_ |= (bitops::GetBits<19, 15>(insn));
             rs2_ |= (bitops::GetBits<24, 20>(insn));
             imm_ |= (bitops::GetBits<11, 7>(insn));
@@ -2306,6 +2342,8 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 3) {
             id_ = InsnId::FSD;
 
+            attributes_.is_store = true;
+
             rs1_ |= (bitops::GetBits<19, 15>(insn));
             rs2_ |= (bitops::GetBits<24, 20>(insn));
             imm_ |= (bitops::GetBits<11, 7>(insn));
@@ -2316,6 +2354,8 @@ void Insn::Decode(insn_size_t insn)
 
         if (var_bits_1 == 4) {
             id_ = InsnId::FSQ;
+
+            attributes_.is_store = true;
 
             rs1_ |= (bitops::GetBits<19, 15>(insn));
             rs2_ |= (bitops::GetBits<24, 20>(insn));

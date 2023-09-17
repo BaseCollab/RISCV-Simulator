@@ -708,7 +708,7 @@ instructions:
   debug_hex_fixedvalue: 800202f
 - &83
   mnemonic: lr.w
-  format: 
+  format:
   fixedbits: [{msb: 24, lsb: 20, value: 0}, {msb: 31, lsb: 29, value: 0}, {msb: 28, lsb: 27, value: 2}, {msb: 14, lsb: 12, value: 2}, {msb: 6, lsb: 2, value: 11}, {msb: 1, lsb: 0, value: 3}]
   fields: [rd, rs1, aqrl]
   fixedmask: 4193284223
@@ -807,7 +807,7 @@ instructions:
   debug_hex_fixedvalue: 800302f
 - &84
   mnemonic: lr.d
-  format: 
+  format:
   fixedbits: [{msb: 24, lsb: 20, value: 0}, {msb: 31, lsb: 29, value: 0}, {msb: 28, lsb: 27, value: 2}, {msb: 14, lsb: 12, value: 3}, {msb: 6, lsb: 2, value: 11}, {msb: 1, lsb: 0, value: 3}]
   fields: [rd, rs1, aqrl]
   fixedmask: 4193284223
@@ -825,7 +825,7 @@ instructions:
   debug_hex_fixedvalue: 1800302f
 - &87
   mnemonic: ecall
-  format: 
+  format:
   fixedbits: [{msb: 11, lsb: 7, value: 0}, {msb: 19, lsb: 15, value: 0}, {msb: 31, lsb: 20, value: 0}, {msb: 14, lsb: 12, value: 0}, {msb: 6, lsb: 2, value: 28}, {msb: 1, lsb: 0, value: 3}]
   fields: []
   fixedmask: 4294967295
@@ -834,7 +834,7 @@ instructions:
   debug_hex_fixedvalue: '73'
 - &88
   mnemonic: ebreak
-  format: 
+  format:
   fixedbits: [{msb: 11, lsb: 7, value: 0}, {msb: 19, lsb: 15, value: 0}, {msb: 31, lsb: 20, value: 1}, {msb: 14, lsb: 12, value: 0}, {msb: 6, lsb: 2, value: 28}, {msb: 1, lsb: 0, value: 3}]
   fields: []
   fixedmask: 4294967295
@@ -843,7 +843,7 @@ instructions:
   debug_hex_fixedvalue: '100073'
 - &89
   mnemonic: uret
-  format: 
+  format:
   fixedbits: [{msb: 11, lsb: 7, value: 0}, {msb: 19, lsb: 15, value: 0}, {msb: 31, lsb: 20, value: 2}, {msb: 14, lsb: 12, value: 0}, {msb: 6, lsb: 2, value: 28}, {msb: 1, lsb: 0, value: 3}]
   fields: []
   fixedmask: 4294967295
@@ -852,7 +852,7 @@ instructions:
   debug_hex_fixedvalue: '200073'
 - &90
   mnemonic: sret
-  format: 
+  format:
   fixedbits: [{msb: 11, lsb: 7, value: 0}, {msb: 19, lsb: 15, value: 0}, {msb: 31, lsb: 20, value: 258}, {msb: 14, lsb: 12, value: 0}, {msb: 6, lsb: 2, value: 28}, {msb: 1, lsb: 0, value: 3}]
   fields: []
   fixedmask: 4294967295
@@ -861,7 +861,7 @@ instructions:
   debug_hex_fixedvalue: '10200073'
 - &92
   mnemonic: mret
-  format: 
+  format:
   fixedbits: [{msb: 11, lsb: 7, value: 0}, {msb: 19, lsb: 15, value: 0}, {msb: 31, lsb: 20, value: 770}, {msb: 14, lsb: 12, value: 0}, {msb: 6, lsb: 2, value: 28}, {msb: 1, lsb: 0, value: 3}]
   fields: []
   fixedmask: 4294967295
@@ -870,7 +870,7 @@ instructions:
   debug_hex_fixedvalue: '30200073'
 - &93
   mnemonic: dret
-  format: 
+  format:
   fixedbits: [{msb: 11, lsb: 7, value: 0}, {msb: 19, lsb: 15, value: 0}, {msb: 31, lsb: 20, value: 1970}, {msb: 14, lsb: 12, value: 0}, {msb: 6, lsb: 2, value: 28}, {msb: 1, lsb: 0, value: 3}]
   fields: []
   fixedmask: 4294967295
@@ -879,7 +879,7 @@ instructions:
   debug_hex_fixedvalue: 7b200073
 - &94
   mnemonic: sfence.vma
-  format: 
+  format:
   fixedbits: [{msb: 11, lsb: 7, value: 0}, {msb: 31, lsb: 25, value: 9}, {msb: 14, lsb: 12, value: 0}, {msb: 6, lsb: 2, value: 28}, {msb: 1, lsb: 0, value: 3}]
   fields: [rs1, rs2]
   fixedmask: 4261445631
@@ -888,7 +888,7 @@ instructions:
   debug_hex_fixedvalue: '12000073'
 - &91
   mnemonic: wfi
-  format: 
+  format:
   fixedbits: [{msb: 11, lsb: 7, value: 0}, {msb: 19, lsb: 15, value: 0}, {msb: 31, lsb: 20, value: 261}, {msb: 14, lsb: 12, value: 0}, {msb: 6, lsb: 2, value: 28}, {msb: 1, lsb: 0, value: 3}]
   fields: []
   fixedmask: 4294967295
@@ -951,7 +951,7 @@ instructions:
   debug_hex_fixedvalue: '7073'
 - &95
   mnemonic: hfence.vvma
-  format: 
+  format:
   fixedbits: [{msb: 11, lsb: 7, value: 0}, {msb: 31, lsb: 25, value: 17}, {msb: 14, lsb: 12, value: 0}, {msb: 6, lsb: 2, value: 28}, {msb: 1, lsb: 0, value: 3}]
   fields: [rs1, rs2]
   fixedmask: 4261445631
@@ -960,7 +960,7 @@ instructions:
   debug_hex_fixedvalue: '22000073'
 - &96
   mnemonic: hfence.gvma
-  format: 
+  format:
   fixedbits: [{msb: 11, lsb: 7, value: 0}, {msb: 31, lsb: 25, value: 49}, {msb: 14, lsb: 12, value: 0}, {msb: 6, lsb: 2, value: 28}, {msb: 1, lsb: 0, value: 3}]
   fields: [rs1, rs2]
   fixedmask: 4261445631

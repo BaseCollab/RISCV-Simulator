@@ -28,7 +28,7 @@ def set_invalid_id():
           'id_ = InsnId::INVALID_ID;\n' \
           'return;\n')
 
-def write_fields_fill(decoder_leaf, fields):
+def write_fields_fill(decoder_leaf, fields, mode):
     insn_fields = decoder_leaf['fields']
     insn_name = decoder_leaf['mnemonic'].upper().replace('.', '_')
 
@@ -36,6 +36,18 @@ def write_fields_fill(decoder_leaf, fields):
 
     if decoder_leaf['format'] == 'B' or decoder_leaf['mnemonic'] in ['jalr', 'jal', 'ecall']:
         print('attributes_.is_branch = true;\n')
+    elif decoder_leaf['format'] == 'S':
+        print('attributes_.is_store = true;\n')
+    elif decoder_leaf['format'] == 'I' and insn_name[0] == 'L':
+        print('attributes_.is_load = true;\n')
+
+    if mode == "privileged":
+        if insn_name == 'WFI' or insn_name[0] == 'M':
+            print('attributes_.mode = Mode::MACHINE_MODE;\n')
+        elif insn_name[0] == 'H':
+            print('attributes_.mode = Mode::HYPERVISOR_MODE;\n')
+        elif insn_name[0] == 'S':
+            print('attributes_.mode = Mode::SUPERVISOR_MODE;\n')
 
     for field in insn_fields:
         name = fields[field]['name']
@@ -60,7 +72,7 @@ def write_fields_fill(decoder_leaf, fields):
             print(f'({get_bits_str(msb, lsb, "insn")})', end='')
             print(';' if move == 0 else f' << {move};')
 
-def recursive_parse(decoder_tree, fields):
+def recursive_parse(decoder_tree, fields, mode):
     if 'range' in decoder_tree:
         opcode_str = get_bits_str(decoder_tree['range']['msb'], decoder_tree['range']['lsb'], 'insn')
         var_name = f'var_bits_{recursive_parse.var_cnt}'
@@ -70,15 +82,20 @@ def recursive_parse(decoder_tree, fields):
         print(f'word_t {var_name} = {opcode_str};')
 
         for node in decoder_tree['nodes']:
-            # comprasion condition
+            if recursive_parse.var_cnt == 1 and 0b1110011 == node: # system opcode
+                mode = "privileged"
+
             print(f'if ({var_name} == {node})\n{{')
-            recursive_parse(decoder_tree['nodes'][node], fields)
+            recursive_parse(decoder_tree['nodes'][node], fields, mode)
             print('}\n')
+
+            if recursive_parse.var_cnt == 1:
+                mode = "unprivileged"
 
         recursive_parse.var_cnt -= 1
         set_invalid_id()
     else:
-        write_fields_fill(decoder_tree, fields)
+        write_fields_fill(decoder_tree, fields, mode)
         print('\nreturn;')
 
 recursive_parse.var_cnt = 0
@@ -87,7 +104,7 @@ def decode_gen(fout, yaml_dict):
     stdout_bak = sys.stdout
     sys.stdout = fout
 
-    recursive_parse(yaml_dict['decodertree'], yaml_dict['fields'])
+    recursive_parse(yaml_dict['decodertree'], yaml_dict['fields'], "unprivileged")
 
     sys.stdout = stdout_bak
 

@@ -20,7 +20,7 @@ using insn_size_t = word_t;
 enum class Mode : uint8_t {
     USER_MODE       = 0,
     SUPERVISOR_MODE = 1,
-    // RESERVED        = 2,
+    HYPERVISOR_MODE = 2,
     MACHINE_MODE    = 3
 };
 
