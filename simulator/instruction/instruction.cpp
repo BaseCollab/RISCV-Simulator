@@ -29,12 +29,19 @@ bool Insn::IsPseudo() const
     return attributes_.is_pseudo;
 }
 
+const InsnId Insn::Id() const
+{
+    return id_;
+}
+
 void Insn::Clear()
 {
     attributes_.is_branch = false;
     attributes_.is_load   = false;
     attributes_.is_store  = false;
     attributes_.mode      = Mode::USER_MODE;
+
+    id_ = InsnId::INVALID_ID;
 
     rs1_ = rs2_ = rd_ = 0;
 

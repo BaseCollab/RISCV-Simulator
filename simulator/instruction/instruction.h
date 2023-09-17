@@ -4,7 +4,9 @@
 #include "common/constants.h"
 #include "common/macros.h"
 #include "common/config.h"
+
 #include "instruction_id.h"
+#include ""
 
 #include <cstdint>
 
@@ -37,6 +39,8 @@ public:
     bool IsStore()  const;
     bool IsPseudo() const;
 
+    const InsnId Id() const;
+
     void Clear();
     void Decode(word_t cmd);
 
@@ -48,6 +52,8 @@ private:
     word_t imm_{0};
 
     insn_attrs_t attributes_;
+
+    InsnId id_ = InsnId::INVALID_ID;
 };
 
 // clang-format on
