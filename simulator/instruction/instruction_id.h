@@ -3,10 +3,12 @@
  * Do not try to change anything in this file
  ***********************************************************
  * Written by Glaz Roman (Vokerlee)
-*/
+ */
 
 #ifndef SIMULATOR_INSTRUCTION_ID_INSTRUCTION_ID_H
 #define SIMULATOR_INSTRUCTION_ID_INSTRUCTION_ID_H
+
+// clang-format off
 
 enum class InsnId
 {
@@ -211,5 +213,7 @@ enum class InsnId
     FNMADD_Q    = 198,
     PSEUDO      = 199,
 };
+
+// clang-format on
 
 #endif // SIMULATOR_INSTRUCTION_ID_INSTRUCTION_ID_H

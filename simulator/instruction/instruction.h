@@ -30,7 +30,7 @@ public:
     NO_MOVE_SEMANTIC(Insn);
 
     Insn() = default;
-    Insn(word_t cmd);
+    Insn(insn_size_t insn);
     ~Insn() = default;
 
     bool IsBranch() const;
@@ -41,12 +41,16 @@ public:
     InsnId Id() const;
 
     void Clear();
-    void Decode(word_t cmd);
+    void Decode(insn_size_t insn);
 
 private:
     reg_idx_t rs1_{0};
     reg_idx_t rs2_{0};
+    reg_idx_t rs3_{0};
+
     reg_idx_t rd_{0};
+
+    reg_idx_t rm_{0};
 
     word_t imm_{0};
 

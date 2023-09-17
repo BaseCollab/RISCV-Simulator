@@ -4,9 +4,9 @@
 
 namespace rvsim {
 
-Insn::Insn(word_t cmd)
+Insn::Insn(insn_size_t insn)
 {
-    Decode(cmd);
+    Decode(insn);
 }
 
 bool Insn::IsBranch() const
@@ -43,14 +43,9 @@ void Insn::Clear()
 
     id_ = InsnId::INVALID_ID;
 
-    rs1_ = rs2_ = rd_ = 0;
+    rs1_ = rs2_ = rs3_ = rd_ = rm_ = 0;
 
     imm_ = 0;
-}
-
-void Insn::Decode(word_t cmd)
-{
-    cmd++; // not implemented yet
 }
 
 // clang-format on

@@ -10,43 +10,140 @@ comment_string = "/*\n"                                                         
                  " * Written by Glaz Roman (Vokerlee)\n"                                            \
                  "*/\n\n"
 
-def generate_id_enum(cmd_list):
+def parse_yaml(filename):
+    with open(filename, 'r') as insn_file:
+        return yaml.safe_load(insn_file)
+
+def get_bits_str(msb, lsb, word_str):
+    return f'bitops::GetBits<{msb}, {lsb}>(' + word_str + ')'
+
+def sort_bits(bits):
+    return sorted(bits, key=lambda elem : elem['from'])
+
+def sign_extend_str(old_size, new_size):
+    return f'bitops::SignExtend<{old_size}, {new_size}>'
+
+def set_invalid_id():
+    print('/* Instruction wasn\'t found */\n' \
+          'id_ = InsnId::INVALID_ID;\n' \
+          'return;\n')
+
+def write_fields_fill(decoder_leaf, fields):
+    insn_fields = decoder_leaf['fields']
+    insn_name = decoder_leaf['mnemonic'].upper().replace('.', '_')
+
+    print(f'id_ = InsnId::{insn_name};\n')
+
+    if decoder_leaf['format'] == 'B' or decoder_leaf['mnemonic'] in ['jalr', 'jal', 'ecall']:
+        print('attributes_.is_branch = true;\n')
+
+    for field in insn_fields:
+        name = fields[field]['name']
+        bits_list = fields[field]['location']['bits']
+        bits_list = sort_bits(bits_list)
+
+        for elem in bits_list:
+            msb, lsb = elem['msb'], elem['lsb']
+            move = elem['to']
+
+            # TEMPORARY EXCLUSION
+            exclude_list = ['fm', 'pred', 'succ', 'aqrl', 'shamtw', 'shamt']
+            if name in exclude_list:
+                if name in exclude_list[3:]:
+                    msb = 31
+                name = 'imm'
+
+            print(f'{name}_ |= ', end='')
+            if name == 'imm' and msb == 31:
+                print(f'{sign_extend_str(msb - lsb + 1, "bitops::BitSizeof<word_t>()")}')
+
+            print(f'({get_bits_str(msb, lsb, "insn")})', end='')
+            print(';' if move == 0 else f' << {move};')
+
+def recursive_parse(decoder_tree, fields):
+    if 'range' in decoder_tree:
+        opcode_str = get_bits_str(decoder_tree['range']['msb'], decoder_tree['range']['lsb'], 'insn')
+        var_name = f'var_bits_{recursive_parse.var_cnt}'
+
+        recursive_parse.var_cnt += 1
+
+        print(f'word_t {var_name} = {opcode_str};')
+
+        for node in decoder_tree['nodes']:
+            # comprasion condition
+            print(f'if ({var_name} == {node})\n{{')
+            recursive_parse(decoder_tree['nodes'][node], fields)
+            print('}\n')
+
+        recursive_parse.var_cnt -= 1
+        set_invalid_id()
+    else:
+        write_fields_fill(decoder_tree, fields)
+        print('\nreturn;')
+
+recursive_parse.var_cnt = 0
+
+def decode_gen(fout, yaml_dict):
+    stdout_bak = sys.stdout
+    sys.stdout = fout
+
+    recursive_parse(yaml_dict['decodertree'], yaml_dict['fields'])
+
+    sys.stdout = stdout_bak
+
+def generate_decode_logic(yaml_dict):
+    with open('instruction_decode.cpp', 'w') as fout:
+        fout.write(comment_string)
+        fout.write('#include \"common/utils/bit_ops.h\"\n')
+        fout.write('#include \"instruction.h\"\n\n')
+        fout.write('namespace rvsim {\n\n')
+        fout.write('void Insn::Decode(insn_size_t insn)\n{\n')
+
+        decode_gen(fout, yaml_dict)
+
+        fout.write('}\n')
+        fout.write("\n} // namespace rvsim\n")
+
+def generate_id_enum(yaml_dict):
+    insns = yaml_dict['instructions']
+
+    insns_mnemonic_list = []
+    for insn in insns:
+        insns_mnemonic_list.append(insn['mnemonic'].upper().replace('.', '_'))
+
+    insns_mnemonic_list.append('PSEUDO') # pseudo cmd for plugin implementation
+
     with open('instruction_id.h', 'w') as fout:
         fout.write(comment_string)
+        fout.write("#ifndef SIMULATOR_INSTRUCTION_ID_INSTRUCTION_ID_H\n"
+                   "#define SIMULATOR_INSTRUCTION_ID_INSTRUCTION_ID_H\n\n"
+                   "// clang-format off\n\n")
+
         fout.write('enum class InsnId\n'
                    '{\n')
 
-        max_cmd_len = max([len(cmd) for cmd in cmd_list])
+        max_insn_len = max([len(insn) for insn in insns_mnemonic_list])
 
-        fout.write('    INVALID_ID' + ' ' * (max_cmd_len - len('INVALID_ID')) + ' = -1,\n')
+        fout.write('    INVALID_ID' + ' ' * (max_insn_len - len('INVALID_ID')) + ' = -1,\n')
 
-        for i in range(len(cmd_list)):
-            fout.write(f'    {cmd_list[i]}' + ' ' * (max_cmd_len - len(cmd_list[i])) + \
+        for i in range(len(insns_mnemonic_list)):
+            fout.write(f'    {insns_mnemonic_list[i]}' + ' ' * (max_insn_len - len(insns_mnemonic_list[i])) + \
                        ' = ' + str(i + 1) + ',\n')
 
-        fout.write('};\n')
+        fout.write("};\n\n"
+                   "// clang-format on\n\n")
+
+        fout.write("#endif // SIMULATOR_INSTRUCTION_ID_INSTRUCTION_ID_H\n")
 
 def main():
     if len(sys.argv) != 2:
         print('Invalid amount of arguments [1 must be used]',        file=sys.stderr)
         print('Usage example: ' + sys.argv[0] + ' ' + 'risc-v.yaml', file=sys.stderr)
 
-    with open(sys.argv[1], 'r') as cmd_file:
-        commands = yaml.safe_load(cmd_file)
+    yaml_dict = parse_yaml(sys.argv[1])
 
-    commands = commands['instructions']
-
-    cmd_list = []
-    for cmd in commands:
-        cmd_list.append(cmd['mnemonic'].upper().replace('.', '_'))
-
-    cmd_list.append('PSEUDO') # pseudo cmd for plugin implementation
-
-    generate_id_enum(cmd_list)
-
-    # cmd_hpp(cmd_list)
-    # cmd_cpp(cmd_list)
-    # ops_cpp(cmd_list)
+    generate_id_enum(yaml_dict)
+    generate_decode_logic(yaml_dict)
 
 if __name__ == '__main__':
     main()
