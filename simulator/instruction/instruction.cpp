@@ -29,7 +29,7 @@ bool Insn::IsPseudo() const
     return attributes_.is_pseudo;
 }
 
-const InsnId Insn::Id() const
+InsnId Insn::Id() const
 {
     return id_;
 }

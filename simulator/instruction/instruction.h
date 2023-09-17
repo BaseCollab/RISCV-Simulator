@@ -6,7 +6,6 @@
 #include "common/config.h"
 
 #include "instruction_id.h"
-#include ""
 
 #include <cstdint>
 
@@ -39,7 +38,7 @@ public:
     bool IsStore()  const;
     bool IsPseudo() const;
 
-    const InsnId Id() const;
+    InsnId Id() const;
 
     void Clear();
     void Decode(word_t cmd);

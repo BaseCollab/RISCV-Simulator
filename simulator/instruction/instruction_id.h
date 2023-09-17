@@ -5,6 +5,9 @@
  * Written by Glaz Roman (Vokerlee)
 */
 
+#ifndef SIMULATOR_INSTRUCTION_ID_INSTRUCTION_ID_H
+#define SIMULATOR_INSTRUCTION_ID_INSTRUCTION_ID_H
+
 enum class InsnId
 {
     INVALID_ID  = -1,
@@ -208,3 +211,5 @@ enum class InsnId
     FNMADD_Q    = 198,
     PSEUDO      = 199,
 };
+
+#endif // SIMULATOR_INSTRUCTION_ID_INSTRUCTION_ID_H
