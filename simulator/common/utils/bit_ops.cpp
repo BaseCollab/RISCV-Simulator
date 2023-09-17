@@ -5,6 +5,7 @@
 #include <cassert>
 
 namespace rvsim {
+namespace bitops {
 
 dword_t Ones(bit_size_t high, bit_size_t low)
 {
@@ -34,9 +35,10 @@ dword_t SignExtend(bit_size_t old_size, bit_size_t new_size, dword_t value)
 
     bit_size_t shift = Clamp<BitSizeof<dword_t>(), 0>(new_size - old_size);
     dword_t sign = GetBits(old_size - 1, old_size - 1, value);
-    dword_t mask = ((dword_t{1} << shift) - sign) << old_size;
+    dword_t mask = ((dword_t {1} << shift) - sign) << old_size;
 
     return GetBits(new_size - 1, 0, mask | value);
 }
 
+} // namespace bitops
 } // namespace rvsim
