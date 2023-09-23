@@ -9,8 +9,6 @@
 
 namespace rvsim {
 
-using reg_t = uint64_t;
-
 class Hart {
 private:
 public:

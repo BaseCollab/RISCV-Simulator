@@ -13,8 +13,6 @@ namespace rvsim {
 
 // clang-format off
 
-using reg_idx_t = uint8_t;
-
 class Instruction {
 public:
     struct instr_attrs_t {
@@ -45,13 +43,13 @@ public:
     void Decode(instr_size_t instr);
 
 private:
-    reg_idx_t rs1_{0};
-    reg_idx_t rs2_{0};
-    reg_idx_t rs3_{0};
+    gpr_idx_t rs1_{0};
+    gpr_idx_t rs2_{0};
+    gpr_idx_t rs3_{0};
 
-    reg_idx_t rd_{0};
+    gpr_idx_t rd_{0};
 
-    reg_idx_t rm_{0};
+    gpr_idx_t rm_{0};
 
     word_t imm_{0};
 
