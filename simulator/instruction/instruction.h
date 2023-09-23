@@ -38,7 +38,7 @@ public:
     bool IsStore()  const;
     bool IsPseudo() const;
 
-    InsnId GetId() const;
+    InstructionId GetId() const;
 
     void Clear();
     void Decode(insn_size_t insn);
@@ -56,7 +56,7 @@ private:
 
     insn_attrs_t attributes_;
 
-    InsnId id_ = InsnId::INVALID_ID;
+    InstructionId id_ = InstructionId::INVALID_ID;
 };
 
 // clang-format on

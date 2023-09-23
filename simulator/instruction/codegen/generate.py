@@ -25,14 +25,14 @@ def sign_extend_str(old_size, new_size):
 
 def set_invalid_id():
     print('/* Instruction wasn\'t found */\n' \
-          'id_ = InsnId::INVALID_ID;\n' \
+          'id_ = InstructionId::INVALID_ID;\n' \
           'return;\n')
 
 def write_fields_fill(decoder_leaf, fields, mode):
     insn_fields = decoder_leaf['fields']
     insn_name = decoder_leaf['mnemonic'].upper().replace('.', '_')
 
-    print(f'id_ = InsnId::{insn_name};\n')
+    print(f'id_ = InstructionId::{insn_name};\n')
 
     if decoder_leaf['format'] == 'B' or decoder_leaf['mnemonic'] in ['jalr', 'jal', 'ecall']:
         print('attributes_.is_branch = true;\n')
@@ -137,7 +137,7 @@ def generate_id_enum(yaml_dict):
                    "namespace rvsim {\n\n"
                    "// clang-format off\n\n")
 
-        fout.write('enum class InsnId\n'
+        fout.write('enum class InstructionId\n'
                    '{\n')
 
         max_insn_len = max([len(insn) for insn in insns_mnemonic_list])

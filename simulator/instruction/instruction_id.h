@@ -3,7 +3,7 @@
  * Do not try to change anything in this file
  ***********************************************************
  * Written by Glaz Roman (Vokerlee)
-*/
+ */
 
 #ifndef SIMULATOR_INSTRUCTION_ID_INSTRUCTION_ID_H
 #define SIMULATOR_INSTRUCTION_ID_INSTRUCTION_ID_H
@@ -12,7 +12,7 @@ namespace rvsim {
 
 // clang-format off
 
-enum class InsnId
+enum class InstructionId
 {
     INVALID_ID  = -1,
     BEQ         = 1,

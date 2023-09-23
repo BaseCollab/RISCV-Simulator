@@ -10,13 +10,13 @@
 
 namespace rvsim {
 
-void Insn::Decode(insn_size_t insn)
+void Instruction::Decode(insn_size_t insn)
 {
     word_t var_bits_0 = bitops::GetBits<6, 0>(insn);
     if (var_bits_0 == 99) {
         word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
         if (var_bits_1 == 0) {
-            id_ = InsnId::BEQ;
+            id_ = InstructionId::BEQ;
 
             attributes_.is_branch = true;
 
@@ -31,7 +31,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 1) {
-            id_ = InsnId::BNE;
+            id_ = InstructionId::BNE;
 
             attributes_.is_branch = true;
 
@@ -46,7 +46,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 4) {
-            id_ = InsnId::BLT;
+            id_ = InstructionId::BLT;
 
             attributes_.is_branch = true;
 
@@ -61,7 +61,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 5) {
-            id_ = InsnId::BGE;
+            id_ = InstructionId::BGE;
 
             attributes_.is_branch = true;
 
@@ -76,7 +76,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 6) {
-            id_ = InsnId::BLTU;
+            id_ = InstructionId::BLTU;
 
             attributes_.is_branch = true;
 
@@ -91,7 +91,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 7) {
-            id_ = InsnId::BGEU;
+            id_ = InstructionId::BGEU;
 
             attributes_.is_branch = true;
 
@@ -106,12 +106,12 @@ void Insn::Decode(insn_size_t insn)
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
     if (var_bits_0 == 103) {
-        id_ = InsnId::JALR;
+        id_ = InstructionId::JALR;
 
         attributes_.is_branch = true;
 
@@ -123,7 +123,7 @@ void Insn::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 111) {
-        id_ = InsnId::JAL;
+        id_ = InstructionId::JAL;
 
         attributes_.is_branch = true;
 
@@ -137,7 +137,7 @@ void Insn::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 55) {
-        id_ = InsnId::LUI;
+        id_ = InstructionId::LUI;
 
         rd_ |= (bitops::GetBits<11, 7>(insn));
         imm_ |= bitops::SignExtend<20, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 12>(insn)) << 12;
@@ -146,7 +146,7 @@ void Insn::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 23) {
-        id_ = InsnId::AUIPC;
+        id_ = InstructionId::AUIPC;
 
         rd_ |= (bitops::GetBits<11, 7>(insn));
         imm_ |= bitops::SignExtend<20, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 12>(insn)) << 12;
@@ -157,7 +157,7 @@ void Insn::Decode(insn_size_t insn)
     if (var_bits_0 == 19) {
         word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
         if (var_bits_1 == 0) {
-            id_ = InsnId::ADDI;
+            id_ = InstructionId::ADDI;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -167,7 +167,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 1) {
-            id_ = InsnId::SLLI;
+            id_ = InstructionId::SLLI;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -177,7 +177,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 2) {
-            id_ = InsnId::SLTI;
+            id_ = InstructionId::SLTI;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -187,7 +187,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 3) {
-            id_ = InsnId::SLTIU;
+            id_ = InstructionId::SLTIU;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -197,7 +197,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 4) {
-            id_ = InsnId::XORI;
+            id_ = InstructionId::XORI;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -209,7 +209,7 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 5) {
             word_t var_bits_2 = bitops::GetBits<31, 26>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::SRLI;
+                id_ = InstructionId::SRLI;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -219,7 +219,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 16) {
-                id_ = InsnId::SRAI;
+                id_ = InstructionId::SRAI;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -229,12 +229,12 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 6) {
-            id_ = InsnId::ORI;
+            id_ = InstructionId::ORI;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -244,7 +244,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 7) {
-            id_ = InsnId::ANDI;
+            id_ = InstructionId::ANDI;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -254,7 +254,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
@@ -263,7 +263,7 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 0) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::ADD;
+                id_ = InstructionId::ADD;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -273,7 +273,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::SLL;
+                id_ = InstructionId::SLL;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -283,7 +283,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 2) {
-                id_ = InsnId::SLT;
+                id_ = InstructionId::SLT;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -293,7 +293,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::SLTU;
+                id_ = InstructionId::SLTU;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -303,7 +303,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 4) {
-                id_ = InsnId::XOR;
+                id_ = InstructionId::XOR;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -313,7 +313,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 5) {
-                id_ = InsnId::SRL;
+                id_ = InstructionId::SRL;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -323,7 +323,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 6) {
-                id_ = InsnId::OR;
+                id_ = InstructionId::OR;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -333,7 +333,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 7) {
-                id_ = InsnId::AND;
+                id_ = InstructionId::AND;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -343,14 +343,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 32) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::SUB;
+                id_ = InstructionId::SUB;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -360,7 +360,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 5) {
-                id_ = InsnId::SRA;
+                id_ = InstructionId::SRA;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -370,14 +370,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 1) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::MUL;
+                id_ = InstructionId::MUL;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -387,7 +387,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::MULH;
+                id_ = InstructionId::MULH;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -397,7 +397,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 2) {
-                id_ = InsnId::MULHSU;
+                id_ = InstructionId::MULHSU;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -407,7 +407,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::MULHU;
+                id_ = InstructionId::MULHU;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -417,7 +417,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 4) {
-                id_ = InsnId::DIV;
+                id_ = InstructionId::DIV;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -427,7 +427,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 5) {
-                id_ = InsnId::DIVU;
+                id_ = InstructionId::DIVU;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -437,7 +437,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 6) {
-                id_ = InsnId::REM;
+                id_ = InstructionId::REM;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -447,7 +447,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 7) {
-                id_ = InsnId::REMU;
+                id_ = InstructionId::REMU;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -457,19 +457,19 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
     if (var_bits_0 == 27) {
         word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
         if (var_bits_1 == 0) {
-            id_ = InsnId::ADDIW;
+            id_ = InstructionId::ADDIW;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -479,7 +479,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 1) {
-            id_ = InsnId::SLLIW;
+            id_ = InstructionId::SLLIW;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -491,7 +491,7 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 5) {
             word_t var_bits_2 = bitops::GetBits<31, 25>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::SRLIW;
+                id_ = InstructionId::SRLIW;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -501,7 +501,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 32) {
-                id_ = InsnId::SRAIW;
+                id_ = InstructionId::SRAIW;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -511,12 +511,12 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
@@ -525,7 +525,7 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 0) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::ADDW;
+                id_ = InstructionId::ADDW;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -535,7 +535,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::SLLW;
+                id_ = InstructionId::SLLW;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -545,7 +545,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 5) {
-                id_ = InsnId::SRLW;
+                id_ = InstructionId::SRLW;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -555,14 +555,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 32) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::SUBW;
+                id_ = InstructionId::SUBW;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -572,7 +572,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 5) {
-                id_ = InsnId::SRAW;
+                id_ = InstructionId::SRAW;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -582,14 +582,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 1) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::MULW;
+                id_ = InstructionId::MULW;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -599,7 +599,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 4) {
-                id_ = InsnId::DIVW;
+                id_ = InstructionId::DIVW;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -609,7 +609,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 5) {
-                id_ = InsnId::DIVUW;
+                id_ = InstructionId::DIVUW;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -619,7 +619,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 6) {
-                id_ = InsnId::REMW;
+                id_ = InstructionId::REMW;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -629,7 +629,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 7) {
-                id_ = InsnId::REMUW;
+                id_ = InstructionId::REMUW;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -639,19 +639,19 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
     if (var_bits_0 == 3) {
         word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
         if (var_bits_1 == 0) {
-            id_ = InsnId::LB;
+            id_ = InstructionId::LB;
 
             attributes_.is_load = true;
 
@@ -663,7 +663,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 1) {
-            id_ = InsnId::LH;
+            id_ = InstructionId::LH;
 
             attributes_.is_load = true;
 
@@ -675,7 +675,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 2) {
-            id_ = InsnId::LW;
+            id_ = InstructionId::LW;
 
             attributes_.is_load = true;
 
@@ -687,7 +687,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 3) {
-            id_ = InsnId::LD;
+            id_ = InstructionId::LD;
 
             attributes_.is_load = true;
 
@@ -699,7 +699,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 4) {
-            id_ = InsnId::LBU;
+            id_ = InstructionId::LBU;
 
             attributes_.is_load = true;
 
@@ -711,7 +711,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 5) {
-            id_ = InsnId::LHU;
+            id_ = InstructionId::LHU;
 
             attributes_.is_load = true;
 
@@ -723,7 +723,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 6) {
-            id_ = InsnId::LWU;
+            id_ = InstructionId::LWU;
 
             attributes_.is_load = true;
 
@@ -735,14 +735,14 @@ void Insn::Decode(insn_size_t insn)
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
     if (var_bits_0 == 35) {
         word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
         if (var_bits_1 == 0) {
-            id_ = InsnId::SB;
+            id_ = InstructionId::SB;
 
             attributes_.is_store = true;
 
@@ -755,7 +755,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 1) {
-            id_ = InsnId::SH;
+            id_ = InstructionId::SH;
 
             attributes_.is_store = true;
 
@@ -768,7 +768,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 2) {
-            id_ = InsnId::SW;
+            id_ = InstructionId::SW;
 
             attributes_.is_store = true;
 
@@ -781,7 +781,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 3) {
-            id_ = InsnId::SD;
+            id_ = InstructionId::SD;
 
             attributes_.is_store = true;
 
@@ -794,14 +794,14 @@ void Insn::Decode(insn_size_t insn)
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
     if (var_bits_0 == 15) {
         word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
         if (var_bits_1 == 0) {
-            id_ = InsnId::FENCE;
+            id_ = InstructionId::FENCE;
 
             imm_ |= bitops::SignExtend<4, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 28>(insn));
             imm_ |= (bitops::GetBits<27, 24>(insn));
@@ -813,7 +813,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 1) {
-            id_ = InsnId::FENCE_I;
+            id_ = InstructionId::FENCE_I;
 
             imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -823,7 +823,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
@@ -832,7 +832,7 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 0) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 2) {
-                id_ = InsnId::AMOADD_W;
+                id_ = InstructionId::AMOADD_W;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -843,7 +843,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::AMOADD_D;
+                id_ = InstructionId::AMOADD_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -854,14 +854,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 4) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 2) {
-                id_ = InsnId::AMOXOR_W;
+                id_ = InstructionId::AMOXOR_W;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -872,7 +872,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::AMOXOR_D;
+                id_ = InstructionId::AMOXOR_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -883,14 +883,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 8) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 2) {
-                id_ = InsnId::AMOOR_W;
+                id_ = InstructionId::AMOOR_W;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -901,7 +901,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::AMOOR_D;
+                id_ = InstructionId::AMOOR_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -912,14 +912,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 12) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 2) {
-                id_ = InsnId::AMOAND_W;
+                id_ = InstructionId::AMOAND_W;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -930,7 +930,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::AMOAND_D;
+                id_ = InstructionId::AMOAND_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -941,14 +941,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 16) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 2) {
-                id_ = InsnId::AMOMIN_W;
+                id_ = InstructionId::AMOMIN_W;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -959,7 +959,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::AMOMIN_D;
+                id_ = InstructionId::AMOMIN_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -970,14 +970,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 20) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 2) {
-                id_ = InsnId::AMOMAX_W;
+                id_ = InstructionId::AMOMAX_W;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -988,7 +988,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::AMOMAX_D;
+                id_ = InstructionId::AMOMAX_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -999,14 +999,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 24) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 2) {
-                id_ = InsnId::AMOMINU_W;
+                id_ = InstructionId::AMOMINU_W;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1017,7 +1017,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::AMOMINU_D;
+                id_ = InstructionId::AMOMINU_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1028,14 +1028,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 28) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 2) {
-                id_ = InsnId::AMOMAXU_W;
+                id_ = InstructionId::AMOMAXU_W;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1046,7 +1046,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::AMOMAXU_D;
+                id_ = InstructionId::AMOMAXU_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1057,14 +1057,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 1) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 2) {
-                id_ = InsnId::AMOSWAP_W;
+                id_ = InstructionId::AMOSWAP_W;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1075,7 +1075,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::AMOSWAP_D;
+                id_ = InstructionId::AMOSWAP_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1086,7 +1086,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
@@ -1095,7 +1095,7 @@ void Insn::Decode(insn_size_t insn)
             if (var_bits_2 == 0) {
                 word_t var_bits_3 = bitops::GetBits<14, 12>(insn);
                 if (var_bits_3 == 2) {
-                    id_ = InsnId::LR_W;
+                    id_ = InstructionId::LR_W;
 
                     rd_ |= (bitops::GetBits<11, 7>(insn));
                     rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1105,7 +1105,7 @@ void Insn::Decode(insn_size_t insn)
                 }
 
                 if (var_bits_3 == 3) {
-                    id_ = InsnId::LR_D;
+                    id_ = InstructionId::LR_D;
 
                     rd_ |= (bitops::GetBits<11, 7>(insn));
                     rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1115,19 +1115,19 @@ void Insn::Decode(insn_size_t insn)
                 }
 
                 /* Instruction wasn't found */
-                id_ = InsnId::INVALID_ID;
+                id_ = InstructionId::INVALID_ID;
                 return;
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 3) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 2) {
-                id_ = InsnId::SC_W;
+                id_ = InstructionId::SC_W;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1138,7 +1138,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::SC_D;
+                id_ = InstructionId::SC_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1149,12 +1149,12 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
@@ -1165,7 +1165,7 @@ void Insn::Decode(insn_size_t insn)
             if (var_bits_2 == 0) {
                 word_t var_bits_3 = bitops::GetBits<24, 15>(insn);
                 if (var_bits_3 == 0) {
-                    id_ = InsnId::ECALL;
+                    id_ = InstructionId::ECALL;
 
                     attributes_.is_branch = true;
 
@@ -1173,26 +1173,26 @@ void Insn::Decode(insn_size_t insn)
                 }
 
                 if (var_bits_3 == 32) {
-                    id_ = InsnId::EBREAK;
+                    id_ = InstructionId::EBREAK;
 
                     return;
                 }
 
                 if (var_bits_3 == 64) {
-                    id_ = InsnId::URET;
+                    id_ = InstructionId::URET;
 
                     return;
                 }
 
                 /* Instruction wasn't found */
-                id_ = InsnId::INVALID_ID;
+                id_ = InstructionId::INVALID_ID;
                 return;
             }
 
             if (var_bits_2 == 8) {
                 word_t var_bits_3 = bitops::GetBits<24, 15>(insn);
                 if (var_bits_3 == 64) {
-                    id_ = InsnId::SRET;
+                    id_ = InstructionId::SRET;
 
                     attributes_.mode = Mode::SUPERVISOR_MODE;
 
@@ -1200,7 +1200,7 @@ void Insn::Decode(insn_size_t insn)
                 }
 
                 if (var_bits_3 == 160) {
-                    id_ = InsnId::WFI;
+                    id_ = InstructionId::WFI;
 
                     attributes_.mode = Mode::MACHINE_MODE;
 
@@ -1208,12 +1208,12 @@ void Insn::Decode(insn_size_t insn)
                 }
 
                 /* Instruction wasn't found */
-                id_ = InsnId::INVALID_ID;
+                id_ = InstructionId::INVALID_ID;
                 return;
             }
 
             if (var_bits_2 == 24) {
-                id_ = InsnId::MRET;
+                id_ = InstructionId::MRET;
 
                 attributes_.mode = Mode::MACHINE_MODE;
 
@@ -1221,13 +1221,13 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 61) {
-                id_ = InsnId::DRET;
+                id_ = InstructionId::DRET;
 
                 return;
             }
 
             if (var_bits_2 == 9) {
-                id_ = InsnId::SFENCE_VMA;
+                id_ = InstructionId::SFENCE_VMA;
 
                 attributes_.mode = Mode::SUPERVISOR_MODE;
 
@@ -1238,7 +1238,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 17) {
-                id_ = InsnId::HFENCE_VVMA;
+                id_ = InstructionId::HFENCE_VVMA;
 
                 attributes_.mode = Mode::HYPERVISOR_MODE;
 
@@ -1249,7 +1249,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 49) {
-                id_ = InsnId::HFENCE_GVMA;
+                id_ = InstructionId::HFENCE_GVMA;
 
                 attributes_.mode = Mode::HYPERVISOR_MODE;
 
@@ -1260,12 +1260,12 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 1) {
-            id_ = InsnId::CSRRW;
+            id_ = InstructionId::CSRRW;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1275,7 +1275,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 2) {
-            id_ = InsnId::CSRRS;
+            id_ = InstructionId::CSRRS;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1285,7 +1285,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 3) {
-            id_ = InsnId::CSRRC;
+            id_ = InstructionId::CSRRC;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1295,7 +1295,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 5) {
-            id_ = InsnId::CSRRWI;
+            id_ = InstructionId::CSRRWI;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1305,7 +1305,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 6) {
-            id_ = InsnId::CSRRSI;
+            id_ = InstructionId::CSRRSI;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1315,7 +1315,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 7) {
-            id_ = InsnId::CSRRCI;
+            id_ = InstructionId::CSRRCI;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1325,14 +1325,14 @@ void Insn::Decode(insn_size_t insn)
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
     if (var_bits_0 == 83) {
         word_t var_bits_1 = bitops::GetBits<31, 25>(insn);
         if (var_bits_1 == 0) {
-            id_ = InsnId::FADD_S;
+            id_ = InstructionId::FADD_S;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1343,7 +1343,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 4) {
-            id_ = InsnId::FSUB_S;
+            id_ = InstructionId::FSUB_S;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1354,7 +1354,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 8) {
-            id_ = InsnId::FMUL_S;
+            id_ = InstructionId::FMUL_S;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1365,7 +1365,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 12) {
-            id_ = InsnId::FDIV_S;
+            id_ = InstructionId::FDIV_S;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1378,7 +1378,7 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 16) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FSGNJ_S;
+                id_ = InstructionId::FSGNJ_S;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1388,7 +1388,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FSGNJN_S;
+                id_ = InstructionId::FSGNJN_S;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1398,7 +1398,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 2) {
-                id_ = InsnId::FSGNJX_S;
+                id_ = InstructionId::FSGNJX_S;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1408,14 +1408,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 20) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FMIN_S;
+                id_ = InstructionId::FMIN_S;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1425,7 +1425,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FMAX_S;
+                id_ = InstructionId::FMAX_S;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1435,12 +1435,12 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 44) {
-            id_ = InsnId::FSQRT_S;
+            id_ = InstructionId::FSQRT_S;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1450,7 +1450,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 1) {
-            id_ = InsnId::FADD_D;
+            id_ = InstructionId::FADD_D;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1461,7 +1461,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 5) {
-            id_ = InsnId::FSUB_D;
+            id_ = InstructionId::FSUB_D;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1472,7 +1472,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 9) {
-            id_ = InsnId::FMUL_D;
+            id_ = InstructionId::FMUL_D;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1483,7 +1483,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 13) {
-            id_ = InsnId::FDIV_D;
+            id_ = InstructionId::FDIV_D;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1496,7 +1496,7 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 17) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FSGNJ_D;
+                id_ = InstructionId::FSGNJ_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1506,7 +1506,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FSGNJN_D;
+                id_ = InstructionId::FSGNJN_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1516,7 +1516,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 2) {
-                id_ = InsnId::FSGNJX_D;
+                id_ = InstructionId::FSGNJX_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1526,14 +1526,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 21) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FMIN_D;
+                id_ = InstructionId::FMIN_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1543,7 +1543,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FMAX_D;
+                id_ = InstructionId::FMAX_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1553,14 +1553,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 32) {
             word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
             if (var_bits_2 == 1) {
-                id_ = InsnId::FCVT_S_D;
+                id_ = InstructionId::FCVT_S_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1570,7 +1570,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::FCVT_S_Q;
+                id_ = InstructionId::FCVT_S_Q;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1580,14 +1580,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 33) {
             word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FCVT_D_S;
+                id_ = InstructionId::FCVT_D_S;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1597,7 +1597,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::FCVT_D_Q;
+                id_ = InstructionId::FCVT_D_Q;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1607,12 +1607,12 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 45) {
-            id_ = InsnId::FSQRT_D;
+            id_ = InstructionId::FSQRT_D;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1622,7 +1622,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 3) {
-            id_ = InsnId::FADD_Q;
+            id_ = InstructionId::FADD_Q;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1633,7 +1633,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 7) {
-            id_ = InsnId::FSUB_Q;
+            id_ = InstructionId::FSUB_Q;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1644,7 +1644,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 11) {
-            id_ = InsnId::FMUL_Q;
+            id_ = InstructionId::FMUL_Q;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1655,7 +1655,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 15) {
-            id_ = InsnId::FDIV_Q;
+            id_ = InstructionId::FDIV_Q;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1668,7 +1668,7 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 19) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FSGNJ_Q;
+                id_ = InstructionId::FSGNJ_Q;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1678,7 +1678,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FSGNJN_Q;
+                id_ = InstructionId::FSGNJN_Q;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1688,7 +1688,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 2) {
-                id_ = InsnId::FSGNJX_Q;
+                id_ = InstructionId::FSGNJX_Q;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1698,14 +1698,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 23) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FMIN_Q;
+                id_ = InstructionId::FMIN_Q;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1715,7 +1715,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FMAX_Q;
+                id_ = InstructionId::FMAX_Q;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1725,14 +1725,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 35) {
             word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FCVT_Q_S;
+                id_ = InstructionId::FCVT_Q_S;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1742,7 +1742,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FCVT_Q_D;
+                id_ = InstructionId::FCVT_Q_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1752,12 +1752,12 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 47) {
-            id_ = InsnId::FSQRT_Q;
+            id_ = InstructionId::FSQRT_Q;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1769,7 +1769,7 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 80) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FLE_S;
+                id_ = InstructionId::FLE_S;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1779,7 +1779,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FLT_S;
+                id_ = InstructionId::FLT_S;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1789,7 +1789,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 2) {
-                id_ = InsnId::FEQ_S;
+                id_ = InstructionId::FEQ_S;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1799,14 +1799,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 81) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FLE_D;
+                id_ = InstructionId::FLE_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1816,7 +1816,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FLT_D;
+                id_ = InstructionId::FLT_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1826,7 +1826,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 2) {
-                id_ = InsnId::FEQ_D;
+                id_ = InstructionId::FEQ_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1836,14 +1836,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 83) {
             word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FLE_Q;
+                id_ = InstructionId::FLE_Q;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1853,7 +1853,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FLT_Q;
+                id_ = InstructionId::FLT_Q;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1863,7 +1863,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 2) {
-                id_ = InsnId::FEQ_Q;
+                id_ = InstructionId::FEQ_Q;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1873,14 +1873,14 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 96) {
             word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FCVT_W_S;
+                id_ = InstructionId::FCVT_W_S;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1890,7 +1890,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FCVT_WU_S;
+                id_ = InstructionId::FCVT_WU_S;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1900,7 +1900,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 2) {
-                id_ = InsnId::FCVT_L_S;
+                id_ = InstructionId::FCVT_L_S;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1910,7 +1910,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::FCVT_LU_S;
+                id_ = InstructionId::FCVT_LU_S;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1920,7 +1920,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
@@ -1929,7 +1929,7 @@ void Insn::Decode(insn_size_t insn)
             if (var_bits_2 == 0) {
                 word_t var_bits_3 = bitops::GetBits<14, 12>(insn);
                 if (var_bits_3 == 0) {
-                    id_ = InsnId::FMV_X_W;
+                    id_ = InstructionId::FMV_X_W;
 
                     rd_ |= (bitops::GetBits<11, 7>(insn));
                     rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1938,7 +1938,7 @@ void Insn::Decode(insn_size_t insn)
                 }
 
                 if (var_bits_3 == 1) {
-                    id_ = InsnId::FCLASS_S;
+                    id_ = InstructionId::FCLASS_S;
 
                     rd_ |= (bitops::GetBits<11, 7>(insn));
                     rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1947,19 +1947,19 @@ void Insn::Decode(insn_size_t insn)
                 }
 
                 /* Instruction wasn't found */
-                id_ = InsnId::INVALID_ID;
+                id_ = InstructionId::INVALID_ID;
                 return;
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 97) {
             word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FCVT_W_D;
+                id_ = InstructionId::FCVT_W_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1969,7 +1969,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FCVT_WU_D;
+                id_ = InstructionId::FCVT_WU_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1979,7 +1979,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 2) {
-                id_ = InsnId::FCVT_L_D;
+                id_ = InstructionId::FCVT_L_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1989,7 +1989,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::FCVT_LU_D;
+                id_ = InstructionId::FCVT_LU_D;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -1999,7 +1999,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
@@ -2008,7 +2008,7 @@ void Insn::Decode(insn_size_t insn)
             if (var_bits_2 == 0) {
                 word_t var_bits_3 = bitops::GetBits<14, 12>(insn);
                 if (var_bits_3 == 0) {
-                    id_ = InsnId::FMV_X_D;
+                    id_ = InstructionId::FMV_X_D;
 
                     rd_ |= (bitops::GetBits<11, 7>(insn));
                     rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2017,7 +2017,7 @@ void Insn::Decode(insn_size_t insn)
                 }
 
                 if (var_bits_3 == 1) {
-                    id_ = InsnId::FCLASS_D;
+                    id_ = InstructionId::FCLASS_D;
 
                     rd_ |= (bitops::GetBits<11, 7>(insn));
                     rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2026,19 +2026,19 @@ void Insn::Decode(insn_size_t insn)
                 }
 
                 /* Instruction wasn't found */
-                id_ = InsnId::INVALID_ID;
+                id_ = InstructionId::INVALID_ID;
                 return;
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 99) {
             word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FCVT_W_Q;
+                id_ = InstructionId::FCVT_W_Q;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2048,7 +2048,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FCVT_WU_Q;
+                id_ = InstructionId::FCVT_WU_Q;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2058,7 +2058,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 2) {
-                id_ = InsnId::FCVT_L_Q;
+                id_ = InstructionId::FCVT_L_Q;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2068,7 +2068,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::FCVT_LU_Q;
+                id_ = InstructionId::FCVT_LU_Q;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2078,7 +2078,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
@@ -2087,7 +2087,7 @@ void Insn::Decode(insn_size_t insn)
             if (var_bits_2 == 0) {
                 word_t var_bits_3 = bitops::GetBits<14, 12>(insn);
                 if (var_bits_3 == 0) {
-                    id_ = InsnId::FMV_X_Q;
+                    id_ = InstructionId::FMV_X_Q;
 
                     rd_ |= (bitops::GetBits<11, 7>(insn));
                     rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2096,7 +2096,7 @@ void Insn::Decode(insn_size_t insn)
                 }
 
                 if (var_bits_3 == 1) {
-                    id_ = InsnId::FCLASS_Q;
+                    id_ = InstructionId::FCLASS_Q;
 
                     rd_ |= (bitops::GetBits<11, 7>(insn));
                     rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2105,19 +2105,19 @@ void Insn::Decode(insn_size_t insn)
                 }
 
                 /* Instruction wasn't found */
-                id_ = InsnId::INVALID_ID;
+                id_ = InstructionId::INVALID_ID;
                 return;
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 104) {
             word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FCVT_S_W;
+                id_ = InstructionId::FCVT_S_W;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2127,7 +2127,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FCVT_S_WU;
+                id_ = InstructionId::FCVT_S_WU;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2137,7 +2137,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 2) {
-                id_ = InsnId::FCVT_S_L;
+                id_ = InstructionId::FCVT_S_L;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2147,7 +2147,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::FCVT_S_LU;
+                id_ = InstructionId::FCVT_S_LU;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2157,12 +2157,12 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 120) {
-            id_ = InsnId::FMV_W_X;
+            id_ = InstructionId::FMV_W_X;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2173,7 +2173,7 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 105) {
             word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FCVT_D_W;
+                id_ = InstructionId::FCVT_D_W;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2183,7 +2183,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FCVT_D_WU;
+                id_ = InstructionId::FCVT_D_WU;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2193,7 +2193,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 2) {
-                id_ = InsnId::FCVT_D_L;
+                id_ = InstructionId::FCVT_D_L;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2203,7 +2203,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::FCVT_D_LU;
+                id_ = InstructionId::FCVT_D_LU;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2213,12 +2213,12 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 121) {
-            id_ = InsnId::FMV_D_X;
+            id_ = InstructionId::FMV_D_X;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2229,7 +2229,7 @@ void Insn::Decode(insn_size_t insn)
         if (var_bits_1 == 107) {
             word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
             if (var_bits_2 == 0) {
-                id_ = InsnId::FCVT_Q_W;
+                id_ = InstructionId::FCVT_Q_W;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2239,7 +2239,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 1) {
-                id_ = InsnId::FCVT_Q_WU;
+                id_ = InstructionId::FCVT_Q_WU;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2249,7 +2249,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 2) {
-                id_ = InsnId::FCVT_Q_L;
+                id_ = InstructionId::FCVT_Q_L;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2259,7 +2259,7 @@ void Insn::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 3) {
-                id_ = InsnId::FCVT_Q_LU;
+                id_ = InstructionId::FCVT_Q_LU;
 
                 rd_ |= (bitops::GetBits<11, 7>(insn));
                 rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2269,12 +2269,12 @@ void Insn::Decode(insn_size_t insn)
             }
 
             /* Instruction wasn't found */
-            id_ = InsnId::INVALID_ID;
+            id_ = InstructionId::INVALID_ID;
             return;
         }
 
         if (var_bits_1 == 123) {
-            id_ = InsnId::FMV_Q_X;
+            id_ = InstructionId::FMV_Q_X;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2283,14 +2283,14 @@ void Insn::Decode(insn_size_t insn)
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
     if (var_bits_0 == 7) {
         word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
         if (var_bits_1 == 2) {
-            id_ = InsnId::FLW;
+            id_ = InstructionId::FLW;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2300,7 +2300,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 3) {
-            id_ = InsnId::FLD;
+            id_ = InstructionId::FLD;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2310,7 +2310,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 4) {
-            id_ = InsnId::FLQ;
+            id_ = InstructionId::FLQ;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2320,14 +2320,14 @@ void Insn::Decode(insn_size_t insn)
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
     if (var_bits_0 == 39) {
         word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
         if (var_bits_1 == 2) {
-            id_ = InsnId::FSW;
+            id_ = InstructionId::FSW;
 
             attributes_.is_store = true;
 
@@ -2340,7 +2340,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 3) {
-            id_ = InsnId::FSD;
+            id_ = InstructionId::FSD;
 
             attributes_.is_store = true;
 
@@ -2353,7 +2353,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 4) {
-            id_ = InsnId::FSQ;
+            id_ = InstructionId::FSQ;
 
             attributes_.is_store = true;
 
@@ -2366,14 +2366,14 @@ void Insn::Decode(insn_size_t insn)
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
     if (var_bits_0 == 67) {
         word_t var_bits_1 = bitops::GetBits<26, 25>(insn);
         if (var_bits_1 == 0) {
-            id_ = InsnId::FMADD_S;
+            id_ = InstructionId::FMADD_S;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2385,7 +2385,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 1) {
-            id_ = InsnId::FMADD_D;
+            id_ = InstructionId::FMADD_D;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2397,7 +2397,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 3) {
-            id_ = InsnId::FMADD_Q;
+            id_ = InstructionId::FMADD_Q;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2409,14 +2409,14 @@ void Insn::Decode(insn_size_t insn)
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
     if (var_bits_0 == 71) {
         word_t var_bits_1 = bitops::GetBits<26, 25>(insn);
         if (var_bits_1 == 0) {
-            id_ = InsnId::FMSUB_S;
+            id_ = InstructionId::FMSUB_S;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2428,7 +2428,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 1) {
-            id_ = InsnId::FMSUB_D;
+            id_ = InstructionId::FMSUB_D;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2440,7 +2440,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 3) {
-            id_ = InsnId::FMSUB_Q;
+            id_ = InstructionId::FMSUB_Q;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2452,14 +2452,14 @@ void Insn::Decode(insn_size_t insn)
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
     if (var_bits_0 == 75) {
         word_t var_bits_1 = bitops::GetBits<26, 25>(insn);
         if (var_bits_1 == 0) {
-            id_ = InsnId::FNMSUB_S;
+            id_ = InstructionId::FNMSUB_S;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2471,7 +2471,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 1) {
-            id_ = InsnId::FNMSUB_D;
+            id_ = InstructionId::FNMSUB_D;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2483,7 +2483,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 3) {
-            id_ = InsnId::FNMSUB_Q;
+            id_ = InstructionId::FNMSUB_Q;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2495,14 +2495,14 @@ void Insn::Decode(insn_size_t insn)
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
     if (var_bits_0 == 79) {
         word_t var_bits_1 = bitops::GetBits<26, 25>(insn);
         if (var_bits_1 == 0) {
-            id_ = InsnId::FNMADD_S;
+            id_ = InstructionId::FNMADD_S;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2514,7 +2514,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 1) {
-            id_ = InsnId::FNMADD_D;
+            id_ = InstructionId::FNMADD_D;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2526,7 +2526,7 @@ void Insn::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 3) {
-            id_ = InsnId::FNMADD_Q;
+            id_ = InstructionId::FNMADD_Q;
 
             rd_ |= (bitops::GetBits<11, 7>(insn));
             rs1_ |= (bitops::GetBits<19, 15>(insn));
@@ -2538,12 +2538,12 @@ void Insn::Decode(insn_size_t insn)
         }
 
         /* Instruction wasn't found */
-        id_ = InsnId::INVALID_ID;
+        id_ = InstructionId::INVALID_ID;
         return;
     }
 
     /* Instruction wasn't found */
-    id_ = InsnId::INVALID_ID;
+    id_ = InstructionId::INVALID_ID;
     return;
 }
 

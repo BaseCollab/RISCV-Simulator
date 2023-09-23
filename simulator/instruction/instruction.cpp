@@ -29,7 +29,7 @@ bool Instruction::IsPseudo() const
     return attributes_.is_pseudo;
 }
 
-InsnId Instruction::GetId() const
+InstructionId Instruction::GetId() const
 {
     return id_;
 }
@@ -41,7 +41,7 @@ void Instruction::Clear()
     attributes_.is_store  = false;
     attributes_.mode      = Mode::USER_MODE;
 
-    id_ = InsnId::INVALID_ID;
+    id_ = InstructionId::INVALID_ID;
 
     rs1_ = rs2_ = rs3_ = rd_ = rm_ = 0;
 
