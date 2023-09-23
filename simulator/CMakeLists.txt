@@ -15,6 +15,8 @@ add_subdirectory(memory)
 add_subdirectory(supervisor)
 add_subdirectory(hart)
 add_subdirectory(mmu)
+add_subdirectory(instruction)
+add_subdirectory(common)
 
 add_library(simulator_static STATIC)
 target_link_libraries(simulator_static PUBLIC
@@ -22,6 +24,8 @@ target_link_libraries(simulator_static PUBLIC
     hart_impl
     mmu_impl
     supervisor_impl
+    instruction_impl
+    common_impl
 )
 
 # --------------------------clang-format--------------------------------------

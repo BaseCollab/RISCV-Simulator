@@ -3,6 +3,7 @@
 
 #include "common/macros.h"
 #include "common/constants.h"
+#include "common/config.h"
 #include "common/utils/stack.h"
 
 #include <cstdint>
