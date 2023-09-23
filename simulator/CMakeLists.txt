@@ -17,6 +17,7 @@ add_subdirectory(hart)
 add_subdirectory(mmu)
 add_subdirectory(instruction)
 add_subdirectory(common)
+add_subdirectory(elf_loader)
 
 add_library(simulator_static STATIC)
 target_link_libraries(simulator_static PUBLIC
@@ -26,6 +27,7 @@ target_link_libraries(simulator_static PUBLIC
     supervisor_impl
     instruction_impl
     common_impl
+    elf_loader_impl
 )
 
 # --------------------------clang-format--------------------------------------

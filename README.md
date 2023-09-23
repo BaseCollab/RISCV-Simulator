@@ -17,7 +17,7 @@ Only unit-tests are supported now.
 cd simulator
 mkdir build && cd build
 cmake .. -GNinja
-ninja simulator
+ninja unit_tests
 ./unit_tests
 ```
 

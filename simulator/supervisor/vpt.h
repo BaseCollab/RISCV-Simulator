@@ -55,6 +55,7 @@ union paddr_t {
 };
 
 union vaddr_t {
+    vaddr_t(addr_t val): value(val) {}
     struct { // Sv48 page table entry (PTE)
         addr_t padding     : 16; // 64 - 48
 

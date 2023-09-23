@@ -9,6 +9,7 @@
 
 namespace rvsim {
 
+// Control and Status Register
 class CSRs {
 private:
     csr_t csr_table_[N_CSR];

@@ -10,15 +10,24 @@
 namespace rvsim {
 
 class Hart {
-private:
 public:
-    CSRs csr_regs;
-
     NO_COPY_SEMANTIC(Hart);
     NO_MOVE_SEMANTIC(Hart);
 
-    Hart() = default;
+    explicit Hart(MemoryCtl *memory) : memory_(memory) {};
     ~Hart() = default;
+
+    const MMU &GetMMU() const
+    {
+        return mmu_;
+    }
+
+public:
+    CSRs csr_regs;
+
+private:
+    MemoryCtl *memory_ {nullptr};
+    MMU mmu_;
 };
 
 } // namespace rvsim

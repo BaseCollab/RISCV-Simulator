@@ -32,6 +32,7 @@ public:
         }
 
         data_[size_++] = value;
+        return std::nullopt;
     }
 
     std::pair<Type, std::optional<Error>> Pop()
