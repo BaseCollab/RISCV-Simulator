@@ -114,7 +114,7 @@ def generate_decode_logic(yaml_dict):
         fout.write('#include \"common/utils/bit_ops.h\"\n')
         fout.write('#include \"instruction.h\"\n\n')
         fout.write('namespace rvsim {\n\n')
-        fout.write('void Insn::Decode(insn_size_t insn)\n{\n')
+        fout.write('void Instruction::Decode(insn_size_t insn)\n{\n')
 
         decode_gen(fout, yaml_dict)
 
@@ -134,6 +134,7 @@ def generate_id_enum(yaml_dict):
         fout.write(comment_string)
         fout.write("#ifndef SIMULATOR_INSTRUCTION_ID_INSTRUCTION_ID_H\n"
                    "#define SIMULATOR_INSTRUCTION_ID_INSTRUCTION_ID_H\n\n"
+                   "namespace rvsim {\n\n"
                    "// clang-format off\n\n")
 
         fout.write('enum class InsnId\n'
@@ -148,7 +149,8 @@ def generate_id_enum(yaml_dict):
                        ' = ' + str(i + 1) + ',\n')
 
         fout.write("};\n\n"
-                   "// clang-format on\n\n")
+                   "// clang-format on\n\n"
+                   "} // namespace rvsim\n\n")
 
         fout.write("#endif // SIMULATOR_INSTRUCTION_ID_INSTRUCTION_ID_H\n")
 

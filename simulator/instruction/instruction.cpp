@@ -4,37 +4,37 @@
 
 namespace rvsim {
 
-Insn::Insn(insn_size_t insn)
+Instruction::Instruction(insn_size_t insn)
 {
     Decode(insn);
 }
 
-bool Insn::IsBranch() const
+bool Instruction::IsBranch() const
 {
     return attributes_.is_branch;
 }
 
-bool Insn::IsLoad() const
+bool Instruction::IsLoad() const
 {
     return attributes_.is_load;
 }
 
-bool Insn::IsStore() const
+bool Instruction::IsStore() const
 {
     return attributes_.is_store;
 }
 
-bool Insn::IsPseudo() const
+bool Instruction::IsPseudo() const
 {
     return attributes_.is_pseudo;
 }
 
-InsnId Insn::Id() const
+InsnId Instruction::GetId() const
 {
     return id_;
 }
 
-void Insn::Clear()
+void Instruction::Clear()
 {
     attributes_.is_branch = false;
     attributes_.is_load   = false;

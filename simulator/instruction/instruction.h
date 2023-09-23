@@ -24,21 +24,21 @@ struct insn_attrs_t {
     Mode mode{Mode::USER_MODE};
 };
 
-class Insn {
+class Instruction {
 public:
-    NO_COPY_SEMANTIC(Insn);
-    NO_MOVE_SEMANTIC(Insn);
+    NO_COPY_SEMANTIC(Instruction);
+    NO_MOVE_SEMANTIC(Instruction);
 
-    Insn() = default;
-    Insn(insn_size_t insn);
-    ~Insn() = default;
+    Instruction() = default;
+    Instruction(insn_size_t insn);
+    ~Instruction() = default;
 
     bool IsBranch() const;
     bool IsLoad()   const;
     bool IsStore()  const;
     bool IsPseudo() const;
 
-    InsnId Id() const;
+    InsnId GetId() const;
 
     void Clear();
     void Decode(insn_size_t insn);
