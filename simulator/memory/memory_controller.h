@@ -77,6 +77,8 @@ public:
         return pages_controller_.GetCleanPage();
     }
 
+    // LoadByPageNumber()
+
 private:
     bool BoundaryCheck(addr_t dst, size_t value_size) const
     {

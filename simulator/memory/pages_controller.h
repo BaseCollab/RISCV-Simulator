@@ -22,6 +22,7 @@ public:
 
     PagesController()
     {
+        // TODO: Push in stack in reverse index
         for (size_t i = 0; i < PAGES_NMB; ++i) {
             clean_pages_stack_.Push(i);
         }
