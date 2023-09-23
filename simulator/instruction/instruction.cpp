@@ -4,7 +4,7 @@
 
 namespace rvsim {
 
-Instruction::Instruction(insn_size_t insn)
+Instruction::Instruction(instr_size_t insn)
 {
     Decode(insn);
 }

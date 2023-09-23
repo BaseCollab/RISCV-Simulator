@@ -10,22 +10,22 @@
 
 namespace rvsim {
 
-void Instruction::Decode(insn_size_t insn)
+void Instruction::Decode(instr_size_t instr)
 {
-    word_t var_bits_0 = bitops::GetBits<6, 0>(insn);
+    word_t var_bits_0 = bitops::GetBits<6, 0>(instr);
     if (var_bits_0 == 99) {
-        word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
+        word_t var_bits_1 = bitops::GetBits<14, 12>(instr);
         if (var_bits_1 == 0) {
             id_ = InstructionId::BEQ;
 
             attributes_.is_branch = true;
 
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            imm_ |= (bitops::GetBits<11, 8>(insn)) << 1;
-            imm_ |= (bitops::GetBits<30, 25>(insn)) << 5;
-            imm_ |= (bitops::GetBits<7, 7>(insn)) << 11;
-            imm_ |= bitops::SignExtend<1, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 31>(insn)) << 12;
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            imm_ |= (bitops::GetBits<11, 8>(instr)) << 1;
+            imm_ |= (bitops::GetBits<30, 25>(instr)) << 5;
+            imm_ |= (bitops::GetBits<7, 7>(instr)) << 11;
+            imm_ |= bitops::SignExtend<1, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 31>(instr)) << 12;
 
             return;
         }
@@ -35,12 +35,12 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_branch = true;
 
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            imm_ |= (bitops::GetBits<11, 8>(insn)) << 1;
-            imm_ |= (bitops::GetBits<30, 25>(insn)) << 5;
-            imm_ |= (bitops::GetBits<7, 7>(insn)) << 11;
-            imm_ |= bitops::SignExtend<1, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 31>(insn)) << 12;
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            imm_ |= (bitops::GetBits<11, 8>(instr)) << 1;
+            imm_ |= (bitops::GetBits<30, 25>(instr)) << 5;
+            imm_ |= (bitops::GetBits<7, 7>(instr)) << 11;
+            imm_ |= bitops::SignExtend<1, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 31>(instr)) << 12;
 
             return;
         }
@@ -50,12 +50,12 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_branch = true;
 
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            imm_ |= (bitops::GetBits<11, 8>(insn)) << 1;
-            imm_ |= (bitops::GetBits<30, 25>(insn)) << 5;
-            imm_ |= (bitops::GetBits<7, 7>(insn)) << 11;
-            imm_ |= bitops::SignExtend<1, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 31>(insn)) << 12;
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            imm_ |= (bitops::GetBits<11, 8>(instr)) << 1;
+            imm_ |= (bitops::GetBits<30, 25>(instr)) << 5;
+            imm_ |= (bitops::GetBits<7, 7>(instr)) << 11;
+            imm_ |= bitops::SignExtend<1, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 31>(instr)) << 12;
 
             return;
         }
@@ -65,12 +65,12 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_branch = true;
 
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            imm_ |= (bitops::GetBits<11, 8>(insn)) << 1;
-            imm_ |= (bitops::GetBits<30, 25>(insn)) << 5;
-            imm_ |= (bitops::GetBits<7, 7>(insn)) << 11;
-            imm_ |= bitops::SignExtend<1, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 31>(insn)) << 12;
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            imm_ |= (bitops::GetBits<11, 8>(instr)) << 1;
+            imm_ |= (bitops::GetBits<30, 25>(instr)) << 5;
+            imm_ |= (bitops::GetBits<7, 7>(instr)) << 11;
+            imm_ |= bitops::SignExtend<1, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 31>(instr)) << 12;
 
             return;
         }
@@ -80,12 +80,12 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_branch = true;
 
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            imm_ |= (bitops::GetBits<11, 8>(insn)) << 1;
-            imm_ |= (bitops::GetBits<30, 25>(insn)) << 5;
-            imm_ |= (bitops::GetBits<7, 7>(insn)) << 11;
-            imm_ |= bitops::SignExtend<1, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 31>(insn)) << 12;
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            imm_ |= (bitops::GetBits<11, 8>(instr)) << 1;
+            imm_ |= (bitops::GetBits<30, 25>(instr)) << 5;
+            imm_ |= (bitops::GetBits<7, 7>(instr)) << 11;
+            imm_ |= bitops::SignExtend<1, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 31>(instr)) << 12;
 
             return;
         }
@@ -95,12 +95,12 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_branch = true;
 
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            imm_ |= (bitops::GetBits<11, 8>(insn)) << 1;
-            imm_ |= (bitops::GetBits<30, 25>(insn)) << 5;
-            imm_ |= (bitops::GetBits<7, 7>(insn)) << 11;
-            imm_ |= bitops::SignExtend<1, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 31>(insn)) << 12;
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            imm_ |= (bitops::GetBits<11, 8>(instr)) << 1;
+            imm_ |= (bitops::GetBits<30, 25>(instr)) << 5;
+            imm_ |= (bitops::GetBits<7, 7>(instr)) << 11;
+            imm_ |= bitops::SignExtend<1, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 31>(instr)) << 12;
 
             return;
         }
@@ -115,9 +115,9 @@ void Instruction::Decode(insn_size_t insn)
 
         attributes_.is_branch = true;
 
-        rd_ |= (bitops::GetBits<11, 7>(insn));
-        rs1_ |= (bitops::GetBits<19, 15>(insn));
-        imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+        rd_ |= (bitops::GetBits<11, 7>(instr));
+        rs1_ |= (bitops::GetBits<19, 15>(instr));
+        imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
         return;
     }
@@ -127,11 +127,11 @@ void Instruction::Decode(insn_size_t insn)
 
         attributes_.is_branch = true;
 
-        rd_ |= (bitops::GetBits<11, 7>(insn));
-        imm_ |= (bitops::GetBits<30, 21>(insn)) << 1;
-        imm_ |= (bitops::GetBits<20, 20>(insn)) << 11;
-        imm_ |= (bitops::GetBits<19, 12>(insn)) << 12;
-        imm_ |= bitops::SignExtend<1, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 31>(insn)) << 20;
+        rd_ |= (bitops::GetBits<11, 7>(instr));
+        imm_ |= (bitops::GetBits<30, 21>(instr)) << 1;
+        imm_ |= (bitops::GetBits<20, 20>(instr)) << 11;
+        imm_ |= (bitops::GetBits<19, 12>(instr)) << 12;
+        imm_ |= bitops::SignExtend<1, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 31>(instr)) << 20;
 
         return;
     }
@@ -139,8 +139,8 @@ void Instruction::Decode(insn_size_t insn)
     if (var_bits_0 == 55) {
         id_ = InstructionId::LUI;
 
-        rd_ |= (bitops::GetBits<11, 7>(insn));
-        imm_ |= bitops::SignExtend<20, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 12>(insn)) << 12;
+        rd_ |= (bitops::GetBits<11, 7>(instr));
+        imm_ |= bitops::SignExtend<20, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 12>(instr)) << 12;
 
         return;
     }
@@ -148,20 +148,20 @@ void Instruction::Decode(insn_size_t insn)
     if (var_bits_0 == 23) {
         id_ = InstructionId::AUIPC;
 
-        rd_ |= (bitops::GetBits<11, 7>(insn));
-        imm_ |= bitops::SignExtend<20, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 12>(insn)) << 12;
+        rd_ |= (bitops::GetBits<11, 7>(instr));
+        imm_ |= bitops::SignExtend<20, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 12>(instr)) << 12;
 
         return;
     }
 
     if (var_bits_0 == 19) {
-        word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
+        word_t var_bits_1 = bitops::GetBits<14, 12>(instr);
         if (var_bits_1 == 0) {
             id_ = InstructionId::ADDI;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -169,9 +169,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 1) {
             id_ = InstructionId::SLLI;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -179,9 +179,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 2) {
             id_ = InstructionId::SLTI;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -189,9 +189,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 3) {
             id_ = InstructionId::SLTIU;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -199,21 +199,21 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 4) {
             id_ = InstructionId::XORI;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
 
         if (var_bits_1 == 5) {
-            word_t var_bits_2 = bitops::GetBits<31, 26>(insn);
+            word_t var_bits_2 = bitops::GetBits<31, 26>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::SRLI;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
                 return;
             }
@@ -221,9 +221,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 16) {
                 id_ = InstructionId::SRAI;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
                 return;
             }
@@ -236,9 +236,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 6) {
             id_ = InstructionId::ORI;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -246,9 +246,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 7) {
             id_ = InstructionId::ANDI;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -259,15 +259,15 @@ void Instruction::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 51) {
-        word_t var_bits_1 = bitops::GetBits<31, 25>(insn);
+        word_t var_bits_1 = bitops::GetBits<31, 25>(instr);
         if (var_bits_1 == 0) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::ADD;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -275,9 +275,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::SLL;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -285,9 +285,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 2) {
                 id_ = InstructionId::SLT;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -295,9 +295,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::SLTU;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -305,9 +305,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 4) {
                 id_ = InstructionId::XOR;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -315,9 +315,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 5) {
                 id_ = InstructionId::SRL;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -325,9 +325,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 6) {
                 id_ = InstructionId::OR;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -335,9 +335,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 7) {
                 id_ = InstructionId::AND;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -348,13 +348,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 32) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::SUB;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -362,9 +362,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 5) {
                 id_ = InstructionId::SRA;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -375,13 +375,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 1) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::MUL;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -389,9 +389,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::MULH;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -399,9 +399,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 2) {
                 id_ = InstructionId::MULHSU;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -409,9 +409,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::MULHU;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -419,9 +419,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 4) {
                 id_ = InstructionId::DIV;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -429,9 +429,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 5) {
                 id_ = InstructionId::DIVU;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -439,9 +439,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 6) {
                 id_ = InstructionId::REM;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -449,9 +449,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 7) {
                 id_ = InstructionId::REMU;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -467,13 +467,13 @@ void Instruction::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 27) {
-        word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
+        word_t var_bits_1 = bitops::GetBits<14, 12>(instr);
         if (var_bits_1 == 0) {
             id_ = InstructionId::ADDIW;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -481,21 +481,21 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 1) {
             id_ = InstructionId::SLLIW;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
 
         if (var_bits_1 == 5) {
-            word_t var_bits_2 = bitops::GetBits<31, 25>(insn);
+            word_t var_bits_2 = bitops::GetBits<31, 25>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::SRLIW;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
                 return;
             }
@@ -503,9 +503,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 32) {
                 id_ = InstructionId::SRAIW;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
                 return;
             }
@@ -521,15 +521,15 @@ void Instruction::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 59) {
-        word_t var_bits_1 = bitops::GetBits<31, 25>(insn);
+        word_t var_bits_1 = bitops::GetBits<31, 25>(instr);
         if (var_bits_1 == 0) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::ADDW;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -537,9 +537,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::SLLW;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -547,9 +547,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 5) {
                 id_ = InstructionId::SRLW;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -560,13 +560,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 32) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::SUBW;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -574,9 +574,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 5) {
                 id_ = InstructionId::SRAW;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -587,13 +587,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 1) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::MULW;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -601,9 +601,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 4) {
                 id_ = InstructionId::DIVW;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -611,9 +611,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 5) {
                 id_ = InstructionId::DIVUW;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -621,9 +621,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 6) {
                 id_ = InstructionId::REMW;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -631,9 +631,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 7) {
                 id_ = InstructionId::REMUW;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -649,15 +649,15 @@ void Instruction::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 3) {
-        word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
+        word_t var_bits_1 = bitops::GetBits<14, 12>(instr);
         if (var_bits_1 == 0) {
             id_ = InstructionId::LB;
 
             attributes_.is_load = true;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -667,9 +667,9 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_load = true;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -679,9 +679,9 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_load = true;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -691,9 +691,9 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_load = true;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -703,9 +703,9 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_load = true;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -715,9 +715,9 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_load = true;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -727,9 +727,9 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_load = true;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -740,16 +740,16 @@ void Instruction::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 35) {
-        word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
+        word_t var_bits_1 = bitops::GetBits<14, 12>(instr);
         if (var_bits_1 == 0) {
             id_ = InstructionId::SB;
 
             attributes_.is_store = true;
 
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            imm_ |= (bitops::GetBits<11, 7>(insn));
-            imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn)) << 5;
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            imm_ |= (bitops::GetBits<11, 7>(instr));
+            imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr)) << 5;
 
             return;
         }
@@ -759,10 +759,10 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_store = true;
 
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            imm_ |= (bitops::GetBits<11, 7>(insn));
-            imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn)) << 5;
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            imm_ |= (bitops::GetBits<11, 7>(instr));
+            imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr)) << 5;
 
             return;
         }
@@ -772,10 +772,10 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_store = true;
 
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            imm_ |= (bitops::GetBits<11, 7>(insn));
-            imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn)) << 5;
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            imm_ |= (bitops::GetBits<11, 7>(instr));
+            imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr)) << 5;
 
             return;
         }
@@ -785,10 +785,10 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_store = true;
 
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            imm_ |= (bitops::GetBits<11, 7>(insn));
-            imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn)) << 5;
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            imm_ |= (bitops::GetBits<11, 7>(instr));
+            imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr)) << 5;
 
             return;
         }
@@ -799,15 +799,15 @@ void Instruction::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 15) {
-        word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
+        word_t var_bits_1 = bitops::GetBits<14, 12>(instr);
         if (var_bits_1 == 0) {
             id_ = InstructionId::FENCE;
 
-            imm_ |= bitops::SignExtend<4, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 28>(insn));
-            imm_ |= (bitops::GetBits<27, 24>(insn));
-            imm_ |= (bitops::GetBits<23, 20>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rd_ |= (bitops::GetBits<11, 7>(insn));
+            imm_ |= bitops::SignExtend<4, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 28>(instr));
+            imm_ |= (bitops::GetBits<27, 24>(instr));
+            imm_ |= (bitops::GetBits<23, 20>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
 
             return;
         }
@@ -815,9 +815,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 1) {
             id_ = InstructionId::FENCE_I;
 
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rd_ |= (bitops::GetBits<11, 7>(insn));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
 
             return;
         }
@@ -828,16 +828,16 @@ void Instruction::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 47) {
-        word_t var_bits_1 = bitops::GetBits<31, 27>(insn);
+        word_t var_bits_1 = bitops::GetBits<31, 27>(instr);
         if (var_bits_1 == 0) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 2) {
                 id_ = InstructionId::AMOADD_W;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -845,10 +845,10 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::AMOADD_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -859,14 +859,14 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 4) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 2) {
                 id_ = InstructionId::AMOXOR_W;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -874,10 +874,10 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::AMOXOR_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -888,14 +888,14 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 8) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 2) {
                 id_ = InstructionId::AMOOR_W;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -903,10 +903,10 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::AMOOR_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -917,14 +917,14 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 12) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 2) {
                 id_ = InstructionId::AMOAND_W;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -932,10 +932,10 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::AMOAND_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -946,14 +946,14 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 16) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 2) {
                 id_ = InstructionId::AMOMIN_W;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -961,10 +961,10 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::AMOMIN_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -975,14 +975,14 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 20) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 2) {
                 id_ = InstructionId::AMOMAX_W;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -990,10 +990,10 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::AMOMAX_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -1004,14 +1004,14 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 24) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 2) {
                 id_ = InstructionId::AMOMINU_W;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -1019,10 +1019,10 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::AMOMINU_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -1033,14 +1033,14 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 28) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 2) {
                 id_ = InstructionId::AMOMAXU_W;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -1048,10 +1048,10 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::AMOMAXU_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -1062,14 +1062,14 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 1) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 2) {
                 id_ = InstructionId::AMOSWAP_W;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -1077,10 +1077,10 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::AMOSWAP_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -1091,15 +1091,15 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 2) {
-            word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
+            word_t var_bits_2 = bitops::GetBits<24, 20>(instr);
             if (var_bits_2 == 0) {
-                word_t var_bits_3 = bitops::GetBits<14, 12>(insn);
+                word_t var_bits_3 = bitops::GetBits<14, 12>(instr);
                 if (var_bits_3 == 2) {
                     id_ = InstructionId::LR_W;
 
-                    rd_ |= (bitops::GetBits<11, 7>(insn));
-                    rs1_ |= (bitops::GetBits<19, 15>(insn));
-                    imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                    rd_ |= (bitops::GetBits<11, 7>(instr));
+                    rs1_ |= (bitops::GetBits<19, 15>(instr));
+                    imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                     return;
                 }
@@ -1107,9 +1107,9 @@ void Instruction::Decode(insn_size_t insn)
                 if (var_bits_3 == 3) {
                     id_ = InstructionId::LR_D;
 
-                    rd_ |= (bitops::GetBits<11, 7>(insn));
-                    rs1_ |= (bitops::GetBits<19, 15>(insn));
-                    imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                    rd_ |= (bitops::GetBits<11, 7>(instr));
+                    rs1_ |= (bitops::GetBits<19, 15>(instr));
+                    imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                     return;
                 }
@@ -1125,14 +1125,14 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 3) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 2) {
                 id_ = InstructionId::SC_W;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -1140,10 +1140,10 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::SC_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
-                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
+                imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr));
 
                 return;
             }
@@ -1159,11 +1159,11 @@ void Instruction::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 115) {
-        word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
+        word_t var_bits_1 = bitops::GetBits<14, 12>(instr);
         if (var_bits_1 == 0) {
-            word_t var_bits_2 = bitops::GetBits<31, 25>(insn);
+            word_t var_bits_2 = bitops::GetBits<31, 25>(instr);
             if (var_bits_2 == 0) {
-                word_t var_bits_3 = bitops::GetBits<24, 15>(insn);
+                word_t var_bits_3 = bitops::GetBits<24, 15>(instr);
                 if (var_bits_3 == 0) {
                     id_ = InstructionId::ECALL;
 
@@ -1190,7 +1190,7 @@ void Instruction::Decode(insn_size_t insn)
             }
 
             if (var_bits_2 == 8) {
-                word_t var_bits_3 = bitops::GetBits<24, 15>(insn);
+                word_t var_bits_3 = bitops::GetBits<24, 15>(instr);
                 if (var_bits_3 == 64) {
                     id_ = InstructionId::SRET;
 
@@ -1231,8 +1231,8 @@ void Instruction::Decode(insn_size_t insn)
 
                 attributes_.mode = Mode::SUPERVISOR_MODE;
 
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1242,8 +1242,8 @@ void Instruction::Decode(insn_size_t insn)
 
                 attributes_.mode = Mode::HYPERVISOR_MODE;
 
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1253,8 +1253,8 @@ void Instruction::Decode(insn_size_t insn)
 
                 attributes_.mode = Mode::HYPERVISOR_MODE;
 
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1267,9 +1267,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 1) {
             id_ = InstructionId::CSRRW;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -1277,9 +1277,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 2) {
             id_ = InstructionId::CSRRS;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -1287,9 +1287,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 3) {
             id_ = InstructionId::CSRRC;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -1297,9 +1297,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 5) {
             id_ = InstructionId::CSRRWI;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -1307,9 +1307,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 6) {
             id_ = InstructionId::CSRRSI;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -1317,9 +1317,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 7) {
             id_ = InstructionId::CSRRCI;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -1330,14 +1330,14 @@ void Instruction::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 83) {
-        word_t var_bits_1 = bitops::GetBits<31, 25>(insn);
+        word_t var_bits_1 = bitops::GetBits<31, 25>(instr);
         if (var_bits_1 == 0) {
             id_ = InstructionId::FADD_S;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -1345,10 +1345,10 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 4) {
             id_ = InstructionId::FSUB_S;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -1356,10 +1356,10 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 8) {
             id_ = InstructionId::FMUL_S;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -1367,22 +1367,22 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 12) {
             id_ = InstructionId::FDIV_S;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
 
         if (var_bits_1 == 16) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FSGNJ_S;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1390,9 +1390,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FSGNJN_S;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1400,9 +1400,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 2) {
                 id_ = InstructionId::FSGNJX_S;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1413,13 +1413,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 20) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FMIN_S;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1427,9 +1427,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FMAX_S;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1442,9 +1442,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 44) {
             id_ = InstructionId::FSQRT_S;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -1452,10 +1452,10 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 1) {
             id_ = InstructionId::FADD_D;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -1463,10 +1463,10 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 5) {
             id_ = InstructionId::FSUB_D;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -1474,10 +1474,10 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 9) {
             id_ = InstructionId::FMUL_D;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -1485,22 +1485,22 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 13) {
             id_ = InstructionId::FDIV_D;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
 
         if (var_bits_1 == 17) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FSGNJ_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1508,9 +1508,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FSGNJN_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1518,9 +1518,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 2) {
                 id_ = InstructionId::FSGNJX_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1531,13 +1531,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 21) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FMIN_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1545,9 +1545,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FMAX_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1558,13 +1558,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 32) {
-            word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
+            word_t var_bits_2 = bitops::GetBits<24, 20>(instr);
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FCVT_S_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -1572,9 +1572,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::FCVT_S_Q;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -1585,13 +1585,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 33) {
-            word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
+            word_t var_bits_2 = bitops::GetBits<24, 20>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FCVT_D_S;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -1599,9 +1599,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::FCVT_D_Q;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -1614,9 +1614,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 45) {
             id_ = InstructionId::FSQRT_D;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -1624,10 +1624,10 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 3) {
             id_ = InstructionId::FADD_Q;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -1635,10 +1635,10 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 7) {
             id_ = InstructionId::FSUB_Q;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -1646,10 +1646,10 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 11) {
             id_ = InstructionId::FMUL_Q;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -1657,22 +1657,22 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 15) {
             id_ = InstructionId::FDIV_Q;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
 
         if (var_bits_1 == 19) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FSGNJ_Q;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1680,9 +1680,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FSGNJN_Q;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1690,9 +1690,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 2) {
                 id_ = InstructionId::FSGNJX_Q;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1703,13 +1703,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 23) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FMIN_Q;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1717,9 +1717,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FMAX_Q;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1730,13 +1730,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 35) {
-            word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
+            word_t var_bits_2 = bitops::GetBits<24, 20>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FCVT_Q_S;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -1744,9 +1744,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FCVT_Q_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -1759,21 +1759,21 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 47) {
             id_ = InstructionId::FSQRT_Q;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
 
         if (var_bits_1 == 80) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FLE_S;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1781,9 +1781,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FLT_S;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1791,9 +1791,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 2) {
                 id_ = InstructionId::FEQ_S;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1804,13 +1804,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 81) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FLE_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1818,9 +1818,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FLT_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1828,9 +1828,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 2) {
                 id_ = InstructionId::FEQ_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1841,13 +1841,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 83) {
-            word_t var_bits_2 = bitops::GetBits<14, 12>(insn);
+            word_t var_bits_2 = bitops::GetBits<14, 12>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FLE_Q;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1855,9 +1855,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FLT_Q;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1865,9 +1865,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 2) {
                 id_ = InstructionId::FEQ_Q;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rs2_ |= (bitops::GetBits<24, 20>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rs2_ |= (bitops::GetBits<24, 20>(instr));
 
                 return;
             }
@@ -1878,13 +1878,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 96) {
-            word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
+            word_t var_bits_2 = bitops::GetBits<24, 20>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FCVT_W_S;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -1892,9 +1892,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FCVT_WU_S;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -1902,9 +1902,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 2) {
                 id_ = InstructionId::FCVT_L_S;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -1912,9 +1912,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::FCVT_LU_S;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -1925,14 +1925,14 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 112) {
-            word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
+            word_t var_bits_2 = bitops::GetBits<24, 20>(instr);
             if (var_bits_2 == 0) {
-                word_t var_bits_3 = bitops::GetBits<14, 12>(insn);
+                word_t var_bits_3 = bitops::GetBits<14, 12>(instr);
                 if (var_bits_3 == 0) {
                     id_ = InstructionId::FMV_X_W;
 
-                    rd_ |= (bitops::GetBits<11, 7>(insn));
-                    rs1_ |= (bitops::GetBits<19, 15>(insn));
+                    rd_ |= (bitops::GetBits<11, 7>(instr));
+                    rs1_ |= (bitops::GetBits<19, 15>(instr));
 
                     return;
                 }
@@ -1940,8 +1940,8 @@ void Instruction::Decode(insn_size_t insn)
                 if (var_bits_3 == 1) {
                     id_ = InstructionId::FCLASS_S;
 
-                    rd_ |= (bitops::GetBits<11, 7>(insn));
-                    rs1_ |= (bitops::GetBits<19, 15>(insn));
+                    rd_ |= (bitops::GetBits<11, 7>(instr));
+                    rs1_ |= (bitops::GetBits<19, 15>(instr));
 
                     return;
                 }
@@ -1957,13 +1957,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 97) {
-            word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
+            word_t var_bits_2 = bitops::GetBits<24, 20>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FCVT_W_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -1971,9 +1971,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FCVT_WU_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -1981,9 +1981,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 2) {
                 id_ = InstructionId::FCVT_L_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -1991,9 +1991,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::FCVT_LU_D;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2004,14 +2004,14 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 113) {
-            word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
+            word_t var_bits_2 = bitops::GetBits<24, 20>(instr);
             if (var_bits_2 == 0) {
-                word_t var_bits_3 = bitops::GetBits<14, 12>(insn);
+                word_t var_bits_3 = bitops::GetBits<14, 12>(instr);
                 if (var_bits_3 == 0) {
                     id_ = InstructionId::FMV_X_D;
 
-                    rd_ |= (bitops::GetBits<11, 7>(insn));
-                    rs1_ |= (bitops::GetBits<19, 15>(insn));
+                    rd_ |= (bitops::GetBits<11, 7>(instr));
+                    rs1_ |= (bitops::GetBits<19, 15>(instr));
 
                     return;
                 }
@@ -2019,8 +2019,8 @@ void Instruction::Decode(insn_size_t insn)
                 if (var_bits_3 == 1) {
                     id_ = InstructionId::FCLASS_D;
 
-                    rd_ |= (bitops::GetBits<11, 7>(insn));
-                    rs1_ |= (bitops::GetBits<19, 15>(insn));
+                    rd_ |= (bitops::GetBits<11, 7>(instr));
+                    rs1_ |= (bitops::GetBits<19, 15>(instr));
 
                     return;
                 }
@@ -2036,13 +2036,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 99) {
-            word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
+            word_t var_bits_2 = bitops::GetBits<24, 20>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FCVT_W_Q;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2050,9 +2050,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FCVT_WU_Q;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2060,9 +2060,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 2) {
                 id_ = InstructionId::FCVT_L_Q;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2070,9 +2070,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::FCVT_LU_Q;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2083,14 +2083,14 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 115) {
-            word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
+            word_t var_bits_2 = bitops::GetBits<24, 20>(instr);
             if (var_bits_2 == 0) {
-                word_t var_bits_3 = bitops::GetBits<14, 12>(insn);
+                word_t var_bits_3 = bitops::GetBits<14, 12>(instr);
                 if (var_bits_3 == 0) {
                     id_ = InstructionId::FMV_X_Q;
 
-                    rd_ |= (bitops::GetBits<11, 7>(insn));
-                    rs1_ |= (bitops::GetBits<19, 15>(insn));
+                    rd_ |= (bitops::GetBits<11, 7>(instr));
+                    rs1_ |= (bitops::GetBits<19, 15>(instr));
 
                     return;
                 }
@@ -2098,8 +2098,8 @@ void Instruction::Decode(insn_size_t insn)
                 if (var_bits_3 == 1) {
                     id_ = InstructionId::FCLASS_Q;
 
-                    rd_ |= (bitops::GetBits<11, 7>(insn));
-                    rs1_ |= (bitops::GetBits<19, 15>(insn));
+                    rd_ |= (bitops::GetBits<11, 7>(instr));
+                    rs1_ |= (bitops::GetBits<19, 15>(instr));
 
                     return;
                 }
@@ -2115,13 +2115,13 @@ void Instruction::Decode(insn_size_t insn)
         }
 
         if (var_bits_1 == 104) {
-            word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
+            word_t var_bits_2 = bitops::GetBits<24, 20>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FCVT_S_W;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2129,9 +2129,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FCVT_S_WU;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2139,9 +2139,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 2) {
                 id_ = InstructionId::FCVT_S_L;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2149,9 +2149,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::FCVT_S_LU;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2164,20 +2164,20 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 120) {
             id_ = InstructionId::FMV_W_X;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
 
             return;
         }
 
         if (var_bits_1 == 105) {
-            word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
+            word_t var_bits_2 = bitops::GetBits<24, 20>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FCVT_D_W;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2185,9 +2185,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FCVT_D_WU;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2195,9 +2195,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 2) {
                 id_ = InstructionId::FCVT_D_L;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2205,9 +2205,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::FCVT_D_LU;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2220,20 +2220,20 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 121) {
             id_ = InstructionId::FMV_D_X;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
 
             return;
         }
 
         if (var_bits_1 == 107) {
-            word_t var_bits_2 = bitops::GetBits<24, 20>(insn);
+            word_t var_bits_2 = bitops::GetBits<24, 20>(instr);
             if (var_bits_2 == 0) {
                 id_ = InstructionId::FCVT_Q_W;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2241,9 +2241,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 1) {
                 id_ = InstructionId::FCVT_Q_WU;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2251,9 +2251,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 2) {
                 id_ = InstructionId::FCVT_Q_L;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2261,9 +2261,9 @@ void Instruction::Decode(insn_size_t insn)
             if (var_bits_2 == 3) {
                 id_ = InstructionId::FCVT_Q_LU;
 
-                rd_ |= (bitops::GetBits<11, 7>(insn));
-                rs1_ |= (bitops::GetBits<19, 15>(insn));
-                rm_ |= (bitops::GetBits<14, 12>(insn));
+                rd_ |= (bitops::GetBits<11, 7>(instr));
+                rs1_ |= (bitops::GetBits<19, 15>(instr));
+                rm_ |= (bitops::GetBits<14, 12>(instr));
 
                 return;
             }
@@ -2276,8 +2276,8 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 123) {
             id_ = InstructionId::FMV_Q_X;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
 
             return;
         }
@@ -2288,13 +2288,13 @@ void Instruction::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 7) {
-        word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
+        word_t var_bits_1 = bitops::GetBits<14, 12>(instr);
         if (var_bits_1 == 2) {
             id_ = InstructionId::FLW;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -2302,9 +2302,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 3) {
             id_ = InstructionId::FLD;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -2312,9 +2312,9 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 4) {
             id_ = InstructionId::FLQ;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            imm_ |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(instr));
 
             return;
         }
@@ -2325,16 +2325,16 @@ void Instruction::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 39) {
-        word_t var_bits_1 = bitops::GetBits<14, 12>(insn);
+        word_t var_bits_1 = bitops::GetBits<14, 12>(instr);
         if (var_bits_1 == 2) {
             id_ = InstructionId::FSW;
 
             attributes_.is_store = true;
 
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            imm_ |= (bitops::GetBits<11, 7>(insn));
-            imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn)) << 5;
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            imm_ |= (bitops::GetBits<11, 7>(instr));
+            imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr)) << 5;
 
             return;
         }
@@ -2344,10 +2344,10 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_store = true;
 
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            imm_ |= (bitops::GetBits<11, 7>(insn));
-            imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn)) << 5;
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            imm_ |= (bitops::GetBits<11, 7>(instr));
+            imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr)) << 5;
 
             return;
         }
@@ -2357,10 +2357,10 @@ void Instruction::Decode(insn_size_t insn)
 
             attributes_.is_store = true;
 
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            imm_ |= (bitops::GetBits<11, 7>(insn));
-            imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(insn)) << 5;
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            imm_ |= (bitops::GetBits<11, 7>(instr));
+            imm_ |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(instr)) << 5;
 
             return;
         }
@@ -2371,15 +2371,15 @@ void Instruction::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 67) {
-        word_t var_bits_1 = bitops::GetBits<26, 25>(insn);
+        word_t var_bits_1 = bitops::GetBits<26, 25>(instr);
         if (var_bits_1 == 0) {
             id_ = InstructionId::FMADD_S;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rs3_ |= (bitops::GetBits<31, 27>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rs3_ |= (bitops::GetBits<31, 27>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -2387,11 +2387,11 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 1) {
             id_ = InstructionId::FMADD_D;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rs3_ |= (bitops::GetBits<31, 27>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rs3_ |= (bitops::GetBits<31, 27>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -2399,11 +2399,11 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 3) {
             id_ = InstructionId::FMADD_Q;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rs3_ |= (bitops::GetBits<31, 27>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rs3_ |= (bitops::GetBits<31, 27>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -2414,15 +2414,15 @@ void Instruction::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 71) {
-        word_t var_bits_1 = bitops::GetBits<26, 25>(insn);
+        word_t var_bits_1 = bitops::GetBits<26, 25>(instr);
         if (var_bits_1 == 0) {
             id_ = InstructionId::FMSUB_S;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rs3_ |= (bitops::GetBits<31, 27>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rs3_ |= (bitops::GetBits<31, 27>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -2430,11 +2430,11 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 1) {
             id_ = InstructionId::FMSUB_D;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rs3_ |= (bitops::GetBits<31, 27>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rs3_ |= (bitops::GetBits<31, 27>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -2442,11 +2442,11 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 3) {
             id_ = InstructionId::FMSUB_Q;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rs3_ |= (bitops::GetBits<31, 27>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rs3_ |= (bitops::GetBits<31, 27>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -2457,15 +2457,15 @@ void Instruction::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 75) {
-        word_t var_bits_1 = bitops::GetBits<26, 25>(insn);
+        word_t var_bits_1 = bitops::GetBits<26, 25>(instr);
         if (var_bits_1 == 0) {
             id_ = InstructionId::FNMSUB_S;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rs3_ |= (bitops::GetBits<31, 27>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rs3_ |= (bitops::GetBits<31, 27>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -2473,11 +2473,11 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 1) {
             id_ = InstructionId::FNMSUB_D;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rs3_ |= (bitops::GetBits<31, 27>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rs3_ |= (bitops::GetBits<31, 27>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -2485,11 +2485,11 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 3) {
             id_ = InstructionId::FNMSUB_Q;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rs3_ |= (bitops::GetBits<31, 27>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rs3_ |= (bitops::GetBits<31, 27>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -2500,15 +2500,15 @@ void Instruction::Decode(insn_size_t insn)
     }
 
     if (var_bits_0 == 79) {
-        word_t var_bits_1 = bitops::GetBits<26, 25>(insn);
+        word_t var_bits_1 = bitops::GetBits<26, 25>(instr);
         if (var_bits_1 == 0) {
             id_ = InstructionId::FNMADD_S;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rs3_ |= (bitops::GetBits<31, 27>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rs3_ |= (bitops::GetBits<31, 27>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -2516,11 +2516,11 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 1) {
             id_ = InstructionId::FNMADD_D;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rs3_ |= (bitops::GetBits<31, 27>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rs3_ |= (bitops::GetBits<31, 27>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }
@@ -2528,11 +2528,11 @@ void Instruction::Decode(insn_size_t insn)
         if (var_bits_1 == 3) {
             id_ = InstructionId::FNMADD_Q;
 
-            rd_ |= (bitops::GetBits<11, 7>(insn));
-            rs1_ |= (bitops::GetBits<19, 15>(insn));
-            rs2_ |= (bitops::GetBits<24, 20>(insn));
-            rs3_ |= (bitops::GetBits<31, 27>(insn));
-            rm_ |= (bitops::GetBits<14, 12>(insn));
+            rd_ |= (bitops::GetBits<11, 7>(instr));
+            rs1_ |= (bitops::GetBits<19, 15>(instr));
+            rs2_ |= (bitops::GetBits<24, 20>(instr));
+            rs3_ |= (bitops::GetBits<31, 27>(instr));
+            rm_ |= (bitops::GetBits<14, 12>(instr));
 
             return;
         }

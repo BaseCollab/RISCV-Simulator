@@ -11,8 +11,8 @@ comment_string = "/*\n"                                                         
                  "*/\n\n"
 
 def parse_yaml(filename):
-    with open(filename, 'r') as insn_file:
-        return yaml.safe_load(insn_file)
+    with open(filename, 'r') as instr_file:
+        return yaml.safe_load(instr_file)
 
 def get_bits_str(msb, lsb, word_str):
     return f'bitops::GetBits<{msb}, {lsb}>(' + word_str + ')'
@@ -29,27 +29,27 @@ def set_invalid_id():
           'return;\n')
 
 def write_fields_fill(decoder_leaf, fields, mode):
-    insn_fields = decoder_leaf['fields']
-    insn_name = decoder_leaf['mnemonic'].upper().replace('.', '_')
+    instr_fields = decoder_leaf['fields']
+    instr_name = decoder_leaf['mnemonic'].upper().replace('.', '_')
 
-    print(f'id_ = InstructionId::{insn_name};\n')
+    print(f'id_ = InstructionId::{instr_name};\n')
 
     if decoder_leaf['format'] == 'B' or decoder_leaf['mnemonic'] in ['jalr', 'jal', 'ecall']:
         print('attributes_.is_branch = true;\n')
     elif decoder_leaf['format'] == 'S':
         print('attributes_.is_store = true;\n')
-    elif decoder_leaf['format'] == 'I' and insn_name[0] == 'L':
+    elif decoder_leaf['format'] == 'I' and instr_name[0] == 'L':
         print('attributes_.is_load = true;\n')
 
     if mode == "privileged":
-        if insn_name == 'WFI' or insn_name[0] == 'M':
+        if instr_name == 'WFI' or instr_name[0] == 'M':
             print('attributes_.mode = Mode::MACHINE_MODE;\n')
-        elif insn_name[0] == 'H':
+        elif instr_name[0] == 'H':
             print('attributes_.mode = Mode::HYPERVISOR_MODE;\n')
-        elif insn_name[0] == 'S':
+        elif instr_name[0] == 'S':
             print('attributes_.mode = Mode::SUPERVISOR_MODE;\n')
 
-    for field in insn_fields:
+    for field in instr_fields:
         name = fields[field]['name']
         bits_list = fields[field]['location']['bits']
         bits_list = sort_bits(bits_list)
@@ -69,12 +69,12 @@ def write_fields_fill(decoder_leaf, fields, mode):
             if name == 'imm' and msb == 31:
                 print(f'{sign_extend_str(msb - lsb + 1, "bitops::BitSizeof<word_t>()")}')
 
-            print(f'({get_bits_str(msb, lsb, "insn")})', end='')
+            print(f'({get_bits_str(msb, lsb, "instr")})', end='')
             print(';' if move == 0 else f' << {move};')
 
 def recursive_parse(decoder_tree, fields, mode):
     if 'range' in decoder_tree:
-        opcode_str = get_bits_str(decoder_tree['range']['msb'], decoder_tree['range']['lsb'], 'insn')
+        opcode_str = get_bits_str(decoder_tree['range']['msb'], decoder_tree['range']['lsb'], 'instr')
         var_name = f'var_bits_{recursive_parse.var_cnt}'
 
         recursive_parse.var_cnt += 1
@@ -114,7 +114,7 @@ def generate_decode_logic(yaml_dict):
         fout.write('#include \"common/utils/bit_ops.h\"\n')
         fout.write('#include \"instruction.h\"\n\n')
         fout.write('namespace rvsim {\n\n')
-        fout.write('void Instruction::Decode(insn_size_t insn)\n{\n')
+        fout.write('void Instruction::Decode(instr_size_t instr)\n{\n')
 
         decode_gen(fout, yaml_dict)
 
@@ -122,13 +122,13 @@ def generate_decode_logic(yaml_dict):
         fout.write("\n} // namespace rvsim\n")
 
 def generate_id_enum(yaml_dict):
-    insns = yaml_dict['instructions']
+    instrs = yaml_dict['instructions']
 
-    insns_mnemonic_list = []
-    for insn in insns:
-        insns_mnemonic_list.append(insn['mnemonic'].upper().replace('.', '_'))
+    instrs_mnemonic_list = []
+    for instr in instrs:
+        instrs_mnemonic_list.append(instr['mnemonic'].upper().replace('.', '_'))
 
-    insns_mnemonic_list.append('PSEUDO') # pseudo cmd for plugin implementation
+    instrs_mnemonic_list.append('PSEUDO') # pseudo cmd for plugin implementation
 
     with open('instruction_id.h', 'w') as fout:
         fout.write(comment_string)
@@ -140,12 +140,12 @@ def generate_id_enum(yaml_dict):
         fout.write('enum class InstructionId\n'
                    '{\n')
 
-        max_insn_len = max([len(insn) for insn in insns_mnemonic_list])
+        max_instr_len = max([len(instr) for instr in instrs_mnemonic_list])
 
-        fout.write('    INVALID_ID' + ' ' * (max_insn_len - len('INVALID_ID')) + ' = -1,\n')
+        fout.write('    INVALID_ID' + ' ' * (max_instr_len - len('INVALID_ID')) + ' = -1,\n')
 
-        for i in range(len(insns_mnemonic_list)):
-            fout.write(f'    {insns_mnemonic_list[i]}' + ' ' * (max_insn_len - len(insns_mnemonic_list[i])) + \
+        for i in range(len(instrs_mnemonic_list)):
+            fout.write(f'    {instrs_mnemonic_list[i]}' + ' ' * (max_instr_len - len(instrs_mnemonic_list[i])) + \
                        ' = ' + str(i + 1) + ',\n')
 
         fout.write("};\n\n"

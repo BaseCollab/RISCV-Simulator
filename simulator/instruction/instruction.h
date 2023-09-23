@@ -15,22 +15,23 @@ namespace rvsim {
 
 using reg_idx_t = uint8_t;
 
-struct insn_attrs_t {
-    bool is_branch = false;
-    bool is_load   = false;
-    bool is_store  = false;
-    bool is_pseudo = false; // for plugins support
-
-    Mode mode{Mode::USER_MODE};
-};
-
 class Instruction {
+public:
+    struct instr_attrs_t {
+        bool is_branch = false;
+        bool is_load   = false;
+        bool is_store  = false;
+        bool is_pseudo = false; // for plugins support
+
+        Mode mode{Mode::USER_MODE};
+    };
+
 public:
     NO_COPY_SEMANTIC(Instruction);
     NO_MOVE_SEMANTIC(Instruction);
 
     Instruction() = default;
-    Instruction(insn_size_t insn);
+    explicit Instruction(instr_size_t instr);
     ~Instruction() = default;
 
     bool IsBranch() const;
@@ -41,7 +42,7 @@ public:
     InstructionId GetId() const;
 
     void Clear();
-    void Decode(insn_size_t insn);
+    void Decode(instr_size_t instr);
 
 private:
     reg_idx_t rs1_{0};
@@ -54,7 +55,7 @@ private:
 
     word_t imm_{0};
 
-    insn_attrs_t attributes_;
+    instr_attrs_t attributes_;
 
     InstructionId id_ = InstructionId::INVALID_ID;
 };
