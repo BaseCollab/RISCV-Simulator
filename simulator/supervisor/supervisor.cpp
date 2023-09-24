@@ -15,15 +15,15 @@ Supervisor::Supervisor(Hart *hart, MemoryCtl *memory) : hart_(hart), memory_(mem
 
     CSRs *csr_regs = &(hart_->csr_regs);
 
+    root_page_idx_ = AllocRootPageTable();
     InitializeCSR(csr_regs);
-    LocateRootPageTable(csr_regs);
 }
 
 void Supervisor::InitializeCSR(CSRs *csr_regs)
 {
     assert(csr_regs);
 
-    csr_satp_t satp = {.mode = 0x9, .asid = 0x0, .ppn = root_page_number_}; // 0x9 = Sv48
+    csr_satp_t satp = {.mode = 0x9, .asid = 0x0, .ppn = root_page_idx_}; // 0x9 = Sv48
     csr_t satp_reg = 0;
     std::memcpy(&satp_reg, &satp, sizeof(csr_satp_t));
 
@@ -32,14 +32,15 @@ void Supervisor::InitializeCSR(CSRs *csr_regs)
     // TODO: map all CSRs to physical memory as specification requires
 }
 
-int Supervisor::LocateRootPageTable(CSRs *csr_regs)
+uint16_t Supervisor::AllocRootPageTable()
 {
-    // TODO: locate root virtual page table to root_page_number_, blocked
-    // TODO: by MemoryCtl interface (no write of the whole page)
+    auto page_idx_pair = memory_->GetCleanPage();
+    uint16_t page_idx = page_idx_pair.first;
 
-    (void)csr_regs;
+    vpt_t vpt;
+    memory_->StoreByPageIdx(page_idx, &vpt, sizeof(vpt));
 
-    return 0;
+    return page_idx;
 }
 
 void Supervisor::LoadElfFile(const std::string &elf_pathname)
@@ -61,6 +62,15 @@ void Supervisor::MMUExceptionHandler(MMU::Exception exception)
 
     switch (exception) {
         case MMU::Exception::INVALID_PAGE_ENTRY:
+            /*
+                1) pass virtual address as argument here
+                2) from virtual address get virtual page number
+                3) from satp get pointer to root page table
+                4) read element from root page table by [vpn]
+                5) initialize this element
+                6) create new table, request from memory new page
+                7) set ppn
+            */
 
             break;
 
@@ -88,6 +98,22 @@ void Supervisor::MMUExceptionHandler(MMU::Exception exception)
 
             break;
     }
+}
+
+void Supervisor::VirtualPageMapping(vaddr_t vaddr, uint8_t rwx_flags)
+{
+    (void)vaddr;
+    (void)rwx_flags;
+    // pte_t pte_3;
+    // pte_t pte_2;
+    // pte_t pte_1;
+    // pte_t pte_0;
+
+    // csr_t satp_reg = hart_->csr_regs.LoadCSR(CSR_SATP_IDX);
+    // csr_satp_t satp;
+    // std::memcpy(&satp_reg, &satp, sizeof(satp_reg));
+
+    // memory_->Load(&pte_3, sizeof(pte_3), satp.ppn * VPAGE_SIZE + vaddr.fields.vpn_3);
 }
 
 } // namespace rvsim

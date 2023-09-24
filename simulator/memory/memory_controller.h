@@ -61,6 +61,7 @@ public:
         return std::nullopt;
     }
 
+    // Load dst_size bytes to dst from src
     std::optional<Error> Load(void *dst, size_t dst_size, addr_t src) const
     {
         if (!BoundaryCheck(src, dst_size)) {
@@ -77,7 +78,10 @@ public:
         return pages_controller_.GetCleanPage();
     }
 
-    // LoadByPageNumber()
+    std::optional<Error> StoreByPageIdx(uint16_t page_idx, void *src, size_t src_size)
+    {
+        return Store(page_idx * PPAGE_SIZE, src, src_size);
+    }
 
 private:
     bool BoundaryCheck(addr_t dst, size_t value_size) const
