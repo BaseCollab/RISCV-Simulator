@@ -81,7 +81,7 @@ void JALR(Hart &hart, const Instruction &instr)
 }
 
 void JAL(Hart &hart, const Instruction &instr)
-
+{
     hart.SetGPR(instr.GetRD(), hart.GetPC() + sizeof(instr_size_t));
     hart.SetPCTarget(hart.GetPC() + instr.GetIMM());
 }
@@ -195,17 +195,26 @@ void SLL(Hart &hart, const Instruction &instr)
 
 void SLT(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_SLT(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = bitops::MakeSigned(hart.GetGPR(instr.GetRS1()));
+    auto rv2 = bitops::MakeSigned(hart.GetGPR(instr.GetRS2()));
+
+    hart.SetGPR(instr.GetRD(), rv1 < rv2);
 }
 
 void SLTU(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_SLTU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t rv2 = hart.GetGPR(instr.GetRS2());
+
+    hart.SetGPR(instr.GetRD(), rv1 < rv2);
 }
 
 void XOR(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_XOR(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t rv2 = hart.GetGPR(instr.GetRS2());
+
+    hart.SetGPR(instr.GetRD(), rv1 ^ rv2);
 }
 
 void SRL(Hart &hart, const Instruction &instr)
