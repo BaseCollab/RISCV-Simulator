@@ -50,7 +50,13 @@ void BGE(Hart &hart, const Instruction &instr)
 
 void BLTU(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_BLTU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rs1 = hart.GetGPR(instr.GetRS1());
+    auto rs2 = hart.GetGPR(instr.GetRS2());
+
+    if (rs1 < rs2)
+        hart.SetPCTarget(hart.GetPC() + instr.GetIMM());
+    else
+        hart.SetPCTarget(hart.GetPC() + sizeof(instr_size_t));
 }
 
 void BGEU(Hart &hart, const Instruction &instr)
