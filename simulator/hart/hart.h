@@ -27,12 +27,23 @@ public:
 public:
     CSRs csr_regs;
 
+    reg_t GetPC() const;
+    void  SetPC(reg_t pc);
+
+    reg_t GetPCTarget() const;
+    void  SetPCTarget(reg_t pc_target);
+
+    gpr_t GetGPR(gpr_idx_t reg_idx) const;
+    void  SetGPR(gpr_idx_t reg_idx, gpr_t value);
+
 private:
     MemoryCtl *memory_ {nullptr};
     MMU mmu_;
 
     gpr_t gpr_table_[N_GPR];
-    reg_t pc_; // Program Counter
+
+    reg_t pc_;
+    reg_t pc_target_;
 };
 
 } // namespace rvsim
