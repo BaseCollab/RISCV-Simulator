@@ -24,9 +24,6 @@ public:
         return mmu_;
     }
 
-public:
-    CSRs csr_regs;
-
     reg_t GetPC() const;
     void SetPC(reg_t pc);
 
@@ -35,6 +32,9 @@ public:
 
     gpr_t GetGPR(gpr_idx_t reg_idx) const;
     void SetGPR(gpr_idx_t reg_idx, gpr_t value);
+
+public:
+    CSRs csr_regs;
 
 private:
     MemoryCtl *memory_ {nullptr};

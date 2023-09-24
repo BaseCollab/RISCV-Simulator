@@ -1,6 +1,6 @@
 #include "hart.h"
 
-#include <assert>
+#include <cassert>
 
 namespace rvsim {
 

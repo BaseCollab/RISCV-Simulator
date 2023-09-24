@@ -64,7 +64,7 @@ word_t Instruction::GetIMM() const
     return imm_;
 }
 
-const instr_attrs_t &Instruction::GetAttrs() const
+const Instruction::instr_attrs_t &Instruction::GetAttrs() const
 {
     return attributes_;
 }

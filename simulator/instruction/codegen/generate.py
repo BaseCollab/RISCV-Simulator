@@ -142,34 +142,38 @@ def generate_execution_decls(yaml_dict):
         fout.write('#include \"hart/hart.h\"\n')
         fout.write('#include \"instruction.h\"\n\n')
 
-        fout.write('namespace rvsim {\n\n'
+        fout.write('namespace rvsim {\n'
+                   'namespace iexec {\n\n'
                    '// clang-format off\n\n')
 
         max_instr_len = max([len(instr) for instr in instrs_mnemonic_list])
 
         for i in range(len(instrs_mnemonic_list)):
-            fout.write(f'void exec_{instrs_mnemonic_list[i]}' + \
+            fout.write(f'void {instrs_mnemonic_list[i]}' + \
                         ' ' * (max_instr_len - len(instrs_mnemonic_list[i])) + '(Hart &hart, const Instruction &instr);\n')
 
         fout.write('\n// clang-format on\n')
-        fout.write("\n} // namespace rvsim\n\n")
+        fout.write("\n} // namespace iexec\n")
+        fout.write("} // namespace rvsim\n\n")
         fout.write("#endif // SIMULATOR_INSTRUCTION_EXEC_INSTRUCTION_EXEC_H\n")
 
     with open('instruction_exec.cpp', 'w') as fout:
         fout.write(COMMENT_WITH_CHANGE_STR)
         fout.write('#include \"instruction_exec.h\"\n\n')
 
-        fout.write('namespace rvsim {\n\n')
+        fout.write('namespace rvsim {\n'
+                   'namespace iexec {\n\n')
 
         max_instr_len = max([len(instr) for instr in instrs_mnemonic_list])
 
         for i in range(len(instrs_mnemonic_list)):
-            fout.write(f'void exec_{instrs_mnemonic_list[i]}(Hart &hart, const Instruction &instr)\n'
+            fout.write(f'void {instrs_mnemonic_list[i]}(Hart &hart, const Instruction &instr)\n'
                         '{\n')
             fout.write(f'    std::cerr << \"function exec_{instrs_mnemonic_list[i]}(Hart &hart, const Instruction &instr) '
                        'is not implemented yet!\" << std::endl;\n')
-            fout.write("}\n")
+            fout.write("}\n\n")
 
+        fout.write("} // namespace iexec\n")
         fout.write("\n} // namespace rvsim\n")
 
 def generate_id_enum(yaml_dict):
