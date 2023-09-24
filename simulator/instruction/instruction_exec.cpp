@@ -98,9 +98,13 @@ void ADDI(Hart &hart, const Instruction &instr)
     hart.setGPR(instr.GetRD(), rv1 + instr.GetIMM());
 }
 
+static constexpr bit_size_t RV_SH_UPPER_BIT_INDEX = 4;
+
 void SLLI(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_SLLI(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1  = hart.getGPR(instr.GetRS1());
+    reg_t imm  = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.GetIMM());
+    hart.setGPR(instr.GetRD(), rv1 << imm);
 }
 
 void SLTI(Hart &hart, const Instruction &instr)
@@ -120,12 +124,20 @@ void XORI(Hart &hart, const Instruction &instr)
 
 void SRLI(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_SRLI(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1  = hart.getGPR(instr.GetRS1());
+    reg_t imm  = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.GetIMM());
+    hart.setGPR(instr.GetRD(), rv1 >> imm);
 }
 
 void SRAI(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_SRAI(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1  = hart.getGPR(instr.GetRS1());
+    reg_t imm  = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.GetIMM());
+
+    rv1 >>= imm;
+    rv1 = bitops::SignExtend(bitops::BitSizeof<reg_t>() - imm, bitops::BitSizeof<reg_t>(), rv1);
+
+    hart.setGPR(instr.GetRD(), rv1);
 }
 
 void ORI(Hart &hart, const Instruction &instr)
