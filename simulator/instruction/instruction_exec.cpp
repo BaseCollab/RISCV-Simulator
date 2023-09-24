@@ -84,7 +84,7 @@ void JAL(Hart &hart, const Instruction &instr)
 
 void LUI(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_LUI(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    hart.setReg(instr.GetRD(), instr.GetIMM());
 }
 
 void AUIPC(Hart &hart, const Instruction &instr)
