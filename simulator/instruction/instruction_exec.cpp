@@ -239,16 +239,18 @@ void SRA(Hart &hart, const Instruction &instr)
 
 void OR(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::OR(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t rv2 = hart.GetGPR(instr.GetRS2());
+
+    hart.SetGPR(instr.GetRD(), rv1 | rv2);
 }
 
 void AND(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::AND(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t rv2 = hart.GetGPR(instr.GetRS2());
+
+    hart.SetGPR(instr.GetRD(), rv1 & rv2);
 }
 
 void ADDIW(Hart &hart, const Instruction &instr)
