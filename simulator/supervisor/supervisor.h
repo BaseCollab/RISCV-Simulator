@@ -34,11 +34,17 @@ public:
         return handlers_;
     }
 
-private:
-    static constexpr reg_t root_page_number_ = 0;
+    /*
+    In case of MMU::Exception::INVALID_PAGE_ENTRY or PAGE_FAULT
+    operation systam aka Supervisor need to handle this exception
+    and take steps to highlight the table
+    */
+    void VirtualPageMapping(vaddr_t vaddr, uint8_t rwx_flags);
 
+private:
     void InitializeCSR(CSRs *csr_regs);
-    int LocateRootPageTable(CSRs *csr_regs);
+
+    uint16_t AllocRootPageTable();
 
     void SetExceptionHandlers();
 
@@ -50,6 +56,8 @@ private:
     MemoryCtl *memory_ {nullptr};
 
     static ExceptionHandlers handlers_;
+    // idx of page where root virtual page table is located
+    uint16_t root_page_idx_ {0};
 };
 
 } // namespace rvsim

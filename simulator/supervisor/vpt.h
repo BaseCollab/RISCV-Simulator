@@ -11,29 +11,29 @@ namespace rvsim {
 
 // clang-format off
 struct pte_t { // Sv48 page table entry (PTE)
-    uint64_t n          : 1; // not implemented yet
-    uint64_t pbmt       : 2; // not implemented yet
+    uint64_t n          : 1 = 0; // not implemented yet
+    uint64_t pbmt       : 2 = 0; // not implemented yet
 
-    uint64_t reserved_1 : 7;
+    uint64_t reserved_1 : 7 = 0;
 
     // PPN = Physical page number
-    uint64_t ppn        : 44;
+    uint64_t ppn        : 44 = 0;
 
     // uint64_t ppn_3      : 17;
     // uint64_t ppn_2      : 9;
     // uint64_t ppn_1      : 9;
     // uint64_t ppn_0      : 9;
 
-    uint64_t rsw        : 2; // is reserved for use by supervisor software
+    uint64_t rsw        : 2 = 0; // is reserved for use by supervisor software
 
-    uint64_t d          : 1; // dirty: not implemented yet
-    uint64_t a          : 1; // accessed: not implemented yet
-    uint64_t g          : 1; // global mapping: not implemented yet
-    uint64_t u          : 1; // page is accessible to user mode: not implemented yet
-    uint64_t x          : 1; // executable
-    uint64_t w          : 1; // write
-    uint64_t r          : 1; // read
-    uint64_t v          : 1; // whether the PTE is valid
+    uint64_t d          : 1 = 0; // dirty: not implemented yet
+    uint64_t a          : 1 = 0; // accessed: not implemented yet
+    uint64_t g          : 1 = 0; // global mapping: not implemented yet
+    uint64_t u          : 1 = 0; // page is accessible to user mode: not implemented yet
+    uint64_t x          : 1 = 0; // executable
+    uint64_t w          : 1 = 0; // write
+    uint64_t r          : 1 = 0; // read
+    uint64_t v          : 1 = 0; // whether the PTE is valid
 };
 
 union paddr_t {

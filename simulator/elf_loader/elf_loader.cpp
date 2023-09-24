@@ -63,13 +63,14 @@ void ElfLoader::LoadElf(MemoryCtl *memory_ctl, const Hart &hart)
             Elf64_Xword segment_vaddr = curr_segment_header->p_vaddr;
             Elf64_Xword segment_size = curr_segment_header->p_memsz;
             Elf64_Word segment_flags = curr_segment_header->p_flags;
-            (void)segment_flags; // TODO pass this flag into MMU and then set in memory
+
+            // exception
+            // Supervisor::GetExceptionHandlers().mmu_handler({ MMU::Exception::INVALID_PAGE_ENTRY, segment_vaddr,
+            // segment_flags });
+            (void)segment_flags;
 
             auto addr_err_pair =
                 hart.GetMMU().VirtToPhysAddr(segment_vaddr, MMU::Target::READ, hart.csr_regs, *memory_ctl);
-            if (addr_err_pair.second.has_value()) {
-                Supervisor::GetExceptionHandlers().mmu_handler(addr_err_pair.second.value());
-            }
 
             paddr_t phys_addr = addr_err_pair.first;
             memory_ctl->Store(phys_addr.value, curr_segment_header, segment_size);
