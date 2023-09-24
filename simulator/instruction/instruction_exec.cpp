@@ -127,7 +127,9 @@ void SLTIU(Hart &hart, const Instruction &instr)
 
 void XORI(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_XORI(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.getGPR(instr.GetRS1());
+
+    hart.setGPR(instr.GetRD(), rv1 ^ instr.GetIMM());
 }
 
 void SRLI(Hart &hart, const Instruction &instr)
@@ -151,12 +153,16 @@ void SRAI(Hart &hart, const Instruction &instr)
 
 void ORI(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_ORI(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.getGPR(instr.GetRS1());
+
+    hart.setGPR(instr.GetRD(), rv1 | instr.GetIMM());
 }
 
 void ANDI(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_ANDI(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.getGPR(instr.GetRS1());
+
+    hart.setGPR(instr.GetRD(), rv1 & instr.GetIMM());
 }
 
 void ADD(Hart &hart, const Instruction &instr)
