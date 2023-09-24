@@ -280,7 +280,7 @@ void SRLIW(Hart &hart, const Instruction &instr)
     hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
 }
 
-void SRAIW(Hart &hart, const Instruction &instr) // can be optimized?
+void SRAIW(Hart &hart, const Instruction &instr)
 {
     reg_t rv1 = hart.GetGPR(instr.GetRS1());
     auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.GetIMM());
@@ -292,37 +292,54 @@ void SRAIW(Hart &hart, const Instruction &instr) // can be optimized?
 
 void ADDW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::ADDW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t rv2 = hart.GetGPR(instr.GetRS2());
+
+    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 + rv2);
+
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
 }
 
 void SUBW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::SUBW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t rv2 = hart.GetGPR(instr.GetRS2());
+
+    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 - rv2);
+
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
 }
 
 void SLLW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::SLLW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t rv2 = hart.GetGPR(instr.GetRS2());
+
+    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 << bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(rv2));
+
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
 }
 
 void SRLW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::SRLW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t rv2 = hart.GetGPR(instr.GetRS2());
+
+    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 >> bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(rv2));
+
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
 }
 
 void SRAW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::SRAW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t rv2 = hart.GetGPR(instr.GetRS2());
+
+    auto shift = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(rv2);
+    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 >> shift);
+    rv1 = bitops::SignExtend(bitops::BitSizeof<reg_t>() - shift, bitops::BitSizeof<reg_t>(), rv1);
+
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend(bitops::BitSizeof<word_t>() - shift, bitops::BitSizeof<reg_t>(), res_w));
 }
 
 void LB(Hart &hart, const Instruction &instr)
