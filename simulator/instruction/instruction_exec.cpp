@@ -19,7 +19,10 @@ void exec_BEQ(Hart &hart, const Instruction &instr)
 
 void exec_BNE(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_BNE(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    if (hart.GetGPR(instr.GetRS1()) != hart.GetGPR(instr.GetRS2()))
+        hart.SetPCTarget(hart.GetPC() + instr.GetIMM());
+    else
+        hart.SetPCTarget(hart.GetPC() + sizeof(instr_size_t));
 }
 
 void exec_BLT(Hart &hart, const Instruction &instr)
