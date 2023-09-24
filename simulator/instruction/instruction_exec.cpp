@@ -183,7 +183,10 @@ void SUB(Hart &hart, const Instruction &instr)
 
 void SLL(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_SLL(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.getGPR(instr.GetRS1());
+    reg_t rv2 = hart.getGPR(instr.GetRS2());
+
+    hart.setGPR(instr.GetRD(), rv1 << bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(rv2));
 }
 
 void SLT(Hart &hart, const Instruction &instr)
@@ -203,12 +206,22 @@ void XOR(Hart &hart, const Instruction &instr)
 
 void SRL(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_SRL(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.getGPR(instr.GetRS1());
+    reg_t rv2 = hart.getGPR(instr.GetRS2());
+
+    hart.setGPR(instr.GetRD(), rv1 >> bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(rv2));
 }
 
 void SRA(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_SRA(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.getGPR(instr.GetRS1());
+    reg_t rv2 = hart.getGPR(instr.GetRS2());
+
+    auto shift = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(rv2);
+    rv1 >>= shift;
+    rv1 = bitops::SignExtend(bitops::BitSizeof<reg_t>() - shift, bitops::BitSizeof<reg_t>(), rv1);
+
+    hart.setGPR(instr.GetRD(), rv1);
 }
 
 void OR(Hart &hart, const Instruction &instr)
