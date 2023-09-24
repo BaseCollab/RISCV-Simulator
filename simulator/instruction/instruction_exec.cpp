@@ -167,12 +167,18 @@ void ANDI(Hart &hart, const Instruction &instr)
 
 void ADD(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_ADD(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.getGPR(instr.GetRS1());
+    reg_t rv2 = hart.getGPR(instr.GetRS2());
+
+    hart.setGPR(instr.GetRD(), rv1 + rv2);
 }
 
 void SUB(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_SUB(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.getGPR(instr.GetRS1());
+    reg_t rv2 = hart.getGPR(instr.GetRS2());
+
+    hart.setGPR(instr.GetRD(), rv1 - rv2);
 }
 
 void SLL(Hart &hart, const Instruction &instr)
