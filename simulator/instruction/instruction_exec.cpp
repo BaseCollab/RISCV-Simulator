@@ -95,6 +95,7 @@ void AUIPC(Hart &hart, const Instruction &instr)
 void ADDI(Hart &hart, const Instruction &instr)
 {
     reg_t rv1 = hart.getGPR(instr.GetRS1());
+
     hart.setGPR(instr.GetRD(), rv1 + instr.GetIMM());
 }
 
@@ -102,19 +103,26 @@ static constexpr bit_size_t RV_SH_UPPER_BIT_INDEX = 4;
 
 void SLLI(Hart &hart, const Instruction &instr)
 {
-    reg_t rv1  = hart.getGPR(instr.GetRS1());
-    reg_t imm  = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.GetIMM());
+    auto rv1 = hart.getGPR(instr.GetRS1());
+    auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.GetIMM());
+
     hart.setGPR(instr.GetRD(), rv1 << imm);
 }
 
 void SLTI(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_SLTI(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = bitops::MakeSigned(hart.getGPR(instr.GetRS1()));
+    auto imm = bitops::MakeSigned(instr.GetIMM());
+
+    hart.setGPR(instr.GetRD(), rv1 < imm);
 }
 
 void SLTIU(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_SLTIU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = hart.getGPR(instr.GetRS1());
+    auto imm = instr.GetIMM();
+
+    hart.setGPR(instr.GetRD(), rv1 < imm);
 }
 
 void XORI(Hart &hart, const Instruction &instr)
@@ -124,15 +132,16 @@ void XORI(Hart &hart, const Instruction &instr)
 
 void SRLI(Hart &hart, const Instruction &instr)
 {
-    reg_t rv1  = hart.getGPR(instr.GetRS1());
-    reg_t imm  = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.GetIMM());
+    auto rv1 = hart.getGPR(instr.GetRS1());
+    auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.GetIMM());
+
     hart.setGPR(instr.GetRD(), rv1 >> imm);
 }
 
 void SRAI(Hart &hart, const Instruction &instr)
 {
-    reg_t rv1  = hart.getGPR(instr.GetRS1());
-    reg_t imm  = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.GetIMM());
+    auto rv1 = hart.getGPR(instr.GetRS1());
+    auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.GetIMM());
 
     rv1 >>= imm;
     rv1 = bitops::SignExtend(bitops::BitSizeof<reg_t>() - imm, bitops::BitSizeof<reg_t>(), rv1);
