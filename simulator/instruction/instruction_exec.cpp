@@ -77,8 +77,9 @@ void JALR(Hart &hart, const Instruction &instr)
 }
 
 void JAL(Hart &hart, const Instruction &instr)
-{
-    std::cerr << "function exec_JAL(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    hart.SetGPR(instr.GetRD(), hart.GetPC() + sizeof(instr_size_t));
+    hart.SetPCTarget(hart.GetPC() + instr.GetIMM());
 }
 
 void LUI(Hart &hart, const Instruction &instr)
