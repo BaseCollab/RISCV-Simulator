@@ -13,6 +13,8 @@
 
 namespace rvsim {
 
+// clang-format off
+
 void exec_BEQ        (Hart &hart, const Instruction &instr);
 void exec_BNE        (Hart &hart, const Instruction &instr);
 void exec_BLT        (Hart &hart, const Instruction &instr);
@@ -211,6 +213,8 @@ void exec_FMADD_Q    (Hart &hart, const Instruction &instr);
 void exec_FMSUB_Q    (Hart &hart, const Instruction &instr);
 void exec_FNMSUB_Q   (Hart &hart, const Instruction &instr);
 void exec_FNMADD_Q   (Hart &hart, const Instruction &instr);
+
+// clang-format on
 
 } // namespace rvsim
 

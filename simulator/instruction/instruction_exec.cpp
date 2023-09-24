@@ -3,7 +3,7 @@
  * This file can be changed without additional autogeneration
  ***********************************************************
  * Written by Glaz Roman (Vokerlee)
-*/
+ */
 
 #include "instruction_exec.h"
 
@@ -1005,6 +1005,4 @@ void exec_FNMADD_Q(Hart &hart, const Instruction &instr)
     std::cerr << "function exec_FNMADD_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
-
 } // namespace rvsim
-

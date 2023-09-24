@@ -142,7 +142,8 @@ def generate_execution_decls(yaml_dict):
         fout.write('#include \"hart/hart.h\"\n')
         fout.write('#include \"instruction.h\"\n\n')
 
-        fout.write('namespace rvsim {\n\n')
+        fout.write('namespace rvsim {\n\n'
+                   '// clang-format off\n\n')
 
         max_instr_len = max([len(instr) for instr in instrs_mnemonic_list])
 
@@ -150,6 +151,7 @@ def generate_execution_decls(yaml_dict):
             fout.write(f'void exec_{instrs_mnemonic_list[i]}' + \
                         ' ' * (max_instr_len - len(instrs_mnemonic_list[i])) + '(Hart &hart, const Instruction &instr);\n')
 
+        fout.write('\n// clang-format on\n')
         fout.write("\n} // namespace rvsim\n\n")
         fout.write("#endif // SIMULATOR_INSTRUCTION_EXEC_INSTRUCTION_EXEC_H\n")
 
@@ -166,9 +168,9 @@ def generate_execution_decls(yaml_dict):
                         '{\n')
             fout.write(f'    std::cerr << \"function exec_{instrs_mnemonic_list[i]}(Hart &hart, const Instruction &instr) '
                        'is not implemented yet!\" << std::endl;\n')
-            fout.write("}\n\n")
+            fout.write("}\n")
 
-        fout.write("\n} // namespace rvsim\n\n")
+        fout.write("\n} // namespace rvsim\n")
 
 def generate_id_enum(yaml_dict):
     instrs = yaml_dict['instructions']

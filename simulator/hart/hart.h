@@ -28,13 +28,13 @@ public:
     CSRs csr_regs;
 
     reg_t GetPC() const;
-    void  SetPC(reg_t pc);
+    void SetPC(reg_t pc);
 
     reg_t GetPCTarget() const;
-    void  SetPCTarget(reg_t pc_target);
+    void SetPCTarget(reg_t pc_target);
 
     gpr_t GetGPR(gpr_idx_t reg_idx) const;
-    void  SetGPR(gpr_idx_t reg_idx, gpr_t value);
+    void SetGPR(gpr_idx_t reg_idx, gpr_t value);
 
 private:
     MemoryCtl *memory_ {nullptr};
