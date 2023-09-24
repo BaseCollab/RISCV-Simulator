@@ -2,6 +2,8 @@
 #define SIMULATOR_HART_HART_H
 
 #include "common/constants.h"
+#include "common/macros.h"
+#include "common/config.h"
 #include "mmu/mmu.h"
 #include "csr.h"
 
@@ -28,6 +30,9 @@ public:
 private:
     MemoryCtl *memory_ {nullptr};
     MMU mmu_;
+
+    gpr_t gpr_table_[N_GPR];
+    reg_t pc_; // Program Counter
 };
 
 } // namespace rvsim
