@@ -84,12 +84,12 @@ void JAL(Hart &hart, const Instruction &instr)
 
 void LUI(Hart &hart, const Instruction &instr)
 {
-    hart.setReg(instr.GetRD(), instr.GetIMM());
+    hart.SetGPR(instr.GetRD(), instr.GetIMM());
 }
 
 void AUIPC(Hart &hart, const Instruction &instr)
 {
-    std::cerr << "function exec_AUIPC(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    hart.SetGPR(instr.GetRD(), instr.GetIMM() + hart.GetPC());
 }
 
 void ADDI(Hart &hart, const Instruction &instr)
