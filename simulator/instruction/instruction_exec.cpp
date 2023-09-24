@@ -8,7 +8,6 @@
 #include "common/utils/bit_ops.h"
 #include "instruction_exec.h"
 
-
 #include <iostream>
 
 namespace rvsim {
@@ -255,30 +254,40 @@ void AND(Hart &hart, const Instruction &instr)
 
 void ADDIW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::ADDIW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 + instr.GetIMM());
+
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
 }
 
 void SLLIW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::SLLIW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.GetIMM());
+
+    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 << imm);
+
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
 }
 
 void SRLIW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::SRLIW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.GetIMM());
+
+    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 >> imm);
+
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
 }
 
-void SRAIW(Hart &hart, const Instruction &instr)
+void SRAIW(Hart &hart, const Instruction &instr) // can be optimized?
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::SRAIW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.GetIMM());
+
+    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 >> imm);
+
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend(bitops::BitSizeof<word_t>() - imm, bitops::BitSizeof<reg_t>(), res_w));
 }
 
 void ADDW(Hart &hart, const Instruction &instr)
