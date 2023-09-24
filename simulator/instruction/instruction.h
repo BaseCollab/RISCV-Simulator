@@ -42,6 +42,15 @@ public:
     void Clear();
     void Decode(instr_size_t instr);
 
+    gpr_idx_t GetRS1() const;
+    gpr_idx_t GetRS2() const;
+    gpr_idx_t GetRS3() const;
+    gpr_idx_t GetRD()  const;
+    gpr_idx_t GetRM()  const;
+    word_t    GetIMM() const;
+
+    const instr_attrs_t &GetAttrs() const;
+
 private:
     gpr_idx_t rs1_{0};
     gpr_idx_t rs2_{0};

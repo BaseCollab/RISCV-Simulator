@@ -2,6 +2,8 @@
 #define SIMULATOR_HART_HART_H
 
 #include "common/constants.h"
+#include "common/macros.h"
+#include "common/config.h"
 #include "mmu/mmu.h"
 #include "csr.h"
 
@@ -22,12 +24,26 @@ public:
         return mmu_;
     }
 
+    reg_t GetPC() const;
+    void SetPC(reg_t pc);
+
+    reg_t GetPCTarget() const;
+    void SetPCTarget(reg_t pc_target);
+
+    gpr_t GetGPR(gpr_idx_t reg_idx) const;
+    void SetGPR(gpr_idx_t reg_idx, gpr_t value);
+
 public:
     CSRs csr_regs;
 
 private:
     MemoryCtl *memory_ {nullptr};
     MMU mmu_;
+
+    gpr_t gpr_table_[N_GPR];
+
+    reg_t pc_;
+    reg_t pc_target_;
 };
 
 } // namespace rvsim

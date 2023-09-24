@@ -4,9 +4,9 @@
 
 namespace rvsim {
 
-Instruction::Instruction(instr_size_t insn)
+Instruction::Instruction(instr_size_t instr)
 {
-    Decode(insn);
+    Decode(instr);
 }
 
 bool Instruction::IsBranch() const
@@ -32,6 +32,41 @@ bool Instruction::IsPseudo() const
 InstructionId Instruction::GetId() const
 {
     return id_;
+}
+
+gpr_idx_t Instruction::GetRS1() const
+{
+    return rs1_;
+}
+
+gpr_idx_t Instruction::GetRS2() const
+{
+    return rs2_;
+}
+
+gpr_idx_t Instruction::GetRS3() const
+{
+    return rs3_;
+}
+
+gpr_idx_t Instruction::GetRD() const
+{
+    return rd_;
+}
+
+gpr_idx_t Instruction::GetRM() const
+{
+    return rm_;
+}
+
+word_t Instruction::GetIMM() const
+{
+    return imm_;
+}
+
+const Instruction::instr_attrs_t &Instruction::GetAttrs() const
+{
+    return attributes_;
 }
 
 void Instruction::Clear()
