@@ -15,7 +15,8 @@ public:
     enum class Error {
         NONE = -1,
         OVERFLOW = 0,
-        EMPTY_POP = 1
+        EMPTY_POP = 1,
+        EMPTY_TOP
     };
 
 public:
@@ -35,13 +36,24 @@ public:
         return std::nullopt;
     }
 
-    std::pair<Type, std::optional<Error>> Pop()
+    std::optional<Error> Pop()
     {
         if (size_ == 0) {
-            return {0, Error::EMPTY_POP};
+            return Error::EMPTY_POP;
         }
 
-        return {data_[size_--], std::nullopt};
+        --size_;
+
+        return std::nullopt;
+    }
+
+    std::pair<Type, std::optional<Error>> Top() const
+    {
+        if (size_ == 0) {
+            return {0, Error::EMPTY_TOP};
+        }
+
+        return {data_[size_ - 1], std::nullopt};
     }
 
     size_t GetSize() const

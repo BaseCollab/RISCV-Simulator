@@ -22,8 +22,7 @@ public:
 
     PagesController()
     {
-        // TODO: Push in stack in reverse index
-        for (size_t i = 0; i < PAGES_NMB; ++i) {
+        for (size_t i = PAGES_NMB; i > 0; --i) {
             clean_pages_stack_.Push(i);
         }
     }
@@ -36,8 +35,15 @@ public:
             return {0, Error::OUT_OF_PAGES};
         }
 
-        auto [idx, err] = clean_pages_stack_.Pop();
-        (void)err;
+        auto [idx, top_err] = clean_pages_stack_.Top();
+        if (top_err.has_value()) {
+            return {0, Error::OUT_OF_PAGES};
+        }
+
+        auto pop_err = clean_pages_stack_.Pop();
+        if (pop_err.has_value()) {
+            return {0, Error::OUT_OF_PAGES};
+        }
 
         pages_states_[idx] = 1;
         return {idx, std::nullopt};
