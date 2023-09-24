@@ -23,7 +23,7 @@ void Supervisor::InitializeCSR(CSRs *csr_regs)
 {
     assert(csr_regs);
 
-    csr_satp_t satp = {.mode = 0x9, .asid = 0x0, .ppn = root_page_idx_}; // 0x9 = Sv48
+    csr_satp_t satp({.mode = 0x9, .asid = 0x0, .ppn = root_page_idx_}); // 0x9 = Sv48
     csr_t satp_reg = 0;
     std::memcpy(&satp_reg, &satp, sizeof(csr_satp_t));
 
@@ -102,18 +102,16 @@ void Supervisor::MMUExceptionHandler(MMU::Exception exception)
 
 void Supervisor::VirtualPageMapping(vaddr_t vaddr, uint8_t rwx_flags)
 {
-    (void)vaddr;
     (void)rwx_flags;
-    // pte_t pte_3;
+    pte_t pte_3;
     // pte_t pte_2;
     // pte_t pte_1;
     // pte_t pte_0;
 
-    // csr_t satp_reg = hart_->csr_regs.LoadCSR(CSR_SATP_IDX);
-    // csr_satp_t satp;
-    // std::memcpy(&satp_reg, &satp, sizeof(satp_reg));
+    csr_t satp_reg = hart_->csr_regs.LoadCSR(CSR_SATP_IDX);
+    csr_satp_t satp(satp_reg);
 
-    // memory_->Load(&pte_3, sizeof(pte_3), satp.ppn * VPAGE_SIZE + vaddr.fields.vpn_3);
+    memory_->Load(&pte_3, sizeof(pte_3), satp.fields.ppn * VPAGE_SIZE + vaddr.fields.vpn_3);
 }
 
 } // namespace rvsim

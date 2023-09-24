@@ -44,10 +44,9 @@ std::pair<paddr_t, std::optional<MMU::Exception>> MMU::VirtToPhysAddr(vaddr_t va
     MMU::Exception exception;
 
     csr_t satp_reg = csr_regs.LoadCSR(CSR_SATP_IDX);
-    csr_satp_t satp;
-    std::memcpy(&satp_reg, &satp, sizeof(satp_reg));
+    csr_satp_t satp(satp_reg);
 
-    memory.Load(&pte_3, sizeof(pte_3), satp.ppn * VPAGE_SIZE + vaddr.fields.vpn_3);
+    memory.Load(&pte_3, sizeof(pte_3), satp.fields.ppn * VPAGE_SIZE + vaddr.fields.vpn_3);
 
     if (pte_3.x == 0 && pte_3.w == 0 && pte_3.r == 0) // pointer to next level
     {
