@@ -1,7 +1,6 @@
-#include "supervisor/supervisor.h"
 #include "hart/hart.h"
+#include "supervisor/supervisor.h"
 #include "memory/memory_controller.h"
-#include "elf_loader/elf_loader.h"
 
 namespace rvsim {
 
