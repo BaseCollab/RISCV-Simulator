@@ -8,7 +8,7 @@
 #include "common/config.h"
 #include "hart/hart.h"
 #include "memory/memory_controller.h"
-#include "elf_loader/elf_loader.h"
+#include "elf_loader.h"
 
 #include <functional>
 
