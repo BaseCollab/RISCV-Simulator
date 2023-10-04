@@ -32,10 +32,10 @@ void Supervisor::InitializeCSR(CSRs *csr_regs)
     // TODO: map all CSRs to physical memory as specification requires
 }
 
-uint16_t Supervisor::AllocRootPageTable()
+reg_t Supervisor::AllocRootPageTable()
 {
     auto page_idx_pair = memory_->GetCleanPage();
-    uint16_t page_idx = page_idx_pair.first;
+    reg_t page_idx = page_idx_pair.first;
 
     vpt_t vpt;
     memory_->StoreByPageIdx(page_idx, &vpt, sizeof(vpt));

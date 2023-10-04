@@ -44,7 +44,7 @@ public:
 private:
     void InitializeCSR(CSRs *csr_regs);
 
-    uint16_t AllocRootPageTable();
+    reg_t AllocRootPageTable();
 
     void SetExceptionHandlers();
 
@@ -57,7 +57,7 @@ private:
 
     static ExceptionHandlers handlers_;
     // idx of page where root virtual page table is located
-    uint16_t root_page_idx_ {0};
+    reg_t root_page_idx_ {0};
 };
 
 } // namespace rvsim
