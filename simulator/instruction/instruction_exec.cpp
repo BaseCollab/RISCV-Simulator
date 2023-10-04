@@ -406,30 +406,38 @@ void LWU(Hart &hart, const Instruction &instr)
 
 void SB(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::SB(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = hart.GetGPR(instr.GetRS1());
+    auto rv2 = hart.GetGPR(instr.GetRS2());
+    auto imm = instr.GetIMM();
+
+    hart.StoreToMemory<byte_t>(rv1 + imm, bitops::GetBits<bitops::BitSizeof<byte_t>() - 1, 0>(rv2));
 }
 
 void SH(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::SH(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = hart.GetGPR(instr.GetRS1());
+    auto rv2 = hart.GetGPR(instr.GetRS2());
+    auto imm = instr.GetIMM();
+
+    hart.StoreToMemory<hword_t>(rv1 + imm, bitops::GetBits<bitops::BitSizeof<hword_t>() - 1, 0>(rv2));
 }
 
 void SW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::SW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = hart.GetGPR(instr.GetRS1());
+    auto rv2 = hart.GetGPR(instr.GetRS2());
+    auto imm = instr.GetIMM();
+
+    hart.StoreToMemory<word_t>(rv1 + imm, bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv2));
 }
 
 void SD(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::SD(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = hart.GetGPR(instr.GetRS1());
+    auto rv2 = hart.GetGPR(instr.GetRS2());
+    auto imm = instr.GetIMM();
+
+    hart.StoreToMemory<reg_t>(rv1 + imm, rv2);
 }
 
 void FENCE(Hart &hart, const Instruction &instr)
