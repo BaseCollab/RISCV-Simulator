@@ -12,7 +12,7 @@
 
 namespace rvsim {
 
-class MemoryCtl {
+class PhysMemoryCtl {
 public:
     enum class Error {
         NONE = -1,
@@ -23,11 +23,11 @@ public:
     using PageError = PagesController::Error;
 
 public:
-    NO_COPY_SEMANTIC(MemoryCtl);
-    NO_MOVE_SEMANTIC(MemoryCtl);
+    NO_COPY_SEMANTIC(PhysMemoryCtl);
+    NO_MOVE_SEMANTIC(PhysMemoryCtl);
 
-    MemoryCtl() = default;
-    ~MemoryCtl() = default;
+    explicit PhysMemoryCtl() : pages_controller_(memory_.GetMemorySize() / PPAGE_SIZE) {};
+    ~PhysMemoryCtl() = default;
 
     template <typename ValueType>
     std::optional<Error> Store(addr_t dst, ValueType value)
@@ -90,7 +90,7 @@ private:
     }
 
 private:
-    Memory memory_;
+    PhysMemory memory_;
     PagesController pages_controller_;
 };
 

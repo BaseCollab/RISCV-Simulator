@@ -35,7 +35,7 @@ ElfLoader::~ElfLoader()
     close(elf_fd_);
 }
 
-void ElfLoader::LoadElf(MemoryCtl *memory_ctl, const Hart &hart)
+void ElfLoader::LoadElf(PhysMemoryCtl *memory_ctl, const Hart &hart)
 {
     GElf_Ehdr elf_header;
     if (gelf_getehdr(elf_, &elf_header) == nullptr) {

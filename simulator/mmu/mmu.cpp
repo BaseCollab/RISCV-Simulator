@@ -32,7 +32,7 @@ MMU::Exception MMU::ValidatePTE(const pte_t &pte, MMU::Target target) const
 
 std::pair<paddr_t, std::optional<MMU::Exception>> MMU::VirtToPhysAddr(vaddr_t vaddr, MMU::Target target,
                                                                       const CSRs &csr_regs,
-                                                                      const MemoryCtl &memory) const
+                                                                      const PhysMemoryCtl &memory) const
 {
     paddr_t paddr = {.value = 0};
 
