@@ -73,12 +73,12 @@ public:
         return std::nullopt;
     }
 
-    std::pair<uint16_t, std::optional<PageError>> GetCleanPage()
+    std::pair<reg_t, std::optional<PageError>> GetCleanPage()
     {
         return pages_controller_.GetCleanPage();
     }
 
-    std::optional<Error> StoreByPageIdx(uint16_t page_idx, void *src, size_t src_size)
+    std::optional<Error> StoreByPageIdx(reg_t page_idx, void *src, size_t src_size)
     {
         return Store(page_idx * PPAGE_SIZE, src, src_size);
     }
