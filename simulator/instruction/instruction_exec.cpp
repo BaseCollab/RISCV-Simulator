@@ -344,51 +344,64 @@ void SRAW(Hart &hart, const Instruction &instr)
 
 void LB(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::LB(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = hart.GetGPR(instr.GetRS1());
+    auto imm = instr.GetIMM();
+
+    reg_t load_value = hart.LoadFromMemory<byte_t>(rv1 + imm);
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<byte_t>(), bitops::BitSizeof<reg_t>()>(load_value));
 }
 
 void LH(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::LH(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = hart.GetGPR(instr.GetRS1());
+    auto imm = instr.GetIMM();
+
+    reg_t load_value = hart.LoadFromMemory<hword_t>(rv1 + imm);
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<hword_t>(), bitops::BitSizeof<reg_t>()>(load_value));
 }
 
 void LW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::LW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = hart.GetGPR(instr.GetRS1());
+    auto imm = instr.GetIMM();
+
+    reg_t load_value = hart.LoadFromMemory<word_t>(rv1 + imm);
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(load_value));
 }
 
 void LD(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::LD(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = hart.GetGPR(instr.GetRS1());
+    auto imm = instr.GetIMM();
+
+    hart.SetGPR(instr.GetRD(), hart.LoadFromMemory<reg_t>(rv1 + imm));
 }
 
 void LBU(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::LBU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = hart.GetGPR(instr.GetRS1());
+    auto imm = instr.GetIMM();
+
+    reg_t load_value = hart.LoadFromMemory<byte_t>(rv1 + imm);
+    hart.SetGPR(instr.GetRD(), load_value);
 }
 
 void LHU(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::LHU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = hart.GetGPR(instr.GetRS1());
+    auto imm = instr.GetIMM();
+
+    reg_t load_value = hart.LoadFromMemory<hword_t>(rv1 + imm);
+    hart.SetGPR(instr.GetRD(), load_value);
 }
 
 void LWU(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::LWU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = hart.GetGPR(instr.GetRS1());
+    auto imm = instr.GetIMM();
+
+    reg_t load_value = hart.LoadFromMemory<word_t>(rv1 + imm);
+    hart.SetGPR(instr.GetRD(), load_value);
 }
 
 void SB(Hart &hart, const Instruction &instr)
