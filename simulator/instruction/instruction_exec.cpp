@@ -76,7 +76,7 @@ void BGEU(Hart &hart, const Instruction &instr)
 void JALR(Hart &hart, const Instruction &instr)
 {
     hart.SetGPR(instr.GetRD(), hart.GetPC() + sizeof(instr_size_t));
-    hart.SetPCTarget((hart.GetGPR(instr.GetRS1()) + instr.GetIMM()) & ~reg_t{1});
+    hart.SetPCTarget((hart.GetGPR(instr.GetRS1()) + instr.GetIMM()) & ~reg_t {1});
 }
 
 void JAL(Hart &hart, const Instruction &instr)
@@ -287,7 +287,8 @@ void SRAIW(Hart &hart, const Instruction &instr)
 
     reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 >> imm);
 
-    hart.SetGPR(instr.GetRD(), bitops::SignExtend(bitops::BitSizeof<word_t>() - imm, bitops::BitSizeof<reg_t>(), res_w));
+    hart.SetGPR(instr.GetRD(),
+                bitops::SignExtend(bitops::BitSizeof<word_t>() - imm, bitops::BitSizeof<reg_t>(), res_w));
 }
 
 void ADDW(Hart &hart, const Instruction &instr)
@@ -315,7 +316,8 @@ void SLLW(Hart &hart, const Instruction &instr)
     reg_t rv1 = hart.GetGPR(instr.GetRS1());
     reg_t rv2 = hart.GetGPR(instr.GetRS2());
 
-    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 << bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(rv2));
+    reg_t res_w =
+        bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 << bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(rv2));
 
     hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
 }
@@ -325,7 +327,8 @@ void SRLW(Hart &hart, const Instruction &instr)
     reg_t rv1 = hart.GetGPR(instr.GetRS1());
     reg_t rv2 = hart.GetGPR(instr.GetRS2());
 
-    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 >> bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(rv2));
+    reg_t res_w =
+        bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 >> bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(rv2));
 
     hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
 }
@@ -339,7 +342,8 @@ void SRAW(Hart &hart, const Instruction &instr)
     reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 >> shift);
     rv1 = bitops::SignExtend(bitops::BitSizeof<reg_t>() - shift, bitops::BitSizeof<reg_t>(), rv1);
 
-    hart.SetGPR(instr.GetRD(), bitops::SignExtend(bitops::BitSizeof<word_t>() - shift, bitops::BitSizeof<reg_t>(), res_w));
+    hart.SetGPR(instr.GetRD(),
+                bitops::SignExtend(bitops::BitSizeof<word_t>() - shift, bitops::BitSizeof<reg_t>(), res_w));
 }
 
 void LB(Hart &hart, const Instruction &instr)
@@ -357,7 +361,8 @@ void LH(Hart &hart, const Instruction &instr)
     auto imm = instr.GetIMM();
 
     reg_t load_value = hart.LoadFromMemory<hword_t>(rv1 + imm);
-    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<hword_t>(), bitops::BitSizeof<reg_t>()>(load_value));
+    hart.SetGPR(instr.GetRD(),
+                bitops::SignExtend<bitops::BitSizeof<hword_t>(), bitops::BitSizeof<reg_t>()>(load_value));
 }
 
 void LW(Hart &hart, const Instruction &instr)
@@ -442,15 +447,15 @@ void SD(Hart &hart, const Instruction &instr)
 
 void FENCE(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FENCE(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FENCE_I(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FENCE_I(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
@@ -464,22 +469,22 @@ void MUL(Hart &hart, const Instruction &instr)
 
 void MULH(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::MULH(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void MULHSU(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::MULHSU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void MULHU(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::MULHU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
@@ -597,939 +602,942 @@ void REMUW(Hart &hart, const Instruction &instr)
 
 void AMOADD_W(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOADD_W(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOXOR_W(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOXOR_W(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOOR_W(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOOR_W(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOAND_W(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOAND_W(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOMIN_W(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOMIN_W(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOMAX_W(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOMAX_W(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOMINU_W(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOMINU_W(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOMAXU_W(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOMAXU_W(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOSWAP_W(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOSWAP_W(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void LR_W(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::LR_W(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void SC_W(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::SC_W(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOADD_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOADD_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOXOR_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOXOR_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOOR_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOOR_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOAND_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOAND_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOMIN_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOMIN_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOMAX_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOMAX_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOMINU_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOMINU_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOMAXU_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOMAXU_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void AMOSWAP_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::AMOSWAP_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void LR_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::LR_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void SC_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::SC_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void ECALL(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::ECALL(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void EBREAK(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::EBREAK(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void URET(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::URET(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void SRET(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::SRET(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void MRET(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::MRET(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void DRET(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::DRET(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void SFENCE_VMA(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::SFENCE_VMA(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    (void)hart;
+    (void)instr;
+    std::cerr << "function iexec::SFENCE_VMA(Hart &hart, const Instruction &instr) is not implemented yet!"
+              << std::endl;
 }
 
 void WFI(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::WFI(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void CSRRW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::CSRRW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void CSRRS(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::CSRRS(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void CSRRC(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::CSRRC(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void CSRRWI(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::CSRRWI(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void CSRRSI(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::CSRRSI(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void CSRRCI(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::CSRRCI(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void HFENCE_VVMA(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::HFENCE_VVMA(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    (void)hart;
+    (void)instr;
+    std::cerr << "function iexec::HFENCE_VVMA(Hart &hart, const Instruction &instr) is not implemented yet!"
+              << std::endl;
 }
 
 void HFENCE_GVMA(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::HFENCE_GVMA(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    (void)hart;
+    (void)instr;
+    std::cerr << "function iexec::HFENCE_GVMA(Hart &hart, const Instruction &instr) is not implemented yet!"
+              << std::endl;
 }
 
 void FADD_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FADD_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSUB_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSUB_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMUL_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMUL_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FDIV_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FDIV_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSGNJ_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSGNJ_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSGNJN_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSGNJN_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSGNJX_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSGNJX_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMIN_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMIN_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMAX_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMAX_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSQRT_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSQRT_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FADD_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FADD_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSUB_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSUB_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMUL_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMUL_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FDIV_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FDIV_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSGNJ_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSGNJ_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSGNJN_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSGNJN_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSGNJX_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSGNJX_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMIN_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMIN_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMAX_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMAX_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_S_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_S_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_D_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_D_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSQRT_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSQRT_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FADD_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FADD_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSUB_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSUB_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMUL_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMUL_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FDIV_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FDIV_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSGNJ_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSGNJ_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSGNJN_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSGNJN_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSGNJX_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSGNJX_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMIN_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMIN_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMAX_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMAX_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_S_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_S_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_Q_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_Q_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_D_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_D_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_Q_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_Q_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSQRT_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSQRT_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FLE_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FLE_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FLT_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FLT_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FEQ_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FEQ_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FLE_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FLE_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FLT_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FLT_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FEQ_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FEQ_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FLE_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FLE_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FLT_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FLT_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FEQ_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FEQ_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_W_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_W_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_WU_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_WU_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_L_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_L_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_LU_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_LU_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMV_X_W(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMV_X_W(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCLASS_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCLASS_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_W_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_W_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_WU_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_WU_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_L_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_L_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_LU_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_LU_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMV_X_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMV_X_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCLASS_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCLASS_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_W_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_W_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_WU_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_WU_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_L_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_L_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_LU_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_LU_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMV_X_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMV_X_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCLASS_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCLASS_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_S_W(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_S_W(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_S_WU(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_S_WU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_S_L(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_S_L(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_S_LU(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_S_LU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMV_W_X(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMV_W_X(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_D_W(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_D_W(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_D_WU(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_D_WU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_D_L(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_D_L(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_D_LU(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_D_LU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMV_D_X(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMV_D_X(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_Q_W(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_Q_W(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_Q_WU(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_Q_WU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_Q_L(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_Q_L(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FCVT_Q_LU(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FCVT_Q_LU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMV_Q_X(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMV_Q_X(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FLW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FLW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FLD(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FLD(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FLQ(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FLQ(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSD(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSD(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FSQ(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FSQ(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMADD_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMADD_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMSUB_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMSUB_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FNMSUB_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FNMSUB_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FNMADD_S(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FNMADD_S(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMADD_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMADD_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMSUB_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMSUB_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FNMSUB_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FNMSUB_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FNMADD_D(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FNMADD_D(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMADD_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMADD_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FMSUB_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FMSUB_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FNMSUB_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FNMSUB_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
 void FNMADD_Q(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
+    (void)hart;
+    (void)instr;
     std::cerr << "function iexec::FNMADD_Q(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
 }
 
