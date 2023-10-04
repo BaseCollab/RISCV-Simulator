@@ -40,6 +40,9 @@ reg_t Supervisor::AllocRootPageTable()
     vpt_t vpt;
     memory_->StoreByPageIdx(page_idx, &vpt, sizeof(vpt));
 
+    // TODO: update SATP register right here
+    // TODO: or root_page_idx_ class member
+
     return page_idx;
 }
 
