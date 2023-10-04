@@ -435,9 +435,10 @@ void FENCE_I(Hart &hart, const Instruction &instr)
 
 void MUL(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::MUL(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t rv2 = hart.GetGPR(instr.GetRS2());
+
+    hart.SetGPR(instr.GetRD(), rv1 * rv2);
 }
 
 void MULH(Hart &hart, const Instruction &instr)
@@ -463,65 +464,114 @@ void MULHU(Hart &hart, const Instruction &instr)
 
 void DIV(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::DIV(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = bitops::MakeSigned(hart.GetGPR(instr.GetRS1()));
+    auto rv2 = bitops::MakeSigned(hart.GetGPR(instr.GetRS2()));
+
+    hart.SetGPR(instr.GetRD(), rv1 / rv2);
 }
 
 void DIVU(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::DIVU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t rv2 = hart.GetGPR(instr.GetRS2());
+
+    hart.SetGPR(instr.GetRD(), rv1 / rv2);
 }
 
 void REM(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::REM(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = bitops::MakeSigned(hart.GetGPR(instr.GetRS1()));
+    auto rv2 = bitops::MakeSigned(hart.GetGPR(instr.GetRS2()));
+
+    hart.SetGPR(instr.GetRD(), rv1 % rv2);
 }
 
 void REMU(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::REMU(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t rv2 = hart.GetGPR(instr.GetRS2());
+
+    hart.SetGPR(instr.GetRD(), rv1 % rv2);
 }
 
 void MULW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::MULW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t rv2 = hart.GetGPR(instr.GetRS2());
+
+    rv1 = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1);
+    rv1 = bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(rv1);
+
+    rv2 = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv2);
+    rv2 = bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(rv2);
+
+    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 * rv2);
+
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
 }
 
 void DIVW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::DIVW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = bitops::MakeSigned(hart.GetGPR(instr.GetRS1()));
+    auto rv2 = bitops::MakeSigned(hart.GetGPR(instr.GetRS2()));
+
+    rv1 = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1);
+    rv1 = bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(rv1);
+
+    rv2 = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv2);
+    rv2 = bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(rv2);
+
+    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 / rv2);
+
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
 }
 
 void DIVUW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::DIVUW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t rv2 = hart.GetGPR(instr.GetRS2());
+
+    rv1 = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1);
+    rv1 = bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(rv1);
+
+    rv2 = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv2);
+    rv2 = bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(rv2);
+
+    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 / rv2);
+
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
 }
 
 void REMW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::REMW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    auto rv1 = bitops::MakeSigned(hart.GetGPR(instr.GetRS1()));
+    auto rv2 = bitops::MakeSigned(hart.GetGPR(instr.GetRS2()));
+
+    rv1 = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1);
+    rv1 = bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(rv1);
+
+    rv2 = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv2);
+    rv2 = bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(rv2);
+
+    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 % rv2);
+
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
 }
 
 void REMUW(Hart &hart, const Instruction &instr)
 {
-    (void) hart;
-    (void) instr;
-    std::cerr << "function iexec::REMUW(Hart &hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    reg_t rv1 = hart.GetGPR(instr.GetRS1());
+    reg_t rv2 = hart.GetGPR(instr.GetRS2());
+
+    rv1 = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1);
+    rv1 = bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(rv1);
+
+    rv2 = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv2);
+    rv2 = bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(rv2);
+
+    reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 % rv2);
+
+    hart.SetGPR(instr.GetRD(), bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
 }
 
 void AMOADD_W(Hart &hart, const Instruction &instr)
