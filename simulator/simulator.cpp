@@ -9,7 +9,7 @@ int Main(int argc, char *argv[])
     (void)argc;
     (void)argv;
 
-    auto memory = MemoryCtl();
+    auto memory = PhysMemoryCtl();
     auto hart = Hart(&memory);
     auto supervisor = Supervisor(&hart, &memory);
 

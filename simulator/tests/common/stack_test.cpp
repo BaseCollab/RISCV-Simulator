@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <memory>
 
 #include "common/utils/stack.h"
 
@@ -8,20 +9,15 @@ class StackTest : public testing::Test {
 public:
     static constexpr size_t STACK_SIZE = 4096;
 
-    using StaticStack = utils::Stack<uint16_t, STACK_SIZE>;
-
     void SetUp() override
     {
-        stack_ = new StaticStack();
+        stack_ = std::make_unique<utils::Stack<size_t>>(STACK_SIZE);
     }
 
-    void TearDown() override
-    {
-        delete stack_;
-    }
+    void TearDown() override {}
 
 protected:
-    StaticStack *stack_ {nullptr};
+    std::unique_ptr<utils::Stack<size_t>> stack_;
 };
 
 TEST_F(StackTest, PushAndGetSize)
@@ -36,7 +32,7 @@ TEST_F(StackTest, PushAndGetSize)
     size_t iteration_nmb = 10000;
     for (size_t i = 0; i < iteration_nmb; ++i) {
         auto error = stack_->Push(i);
-        ASSERT_EQ(error.value(), StaticStack::Error::OVERFLOW);
+        ASSERT_EQ(error.value(), utils::Stack<size_t>::Error::OVERFLOW);
     }
     // stack has static size
     ASSERT_EQ(stack_->GetSize(), StackTest::STACK_SIZE);

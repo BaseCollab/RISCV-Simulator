@@ -31,7 +31,7 @@ public:
     explicit ElfLoader(const std::string &elf_pathname);
     ~ElfLoader();
 
-    void LoadElf(MemoryCtl *memory_ctl, const Hart &hart);
+    void LoadElf(PhysMemoryCtl *memory_ctl, const Hart &hart);
 
 private:
     void ValidateElfKind() const;

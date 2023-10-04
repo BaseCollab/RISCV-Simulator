@@ -16,7 +16,7 @@ public:
     NO_COPY_SEMANTIC(Hart);
     NO_MOVE_SEMANTIC(Hart);
 
-    explicit Hart(MemoryCtl *memory) : memory_(memory) {};
+    explicit Hart(PhysMemoryCtl *memory) : memory_(memory) {};
     ~Hart() = default;
 
     const MMU &GetMMU() const
@@ -37,7 +37,7 @@ public:
     CSRs csr_regs;
 
 private:
-    MemoryCtl *memory_ {nullptr};
+    PhysMemoryCtl *memory_ {nullptr};
     MMU mmu_;
 
     gpr_t gpr_table_[N_GPR];

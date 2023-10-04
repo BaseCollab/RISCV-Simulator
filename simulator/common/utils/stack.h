@@ -9,7 +9,7 @@
 
 namespace rvsim::utils {
 
-template <typename Type, size_t capacity>
+template <typename Type>
 class Stack {
 public:
     enum class Error {
@@ -23,12 +23,19 @@ public:
     NO_COPY_SEMANTIC(Stack);
     NO_MOVE_SEMANTIC(Stack);
 
-    Stack() = default;
-    ~Stack() = default;
+    explicit Stack(size_t capacity) : capacity_(capacity)
+    {
+        data_ = new Type[capacity_];
+    }
+
+    ~Stack()
+    {
+        delete[] data_;
+    }
 
     std::optional<Error> Push(Type value)
     {
-        if (size_ >= capacity) {
+        if (size_ >= capacity_) {
             return Error::OVERFLOW;
         }
 
@@ -61,14 +68,20 @@ public:
         return size_;
     }
 
+    size_t GetCapacity() const
+    {
+        return capacity_;
+    }
+
     bool Empty() const
     {
         return size_ == 0;
     }
 
 private:
-    Type data_[capacity];
+    Type *data_ {nullptr};
     size_t size_ {0};
+    size_t capacity_ {0};
 };
 
 } // namespace rvsim::utils

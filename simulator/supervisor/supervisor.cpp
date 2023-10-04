@@ -8,7 +8,7 @@ namespace rvsim {
 /* static */
 Supervisor::ExceptionHandlers Supervisor::handlers_;
 
-Supervisor::Supervisor(Hart *hart, MemoryCtl *memory) : hart_(hart), memory_(memory)
+Supervisor::Supervisor(Hart *hart, PhysMemoryCtl *memory) : hart_(hart), memory_(memory)
 {
     assert(hart);
     assert(memory);

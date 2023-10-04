@@ -24,7 +24,7 @@ public:
     NO_COPY_SEMANTIC(Supervisor);
     NO_MOVE_SEMANTIC(Supervisor);
 
-    explicit Supervisor(Hart *hart, MemoryCtl *memory);
+    explicit Supervisor(Hart *hart, PhysMemoryCtl *memory);
     ~Supervisor() = default;
 
     void LoadElfFile(const std::string &elf_pathname);
@@ -53,7 +53,7 @@ private:
 private:
     Hart *hart_ {nullptr};
 
-    MemoryCtl *memory_ {nullptr};
+    PhysMemoryCtl *memory_ {nullptr};
 
     static ExceptionHandlers handlers_;
     // idx of page where root virtual page table is located

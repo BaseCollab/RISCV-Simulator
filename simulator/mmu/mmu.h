@@ -37,7 +37,7 @@ public:
     MMU() = default;
     ~MMU() = default;
 
-    std::pair<paddr_t, std::optional<MMU::Exception>> VirtToPhysAddr(vaddr_t vaddr, Target target, const CSRs &csr_regs, const MemoryCtl &memory) const;
+    std::pair<paddr_t, std::optional<MMU::Exception>> VirtToPhysAddr(vaddr_t vaddr, Target target, const CSRs &csr_regs, const PhysMemoryCtl &memory) const;
 
 private:
     Exception ValidatePTE(const pte_t &pte, MMU::Target target) const;
