@@ -36,4 +36,19 @@ void Hart::SetGPR(gpr_idx_t reg_idx, gpr_t value)
     gpr_table_[reg_idx] = value;
 }
 
+template <typename ValueType>
+reg_t Hart::LoadFromMemory(vaddr_t src) const
+{
+    // TODO: Page-fault handling
+    auto pair = memory_->Load<ValueType>(src);
+    return pair.second;
+}
+
+template <typename ValueType>
+void Hart::StoreToMemory(vaddr_t dst, reg_t value) const
+{
+    // TODO: Page-fault handling
+    memory_->Store<ValueType>(dst, value);
+}
+
 } // namespace rvsim

@@ -33,6 +33,12 @@ public:
     gpr_t GetGPR(gpr_idx_t reg_idx) const;
     void SetGPR(gpr_idx_t reg_idx, gpr_t value);
 
+    template <typename ValueType>
+    reg_t LoadFromMemory(vaddr_t src) const;
+
+    template <typename ValueType>
+    void StoreToMemory(vaddr_t dst, reg_t value) const;
+
 public:
     CSRs csr_regs;
 
