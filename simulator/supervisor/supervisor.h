@@ -29,11 +29,6 @@ public:
 
     void LoadElfFile(const std::string &elf_pathname);
 
-    static const ExceptionHandlers &GetExceptionHandlers()
-    {
-        return handlers_;
-    }
-
     /*
     In case of MMU::Exception::INVALID_PAGE_ENTRY or PAGE_FAULT
     operation systam aka Supervisor need to handle this exception
