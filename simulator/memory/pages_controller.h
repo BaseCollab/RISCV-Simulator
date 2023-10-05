@@ -39,7 +39,7 @@ public:
         }
     }
 
-    std::pair<uint16_t, std::optional<Error>> GetCleanPage()
+    std::pair<reg_t, std::optional<Error>> GetCleanPage()
     {
         if (clean_pages_stack_->Empty()) {
             return {0, Error::OUT_OF_PAGES};

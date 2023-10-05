@@ -12,18 +12,13 @@ Supervisor::Supervisor(Hart *hart, PhysMemoryCtl *memory) : hart_(hart), memory_
 {
     assert(hart);
     assert(memory);
-
-    CSRs *csr_regs = &(hart_->csr_regs);
-
-    root_page_idx_ = AllocRootPageTable();
-    InitializeCSR(csr_regs);
 }
 
-void Supervisor::InitializeCSR(CSRs *csr_regs)
+void Supervisor::InitializeCSR(CSRs *csr_regs, reg_t root_page_idx)
 {
     assert(csr_regs);
 
-    csr_satp_t satp = {.mode = 0x9, .asid = 0x0, .ppn = root_page_idx_}; // 0x9 = Sv48
+    csr_satp_t satp = {.mode = 0x9, .asid = 0x0, .ppn = root_page_idx}; // 0x9 = Sv48
     csr_t satp_reg = 0;
     std::memcpy(&satp_reg, &satp, sizeof(csr_satp_t));
 
@@ -40,14 +35,16 @@ reg_t Supervisor::AllocRootPageTable()
     vpt_t vpt;
     memory_->StoreByPageIdx(page_idx, &vpt, sizeof(vpt));
 
-    // TODO: update SATP register right here
-    // TODO: or root_page_idx_ class member
-
     return page_idx;
 }
 
 void Supervisor::LoadElfFile(const std::string &elf_pathname)
 {
+    CSRs *csr_regs = &(hart_->csr_regs);
+
+    reg_t root_page_idx = AllocRootPageTable();
+    InitializeCSR(csr_regs, root_page_idx);
+
     ElfLoader elf_loader(elf_pathname);
     elf_loader.LoadElf(memory_, *hart_);
 }

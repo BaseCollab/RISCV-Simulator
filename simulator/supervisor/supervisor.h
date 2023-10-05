@@ -42,7 +42,7 @@ public:
     void VirtualPageMapping(vaddr_t vaddr, uint8_t rwx_flags);
 
 private:
-    void InitializeCSR(CSRs *csr_regs);
+    void InitializeCSR(CSRs *csr_regs, reg_t root_page_idx);
 
     reg_t AllocRootPageTable();
 
@@ -56,8 +56,6 @@ private:
     PhysMemoryCtl *memory_ {nullptr};
 
     static ExceptionHandlers handlers_;
-    // idx of page where root virtual page table is located
-    reg_t root_page_idx_ {0};
 };
 
 } // namespace rvsim
