@@ -1,10 +1,11 @@
-#include "supervisor.h"
+#include "exception_handler.h"
 
 #include <cassert>
+#include <elf.h>
 
 namespace rvsim {
 
-void Supervisor::MMUExceptionHandler(MMU::Exception exception)
+void ExceptionHandler::MMUExceptionHandler(Hart *hart, MMU::Exception exception)
 {
     if (exception == MMU::Exception::NONE) {
         return;
@@ -50,7 +51,7 @@ void Supervisor::MMUExceptionHandler(MMU::Exception exception)
     }
 }
 
-void Supervisor::VirtualPageMapping(vaddr_t vaddr, uint8_t rwx_flags)
+void ExceptionHandler::VirtualPageMapping(vaddr_t vaddr, uint8_t rwx_flags)
 {
     (void)vaddr;
     (void)rwx_flags;

@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.13)
 
 set(SOURCES supervisor.cpp
             elf_loader.cpp
-            exception_handling.cpp
 )
 
 add_library(supervisor_impl OBJECT ${SOURCES})

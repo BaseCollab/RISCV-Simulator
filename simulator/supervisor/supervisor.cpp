@@ -5,13 +5,12 @@
 
 namespace rvsim {
 
-/* static */
-Supervisor::ExceptionHandlers Supervisor::handlers_;
-
 Supervisor::Supervisor(Hart *hart, PhysMemoryCtl *memory) : hart_(hart), memory_(memory)
 {
     assert(hart);
     assert(memory);
+
+    SetExceptionHandlers();
 }
 
 void Supervisor::InitializeCSR(CSRs *csr_regs, reg_t root_page_idx)
@@ -51,7 +50,10 @@ void Supervisor::LoadElfFile(const std::string &elf_pathname)
 
 void Supervisor::SetExceptionHandlers()
 {
-    handlers_.mmu_handler = std::bind(&Supervisor::MMUExceptionHandler, this, std::placeholders::_1);
+    Hart::ExceptionHandlers handlers;
+    handlers.mmu_handler = std::bind(&ExceptionHandler::MMUExceptionHandler, hart_, std::placeholders::_1);
+
+    hart.SetExceptionHandlers(handlers);
 }
 
 } // namespace rvsim

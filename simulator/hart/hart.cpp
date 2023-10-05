@@ -4,6 +4,11 @@
 
 namespace rvsim {
 
+void Hart::SetExceptionHandlers(const ExceptionHandlers &handlers)
+{
+    handlers_ = handlers;
+}
+
 reg_t Hart::GetPC() const
 {
     return pc_;

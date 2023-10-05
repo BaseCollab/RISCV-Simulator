@@ -8,17 +8,24 @@
 #include "csr.h"
 
 #include <cstdint>
-#include <gelf.h>
+#include <elf.h>
 
 namespace rvsim {
 
 class Hart {
+public:
+    struct ExceptionHandlers {
+        std::function<void(MMU::Exception)> mmu_handler;
+    };
+
 public:
     NO_COPY_SEMANTIC(Hart);
     NO_MOVE_SEMANTIC(Hart);
 
     explicit Hart(PhysMemoryCtl *memory) : memory_(memory) {};
     ~Hart() = default;
+
+    void SetExceptionHandlers(const ExceptionHandlers &handlers);
 
     const MMU &GetMMU() const
     {
@@ -54,6 +61,8 @@ private:
 
     reg_t pc_;
     reg_t pc_target_;
+
+    ExceptionHandlers handlers_;
 };
 
 } // namespace rvsim

@@ -1,12 +1,12 @@
 #ifndef SIMULATOR_SUPERVISOR_SUPERVISOR_H
 #define SIMULATOR_SUPERVISOR_SUPERVISOR_H
 
-#include "vpt.h"
-#include "hart/hart.h"
 #include "common/macros.h"
 #include "common/constants.h"
 #include "common/config.h"
 #include "hart/hart.h"
+#include "hart/vpt.h"
+#include "hart/exception_handler.h"
 #include "memory/memory_controller.h"
 #include "elf_loader.h"
 
@@ -15,11 +15,6 @@
 namespace rvsim {
 
 class Supervisor {
-public:
-    struct ExceptionHandlers {
-        std::function<void(MMU::Exception)> mmu_handler;
-    };
-
 public:
     NO_COPY_SEMANTIC(Supervisor);
     NO_MOVE_SEMANTIC(Supervisor);
@@ -49,8 +44,6 @@ private:
     Hart *hart_ {nullptr};
 
     PhysMemoryCtl *memory_ {nullptr};
-
-    static ExceptionHandlers handlers_;
 };
 
 } // namespace rvsim
