@@ -46,7 +46,7 @@ void Supervisor::LoadElfFile(const std::string &elf_pathname)
     InitializeCSR(csr_regs, root_page_idx);
 
     ElfLoader elf_loader(elf_pathname);
-    elf_loader.LoadElf(memory_, *hart_);
+    elf_loader.LoadElf(*hart_);
 }
 
 void Supervisor::SetExceptionHandlers()

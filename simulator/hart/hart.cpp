@@ -36,8 +36,24 @@ void Hart::SetGPR(gpr_idx_t reg_idx, gpr_t value)
     gpr_table_[reg_idx] = value;
 }
 
+void Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags) const
+{
+    (void)dst;
+    (void)dst_size;
+    (void)src;
+    (void)rwx_flags;
+}
+
+void Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags) const
+{
+    (void)dst;
+    (void)src_size;
+    (void)src;
+    (void)rwx_flags;
+}
+
 template <typename ValueType>
-reg_t Hart::LoadFromMemory(vaddr_t src) const
+reg_t Hart::LoadFromMemory(vaddr_t src, uint8_t rwx_flags) const
 {
     // TODO: Page-fault handling
     auto pair = memory_->Load<ValueType>(src);
@@ -45,7 +61,7 @@ reg_t Hart::LoadFromMemory(vaddr_t src) const
 }
 
 template <typename ValueType>
-void Hart::StoreToMemory(vaddr_t dst, reg_t value) const
+void Hart::StoreToMemory(vaddr_t dst, reg_t value, uint8_t rwx_flags) const
 {
     // TODO: Page-fault handling
     memory_->Store<ValueType>(dst, value);

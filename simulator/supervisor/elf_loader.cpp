@@ -1,6 +1,7 @@
 #include "elf_loader.h"
 #include "supervisor.h"
 
+#include <unistd.h>
 #include <iostream>
 
 namespace rvsim {
@@ -21,6 +22,19 @@ ElfLoader::ElfLoader(const std::string &elf_pathname) : elf_pathname_(elf_pathna
         err(EX_NOINPUT, "Open \"%s\" failed: %s", elf_pathname_.c_str(), strerror(errno));
     }
 
+    elf_buffer_size_ = lseek(elf_fd_, 0, SEEK_END);
+    lseek(elf_fd_, 0, SEEK_SET);
+
+    elf_buffer_ = (unsigned char *)calloc(elf_buffer_size_ + 1, sizeof(unsigned char));
+    if (elf_buffer_ == nullptr) {
+        err(EX_OSERR, "File \"%s\" buffering failed (calloc())", elf_pathname_.c_str());
+    }
+
+    int read_error = read(elf_fd_, elf_buffer_, elf_buffer_size_);
+    if (read_error != 0) {
+        err(EX_OSERR, "Read of \"%s\" failed (read()): %s", elf_pathname_.c_str(), strerror(errno));
+    }
+
     elf_ = elf_begin(elf_fd_, ELF_C_READ, nullptr);
     if (elf_ == nullptr) {
         errx(EX_SOFTWARE, "elf_begin() failed : %s. ", elf_errmsg(-1));
@@ -31,11 +45,12 @@ ElfLoader::ElfLoader(const std::string &elf_pathname) : elf_pathname_(elf_pathna
 
 ElfLoader::~ElfLoader()
 {
+    free(elf_buffer_);
     elf_end(elf_);
     close(elf_fd_);
 }
 
-void ElfLoader::LoadElf(PhysMemoryCtl *memory_ctl, const Hart &hart)
+void ElfLoader::LoadElf(const Hart &hart)
 {
     GElf_Ehdr elf_header;
     if (gelf_getehdr(elf_, &elf_header) == nullptr) {
@@ -59,21 +74,13 @@ void ElfLoader::LoadElf(PhysMemoryCtl *memory_ctl, const Hart &hart)
         }
 
         if (curr_segment_header->p_type == PT_LOAD) {
-            // if curr_segment_header is loadable program segment then load it to virutal memory
+            // If curr_segment_header is loadable program segment then load it to virtual memory
             Elf64_Xword segment_vaddr = curr_segment_header->p_vaddr;
-            Elf64_Xword segment_size = curr_segment_header->p_memsz;
+            Elf64_Xword segment_elf_size = curr_segment_header->p_filesz;
+            Elf64_Off segment_file_offset = curr_segment_header->p_offset;
             Elf64_Word segment_flags = curr_segment_header->p_flags;
 
-            // exception
-            // Supervisor::GetExceptionHandlers().mmu_handler({ MMU::Exception::INVALID_PAGE_ENTRY, segment_vaddr,
-            // segment_flags });
-            (void)segment_flags;
-
-            auto addr_err_pair =
-                hart.GetMMU().VirtToPhysAddr(segment_vaddr, MMU::Target::READ, hart.csr_regs, *memory_ctl);
-
-            paddr_t phys_addr = addr_err_pair.first;
-            memory_ctl->Store(phys_addr.value, curr_segment_header, segment_size);
+            hart.StoreToMemory(segment_vaddr, elf_buffer_ + segment_file_offset, segment_elf_size, segment_flags);
         }
     }
 }

@@ -8,6 +8,7 @@
 #include "csr.h"
 
 #include <cstdint>
+#include <gelf.h>
 
 namespace rvsim {
 
@@ -33,11 +34,14 @@ public:
     gpr_t GetGPR(gpr_idx_t reg_idx) const;
     void SetGPR(gpr_idx_t reg_idx, gpr_t value);
 
-    template <typename ValueType>
-    reg_t LoadFromMemory(vaddr_t src) const;
+    void LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
+    void StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
 
     template <typename ValueType>
-    void StoreToMemory(vaddr_t dst, reg_t value) const;
+    reg_t LoadFromMemory(vaddr_t src, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
+
+    template <typename ValueType>
+    void StoreToMemory(vaddr_t dst, reg_t value, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
 
 public:
     CSRs csr_regs;
