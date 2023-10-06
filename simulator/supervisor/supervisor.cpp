@@ -51,7 +51,7 @@ void Supervisor::LoadElfFile(const std::string &elf_pathname)
 void Supervisor::SetExceptionHandlers()
 {
     Hart::ExceptionHandlers handlers;
-    handlers.mmu_handler = std::bind(&ExceptionHandler::MMUExceptionHandler, hart_, std::placeholders::_1);
+    handlers.mmu_handler = std::bind(ExceptionHandler::MMUExceptionHandler, hart_, std::placeholders::_1, std::placeholders::_2);
 
     hart_->SetExceptionHandlers(handlers);
 }

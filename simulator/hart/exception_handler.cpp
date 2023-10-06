@@ -5,9 +5,10 @@
 
 namespace rvsim {
 
-void ExceptionHandler::MMUExceptionHandler(Hart *hart, MMU::Exception exception)
+void ExceptionHandler::MMUExceptionHandler(Hart *hart, MMU::Exception exception, uint8_t rwx_flags)
 {
     (void)hart;
+    (void)rwx_flags;
 
     if (exception == MMU::Exception::NONE) {
         return;

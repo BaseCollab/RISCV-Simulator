@@ -12,7 +12,7 @@ namespace rvsim {
 
 class ExceptionHandler {
 public:
-    static void MMUExceptionHandler(Hart *hart, MMU::Exception exception);
+    static void MMUExceptionHandler(Hart *hart, MMU::Exception exception, uint8_t rwx_flags);
 
 private:
     void VirtualPageMapping(vaddr_t vaddr, uint8_t rwx_flags);
