@@ -29,11 +29,11 @@ MMU::Exception MMU::ValidatePTE(const pte_t &pte, uint8_t rwx_flags) const
     return MMU::Exception::NONE;
 }
 
-std::pair<paddr_t, std::optional<MMU::Exception>> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_flags,
+std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_flags,
                                                                       const CSRs &csr_regs,
                                                                       const PhysMemoryCtl &memory) const
 {
-    paddr_t paddr = {.value = 0};
+    paddr_t paddr = 0;
 
     pte_t pte_3;
     pte_t pte_2;
@@ -72,7 +72,7 @@ std::pair<paddr_t, std::optional<MMU::Exception>> MMU::VirtToPhysAddr(vaddr_t va
 
                 memory.Load(&pte_0, sizeof(pte_0), pte_1.ppn * VPAGE_SIZE + vaddr.fields.vpn_0);
 
-                exception = ValidatePTE(pte_0, target);
+                exception = ValidatePTE(pte_0, rwx_flags);
                 if (exception != MMU::Exception::NONE)
                     return std::make_pair(paddr, exception);
 

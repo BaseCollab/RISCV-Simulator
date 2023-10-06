@@ -7,6 +7,7 @@
 #include "mmu/mmu.h"
 #include "csr.h"
 
+#include <functional>
 #include <cstdint>
 #include <elf.h>
 
@@ -45,10 +46,10 @@ public:
     void StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
 
     template <typename ValueType>
-    reg_t LoadFromMemory(vaddr_t src, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
+    ValueType LoadFromMemory(vaddr_t src, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
 
     template <typename ValueType>
-    void StoreToMemory(vaddr_t dst, reg_t value, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
+    void StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
 
 public:
     CSRs csr_regs;

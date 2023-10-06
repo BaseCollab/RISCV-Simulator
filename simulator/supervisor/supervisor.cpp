@@ -53,7 +53,7 @@ void Supervisor::SetExceptionHandlers()
     Hart::ExceptionHandlers handlers;
     handlers.mmu_handler = std::bind(&ExceptionHandler::MMUExceptionHandler, hart_, std::placeholders::_1);
 
-    hart.SetExceptionHandlers(handlers);
+    hart_->SetExceptionHandlers(handlers);
 }
 
 } // namespace rvsim

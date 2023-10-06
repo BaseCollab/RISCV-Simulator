@@ -7,6 +7,8 @@ namespace rvsim {
 
 void ExceptionHandler::MMUExceptionHandler(Hart *hart, MMU::Exception exception)
 {
+    (void)hart;
+
     if (exception == MMU::Exception::NONE) {
         return;
     }

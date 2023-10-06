@@ -3,7 +3,7 @@
 
 #include "common/macros.h"
 #include "common/constants.h"
-#include "supervisor/vpt.h"
+#include "hart/vpt.h"
 #include "hart/csr.h"
 #include "memory/memory_controller.h"
 
@@ -30,7 +30,7 @@ public:
     MMU() = default;
     ~MMU() = default;
 
-    std::pair<paddr_t, std::optional<MMU::Exception>> VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_flags, const CSRs &csr_regs, const PhysMemoryCtl &memory) const;
+    std::pair<paddr_t, MMU::Exception> VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_flags, const CSRs &csr_regs, const PhysMemoryCtl &memory) const;
 
 private:
     Exception ValidatePTE(const pte_t &pte, uint8_t rwx_flags) const;
