@@ -16,8 +16,8 @@ static constexpr size_t PPAGE_SIZE = VPAGE_SIZE;
 using instr_size_t = word_t;
 
 using reg_t      = dword_t;
-using addr_t     = dword_t;
-using bit_size_t = dword_t;
+using addr_t     = reg_t;
+using bit_size_t = reg_t;
 
 using gpr_t     = reg_t; // GPR = General Purpose Register
 using gpr_idx_t = byte_t;

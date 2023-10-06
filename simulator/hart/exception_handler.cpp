@@ -2,6 +2,8 @@
 
 #include <cassert>
 #include <elf.h>
+#include <sysexits.h>
+#include <err.h>
 
 namespace rvsim {
 
@@ -14,6 +16,8 @@ void ExceptionHandler::MMUExceptionHandler(Hart *hart, MMU::Exception exception,
         return;
     }
 
+    addr_t exception_addr = hart->GetPC();
+
     switch (exception) {
         case MMU::Exception::INVALID_PAGE_ENTRY:
             /*
@@ -25,31 +29,24 @@ void ExceptionHandler::MMUExceptionHandler(Hart *hart, MMU::Exception exception,
                 6) create new table, request from memory new page
                 7) set ppn
             */
-
-            break;
+           break;
 
         case MMU::Exception::INVALID_PAGE_SIZE:
-
-            break;
+            err(EX_SOFTWARE, "Superpages, megapages, etc - are not supported (rwx != 0x0 for not final page table entry) [addr %lx]", exception_addr);
 
         case MMU::Exception::PAGE_WRITE_NO_READ:
-
-            break;
+            err(EX_SOFTWARE, "Page invalid rights: write permission without read permission [addr %lx]", exception_addr);
 
         case MMU::Exception::PAGE_ACCESS_READ:
-
-            break;
+            err(EX_SOFTWARE, "Page access fault: read without read permission [addr %lx]", exception_addr);
 
         case MMU::Exception::PAGE_ACCESS_WRITE:
-
-            break;
+            err(EX_SOFTWARE, "Page access fault: write without write permission [addr %lx]", exception_addr);
 
         case MMU::Exception::PAGE_ACCESS_EXECUTE:
-
-            break;
+            err(EX_SOFTWARE, "Page access fault: execute without execute permission [addr %lx]", exception_addr);
 
         default:
-
             break;
     }
 }
