@@ -3,10 +3,11 @@
 #include <optional>
 #include <utility>
 #include <cstring>
+#include <elf.h>
 
 namespace rvsim {
 
-MMU::Exception MMU::ValidatePTE(const pte_t &pte, MMU::Target target) const
+MMU::Exception MMU::ValidatePTE(const pte_t &pte, uint8_t rwx_flags) const
 {
     if (pte.v == 0) // not valid page table entry
         return MMU::Exception::INVALID_PAGE_ENTRY;
@@ -14,27 +15,25 @@ MMU::Exception MMU::ValidatePTE(const pte_t &pte, MMU::Target target) const
     if (pte.w == 1 && pte.r == 0)
         return MMU::Exception::PAGE_WRITE_NO_READ;
 
-    if (target != MMU::Target::NONE) {
-        if ((target == MMU::Target::READ) && pte.r == 0)
-            return MMU::Exception::PAGE_ACCESS_READ;
+    if ((rwx_flags & PF_R) && (pte.r == 0))
+        return MMU::Exception::PAGE_ACCESS_READ;
 
-        if ((target == MMU::Target::WRITE) && pte.w == 0)
-            return MMU::Exception::PAGE_ACCESS_WRITE;
+    if ((rwx_flags & PF_W) && (pte.w == 0))
+        return MMU::Exception::PAGE_ACCESS_WRITE;
 
-        if ((target == MMU::Target::EXECUTE) && pte.x == 0)
-            return MMU::Exception::PAGE_ACCESS_EXECUTE;
-    }
+    if ((rwx_flags & PF_X) && (pte.x == 0))
+        return MMU::Exception::PAGE_ACCESS_EXECUTE;
 
     // TODO: add all other possible exceptions
 
     return MMU::Exception::NONE;
 }
 
-std::pair<paddr_t, std::optional<MMU::Exception>> MMU::VirtToPhysAddr(vaddr_t vaddr, MMU::Target target,
+std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_flags,
                                                                       const CSRs &csr_regs,
                                                                       const PhysMemoryCtl &memory) const
 {
-    paddr_t paddr = {.value = 0};
+    paddr_t paddr = 0;
 
     pte_t pte_3;
     pte_t pte_2;
@@ -51,7 +50,7 @@ std::pair<paddr_t, std::optional<MMU::Exception>> MMU::VirtToPhysAddr(vaddr_t va
 
     if (pte_3.x == 0 && pte_3.w == 0 && pte_3.r == 0) // pointer to next level
     {
-        exception = ValidatePTE(pte_3, MMU::Target::NONE);
+        exception = ValidatePTE(pte_3, 0);
         if (exception != MMU::Exception::NONE)
             return std::make_pair(paddr, exception);
 
@@ -59,7 +58,7 @@ std::pair<paddr_t, std::optional<MMU::Exception>> MMU::VirtToPhysAddr(vaddr_t va
 
         if (pte_2.x == 0 && pte_2.w == 0 && pte_2.r == 0) // pointer to next level
         {
-            exception = ValidatePTE(pte_2, MMU::Target::NONE);
+            exception = ValidatePTE(pte_2, 0);
             if (exception != MMU::Exception::NONE)
                 return std::make_pair(paddr, exception);
 
@@ -67,13 +66,13 @@ std::pair<paddr_t, std::optional<MMU::Exception>> MMU::VirtToPhysAddr(vaddr_t va
 
             if (pte_1.x == 0 && pte_1.w == 0 && pte_1.r == 0) // pointer to next level
             {
-                exception = ValidatePTE(pte_1, MMU::Target::NONE);
+                exception = ValidatePTE(pte_1, 0);
                 if (exception != MMU::Exception::NONE)
                     return std::make_pair(paddr, exception);
 
                 memory.Load(&pte_0, sizeof(pte_0), pte_1.ppn * VPAGE_SIZE + vaddr.fields.vpn_0);
 
-                exception = ValidatePTE(pte_0, target);
+                exception = ValidatePTE(pte_0, rwx_flags);
                 if (exception != MMU::Exception::NONE)
                     return std::make_pair(paddr, exception);
 

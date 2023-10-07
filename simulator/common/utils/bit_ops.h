@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cassert>
+#include <type_traits>
 
 namespace rvsim {
 namespace bitops {
@@ -51,6 +52,13 @@ constexpr dword_t SignExtend(dword_t value)
     dword_t mask = ((dword_t {1} << shift) - sign) << old_size;
 
     return GetBits<new_size - 1, 0>(mask | value);
+}
+
+template <typename T>
+std::make_signed_t<T> MakeSigned(T unsigned_value)
+{
+    static_assert(std::is_unsigned_v<T>);
+    return static_cast<std::make_signed_t<T>>(unsigned_value);
 }
 
 dword_t Ones(bit_size_t high, bit_size_t low);

@@ -31,7 +31,7 @@ public:
     explicit ElfLoader(const std::string &elf_pathname);
     ~ElfLoader();
 
-    void LoadElf(PhysMemoryCtl *memory_ctl, const Hart &hart);
+    void LoadElf(const Hart &hart);
 
 private:
     void ValidateElfKind() const;
@@ -43,6 +43,9 @@ private:
 
     int elf_fd_ {0};
     Elf *elf_ {nullptr};
+
+    unsigned char *elf_buffer_ {nullptr};
+    size_t elf_buffer_size_ {0};
 };
 
 } // namespace rvsim

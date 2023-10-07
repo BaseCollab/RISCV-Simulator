@@ -7,17 +7,26 @@
 #include "mmu/mmu.h"
 #include "csr.h"
 
+#include <functional>
 #include <cstdint>
+#include <elf.h>
 
 namespace rvsim {
 
 class Hart {
+public:
+    struct ExceptionHandlers {
+        std::function<void(MMU::Exception, uint8_t)> mmu_handler;
+    };
+
 public:
     NO_COPY_SEMANTIC(Hart);
     NO_MOVE_SEMANTIC(Hart);
 
     explicit Hart(PhysMemoryCtl *memory) : memory_(memory) {};
     ~Hart() = default;
+
+    void SetExceptionHandlers(const ExceptionHandlers &handlers);
 
     const MMU &GetMMU() const
     {
@@ -33,6 +42,15 @@ public:
     gpr_t GetGPR(gpr_idx_t reg_idx) const;
     void SetGPR(gpr_idx_t reg_idx, gpr_t value);
 
+    void LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
+    void StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
+
+    template <typename ValueType>
+    ValueType LoadFromMemory(vaddr_t src, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
+
+    template <typename ValueType>
+    void StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
+
 public:
     CSRs csr_regs;
 
@@ -44,6 +62,8 @@ private:
 
     reg_t pc_;
     reg_t pc_target_;
+
+    ExceptionHandlers handlers_;
 };
 
 } // namespace rvsim

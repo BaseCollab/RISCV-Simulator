@@ -169,7 +169,9 @@ def generate_execution_decls(yaml_dict):
         for i in range(len(instrs_mnemonic_list)):
             fout.write(f'void {instrs_mnemonic_list[i]}(Hart &hart, const Instruction &instr)\n'
                         '{\n')
-            fout.write(f'    std::cerr << \"function exec_{instrs_mnemonic_list[i]}(Hart &hart, const Instruction &instr) '
+            fout.write('    (void) hart;\n')
+            fout.write('    (void) instr;\n')
+            fout.write(f'    std::cerr << \"function iexec::{instrs_mnemonic_list[i]}(Hart &hart, const Instruction &instr) '
                        'is not implemented yet!\" << std::endl;\n')
             fout.write("}\n\n")
 
