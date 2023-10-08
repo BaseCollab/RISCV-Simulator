@@ -24,18 +24,18 @@ enum OPT_NAMES {
 
 class ArgParser {
 public:
-    std::string &exec_fn,
-    std::string &out_fn,
+    std::string exec_fn;
+    std::string out_fn;
 
     ArgParser(int argc, char *argv[]);
     bool Parse();
 
 private:
-    int argc_,
-    char *argv_[],
+    int argc_;
+    char **argv_;
 
     void PrintHelp();
-}
+};
 
 } // end of rvsim namespace
 

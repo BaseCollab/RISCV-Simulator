@@ -2,9 +2,7 @@
 
 namespace rvsim {
 
-ArgParser::ArgParser(int argc, char *argv[])  :
-    exec_fn(),
-    out_fn(),
+ArgParser::ArgParser(int argc, char *argv[])
 {
         argc_ = argc;
         argv_ = argv;
@@ -15,7 +13,7 @@ ArgParser::ArgParser(int argc, char *argv[])  :
 bool ArgParser::Parse()
 {
     if (argc_ < 2) {
-        printUsage(argv_[0]);
+        PrintHelp();
         return false;
     }
 
@@ -27,7 +25,7 @@ bool ArgParser::Parse()
 
 
     int opt = 0;
-    while ((opt = getopt(argc, argv, "-o:h", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc_, argv_, "-o:h", long_options, NULL)) != -1) {
         switch (opt) {
         case OPT_FILE:
             exec_fn = optarg;
