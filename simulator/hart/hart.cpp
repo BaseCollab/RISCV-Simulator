@@ -75,9 +75,11 @@ void Hart::Interpret()
 
     while (!is_idle_) {
         instr_size_t raw_instr = FetchInstruction();
+
         Instruction instr;
         DecodeAndExecute(&instr, raw_instr);
-        pc_ += sizeof(instr_size_t);
+
+        pc_ = pc_target_;
     }
 }
 
