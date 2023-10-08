@@ -29,9 +29,9 @@ ElfLoader::ElfLoader(const std::string &elf_pathname) : elf_pathname_(elf_pathna
     std::cerr << "[DEBUG] Elf file size is = " << elf_buffer_size_ << std::endl;
 #endif
 
-    elf_buffer_ = (unsigned char *)calloc(elf_buffer_size_ + 1, sizeof(unsigned char));
+    elf_buffer_ = new uint8_t[elf_buffer_size_ * sizeof(uint8_t)];
     if (elf_buffer_ == nullptr) {
-        err(EX_OSERR, "File \"%s\" buffering failed (calloc())", elf_pathname_.c_str());
+        err(EX_OSERR, "File \"%s\" buffering failed (new)", elf_pathname_.c_str());
     }
 
     int read_error = read(elf_fd_, elf_buffer_, elf_buffer_size_);
@@ -49,7 +49,8 @@ ElfLoader::ElfLoader(const std::string &elf_pathname) : elf_pathname_(elf_pathna
 
 ElfLoader::~ElfLoader()
 {
-    free(elf_buffer_);
+    delete[] elf_buffer_;
+
     elf_end(elf_);
     close(elf_fd_);
 }
@@ -66,7 +67,10 @@ void ElfLoader::LoadElf(const Hart &hart)
         errx(EX_DATAERR, "getclass() failed: %s.", elf_errmsg(-1));
     } else if (elf_class == ELFCLASS32) {
         std::cerr << "ElfLoader error: the file is 32 bit, 64 bit is required" << std::endl;
+        return;
     }
+
+    elf_entry_ = elf_header.e_entry;
 
     Elf64_Half segments_count = elf_header.e_phnum;
 

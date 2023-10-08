@@ -33,6 +33,11 @@ public:
 
     void LoadElf(const Hart &hart);
 
+    uint64_t GetElfEntryPoint() const
+    {
+        return elf_entry_;
+    }
+
 private:
     void ValidateElfKind() const;
 
@@ -44,8 +49,10 @@ private:
     int elf_fd_ {0};
     Elf *elf_ {nullptr};
 
-    unsigned char *elf_buffer_ {nullptr};
+    uint8_t *elf_buffer_ {nullptr};
     size_t elf_buffer_size_ {0};
+
+    uint64_t elf_entry_ {0};
 };
 
 } // namespace rvsim

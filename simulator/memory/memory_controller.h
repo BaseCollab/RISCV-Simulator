@@ -37,16 +37,18 @@ public:
         }
 
         memory_.Store<ValueType>(dst, value);
+
+        return std::nullopt;
     }
 
     template <typename ValueType>
     std::pair<ValueType, std::optional<Error>> Load(addr_t src) const
     {
         if (!BoundaryCheck(src, sizeof(ValueType))) {
-            return Error::LOAD_BOUNDARY_CHK;
+            return {0, Error::LOAD_BOUNDARY_CHK};
         }
 
-        memory_.Load<ValueType>(src);
+        return {memory_.Load<ValueType>(src), std::nullopt};
     }
 
     // Store src_size bytes from src to dst in ram_
