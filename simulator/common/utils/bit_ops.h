@@ -33,6 +33,13 @@ constexpr dword_t GetBits(dword_t value)
     return (value >> low) & (Ones() >> (BitSizeof<dword_t>() - bit_size));
 }
 
+template <bit_size_t high, bit_size_t low>
+constexpr dword_t Ones()
+{
+    static_assert(high >= low);
+    return ~((Ones() >> (BitSizeof<dword_t>() - high - 1)) ^ (Ones() << low));
+}
+
 template <dword_t max, dword_t min>
 constexpr dword_t Clamp(dword_t value)
 {
