@@ -25,9 +25,9 @@ ElfLoader::ElfLoader(const std::string &elf_pathname) : elf_pathname_(elf_pathna
     elf_buffer_size_ = lseek(elf_fd_, 0, SEEK_END);
     lseek(elf_fd_, 0, SEEK_SET);
 
-    #ifndef NDEBUG
-        std::cerr << "[DEBUG] Elf file size is = " << elf_buffer_size_ << std::endl;
-    #endif
+#ifndef NDEBUG
+    std::cerr << "[DEBUG] Elf file size is = " << elf_buffer_size_ << std::endl;
+#endif
 
     elf_buffer_ = (unsigned char *)calloc(elf_buffer_size_ + 1, sizeof(unsigned char));
     if (elf_buffer_ == nullptr) {
@@ -70,9 +70,9 @@ void ElfLoader::LoadElf(const Hart &hart)
 
     Elf64_Half segments_count = elf_header.e_phnum;
 
-    #ifndef NDEBUG
-        std::cerr << "[DEBUG] Amount of elf segments = " << segments_count << std::endl;
-    #endif
+#ifndef NDEBUG
+    std::cerr << "[DEBUG] Amount of elf segments = " << segments_count << std::endl;
+#endif
 
     for (size_t i = 0; i < segments_count; ++i) {
         // Get next header
@@ -88,13 +88,13 @@ void ElfLoader::LoadElf(const Hart &hart)
             Elf64_Off segment_file_offset = curr_segment_header.p_offset;
             Elf64_Word segment_flags = curr_segment_header.p_flags;
 
-            #ifndef NDEBUG
-                std::cerr << "[DEBUG] Segment " << i << " is PT_LOAD:" << std::endl;
-                std::cerr << "[DEBUG]     p_vaddr = "  << segment_vaddr << std::endl;
-                std::cerr << "[DEBUG]     p_filesz = " << segment_elf_size << std::endl;
-                std::cerr << "[DEBUG]     p_offset = " << segment_file_offset << std::endl;
-                std::cerr << "[DEBUG]     p_flags = "  << segment_flags << std::endl;
-            #endif
+#ifndef NDEBUG
+            std::cerr << "[DEBUG] Segment " << i << " is PT_LOAD:" << std::endl;
+            std::cerr << "[DEBUG]     p_vaddr = " << segment_vaddr << std::endl;
+            std::cerr << "[DEBUG]     p_filesz = " << segment_elf_size << std::endl;
+            std::cerr << "[DEBUG]     p_offset = " << segment_file_offset << std::endl;
+            std::cerr << "[DEBUG]     p_flags = " << segment_flags << std::endl;
+#endif
 
             hart.StoreToMemory(segment_vaddr, elf_buffer_ + segment_file_offset, segment_elf_size, segment_flags);
         }

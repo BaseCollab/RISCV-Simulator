@@ -12,7 +12,8 @@ namespace rvsim {
 
 class ExceptionHandler {
 public:
-    static void MMUExceptionHandler(Hart *hart, PhysMemoryCtl *memory, MMU::Exception exception, addr_t vaddr, uint8_t rwx_flags);
+    static void MMUExceptionHandler(Hart *hart, PhysMemoryCtl *memory, MMU::Exception exception, addr_t vaddr,
+                                    uint8_t rwx_flags);
 
 private:
     static void VirtualPageMapping(Hart *hart, PhysMemoryCtl *memory, vaddr_t vaddr, uint8_t rwx_flags);

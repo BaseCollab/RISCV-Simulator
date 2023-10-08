@@ -35,10 +35,10 @@ reg_t Supervisor::AllocRootPageTable()
     vpt_t vpt;
     memory_->StoreByPageIdx(page_idx, &vpt, sizeof(vpt));
 
-    #ifndef NDEBUG
-        std::cerr << "[DEBUG] Root page table is allocated at: phys page index = "
-                  << page_idx << ", phys address = " << page_idx * VPAGE_SIZE << std::endl;
-    #endif
+#ifndef NDEBUG
+    std::cerr << "[DEBUG] Root page table is allocated at: phys page index = " << page_idx
+              << ", phys address = " << page_idx * VPAGE_SIZE << std::endl;
+#endif
 
     return page_idx;
 }
@@ -57,7 +57,8 @@ void Supervisor::LoadElfFile(const std::string &elf_pathname)
 void Supervisor::SetExceptionHandlers()
 {
     Hart::ExceptionHandlers handlers;
-    handlers.mmu_handler = std::bind(&ExceptionHandler::MMUExceptionHandler, hart_, memory_, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    handlers.mmu_handler = std::bind(&ExceptionHandler::MMUExceptionHandler, hart_, memory_, std::placeholders::_1,
+                                     std::placeholders::_2, std::placeholders::_3);
 
     hart_->SetExceptionHandlers(handlers);
 }

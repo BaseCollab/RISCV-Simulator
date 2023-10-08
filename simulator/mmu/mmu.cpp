@@ -30,9 +30,8 @@ MMU::Exception MMU::ValidatePTE(const pte_t &pte, uint8_t rwx_flags) const
     return MMU::Exception::NONE;
 }
 
-std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_flags,
-                                                                      const CSRs &csr_regs,
-                                                                      const PhysMemoryCtl &memory) const
+std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_flags, const CSRs &csr_regs,
+                                                       const PhysMemoryCtl &memory) const
 {
     paddr_t paddr = 0;
 
@@ -49,16 +48,16 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
 
     memory.Load(&pte_3, sizeof(pte_3), satp.ppn * VPAGE_SIZE + vaddr.GetVPN3());
 
-    #ifndef NDEBUG
-        std::bitset<bitops::BitSizeof<vaddr_t>()> vaddr_bitset(vaddr.value);
-        std::cerr << "[DEBUG] [MMU] vaddr = " << vaddr.value << std::endl;
-        std::cerr << "[DEBUG] [MMU] vaddr = " << vaddr_bitset << std::endl;
-        std::cerr << "[DEBUG] [MMU] vaddr.offset = " << vaddr.GetPageOffset() << std::endl;
+#ifndef NDEBUG
+    std::bitset<bitops::BitSizeof<vaddr_t>()> vaddr_bitset(vaddr.value);
+    std::cerr << "[DEBUG] [MMU] vaddr = " << vaddr.value << std::endl;
+    std::cerr << "[DEBUG] [MMU] vaddr = " << vaddr_bitset << std::endl;
+    std::cerr << "[DEBUG] [MMU] vaddr.offset = " << vaddr.GetPageOffset() << std::endl;
 
-        std::cerr << "[DEBUG] [MMU] satp.ppn = " << satp.ppn << std::endl;
-        std::cerr << "[DEBUG] [MMU] vaddr.vpn3 = " << vaddr.GetVPN3() << std::endl;
-        std::cerr << "[DEBUG] [MMU] pte_3_entry_addr = " << satp.ppn * VPAGE_SIZE + vaddr.GetVPN3() << std::endl;
-    #endif
+    std::cerr << "[DEBUG] [MMU] satp.ppn = " << satp.ppn << std::endl;
+    std::cerr << "[DEBUG] [MMU] vaddr.vpn3 = " << vaddr.GetVPN3() << std::endl;
+    std::cerr << "[DEBUG] [MMU] pte_3_entry_addr = " << satp.ppn * VPAGE_SIZE + vaddr.GetVPN3() << std::endl;
+#endif
 
     if (pte_3.GetX() == 0 && pte_3.GetW() == 0 && pte_3.GetR() == 0) // pointer to next level
     {
@@ -68,11 +67,11 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
 
         memory.Load(&pte_2, sizeof(pte_2), pte_3.GetPPN() * VPAGE_SIZE + vaddr.GetVPN2());
 
-        #ifndef NDEBUG
-            std::cerr << "[DEBUG] [MMU] pte_3.ppn = " << pte_3.GetPPN() << std::endl;
-            std::cerr << "[DEBUG] [MMU] vaddr.vpn2 = " << vaddr.GetVPN2() << std::endl;
-            std::cerr << "[DEBUG] [MMU] pte_2_entry_addr = " << pte_3.GetPPN() * VPAGE_SIZE + vaddr.GetVPN2() << std::endl;
-        #endif
+#ifndef NDEBUG
+        std::cerr << "[DEBUG] [MMU] pte_3.ppn = " << pte_3.GetPPN() << std::endl;
+        std::cerr << "[DEBUG] [MMU] vaddr.vpn2 = " << vaddr.GetVPN2() << std::endl;
+        std::cerr << "[DEBUG] [MMU] pte_2_entry_addr = " << pte_3.GetPPN() * VPAGE_SIZE + vaddr.GetVPN2() << std::endl;
+#endif
 
         if (pte_2.GetX() == 0 && pte_2.GetW() == 0 && pte_2.GetR() == 0) // pointer to next level
         {
@@ -82,11 +81,12 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
 
             memory.Load(&pte_1, sizeof(pte_1), pte_2.GetPPN() * VPAGE_SIZE + vaddr.GetVPN1());
 
-            #ifndef NDEBUG
-                std::cerr << "[DEBUG] [MMU] pte_2.ppn = " << pte_2.GetPPN() << std::endl;
-                std::cerr << "[DEBUG] [MMU] vaddr.vpn1 = " << vaddr.GetVPN1() << std::endl;
-                std::cerr << "[DEBUG] [MMU] pte_1_entry_addr = " << pte_2.GetPPN() * VPAGE_SIZE + vaddr.GetVPN1() << std::endl;
-            #endif
+#ifndef NDEBUG
+            std::cerr << "[DEBUG] [MMU] pte_2.ppn = " << pte_2.GetPPN() << std::endl;
+            std::cerr << "[DEBUG] [MMU] vaddr.vpn1 = " << vaddr.GetVPN1() << std::endl;
+            std::cerr << "[DEBUG] [MMU] pte_1_entry_addr = " << pte_2.GetPPN() * VPAGE_SIZE + vaddr.GetVPN1()
+                      << std::endl;
+#endif
 
             if (pte_1.GetX() == 0 && pte_1.GetW() == 0 && pte_1.GetR() == 0) // pointer to next level
             {
@@ -96,17 +96,18 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
 
                 memory.Load(&pte_0, sizeof(pte_0), pte_1.GetPPN() * VPAGE_SIZE + vaddr.GetVPN0());
 
-                #ifndef NDEBUG
-                    std::cerr << "[DEBUG] [MMU] pte_1.ppn = " << pte_1.GetPPN() << std::endl;
-                    std::cerr << "[DEBUG] [MMU] vaddr.vpn0 = " << vaddr.GetVPN0() << std::endl;
-                    std::cerr << "[DEBUG] [MMU] pte_0_entry_addr = " << pte_1.GetPPN() * VPAGE_SIZE + vaddr.GetVPN0() << std::endl;
-                #endif
+#ifndef NDEBUG
+                std::cerr << "[DEBUG] [MMU] pte_1.ppn = " << pte_1.GetPPN() << std::endl;
+                std::cerr << "[DEBUG] [MMU] vaddr.vpn0 = " << vaddr.GetVPN0() << std::endl;
+                std::cerr << "[DEBUG] [MMU] pte_0_entry_addr = " << pte_1.GetPPN() * VPAGE_SIZE + vaddr.GetVPN0()
+                          << std::endl;
+#endif
 
                 exception = ValidatePTE(pte_0, rwx_flags);
 
-                #ifndef NDEBUG
-                    std::cerr << "[DEBUG] [MMU] pte_0_entry->ppn exception: " << (int) exception << std::endl;
-                #endif
+#ifndef NDEBUG
+                std::cerr << "[DEBUG] [MMU] pte_0_entry->ppn exception: " << (int)exception << std::endl;
+#endif
 
                 if (exception != MMU::Exception::NONE)
                     return std::make_pair(paddr, exception);
@@ -114,10 +115,10 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
                 paddr.SetPageOffset(vaddr.GetPageOffset());
                 paddr.SetPPN(pte_0.GetPPN());
 
-                #ifndef NDEBUG
-                    std::bitset<bitops::BitSizeof<paddr_t>()> paddr_bitset(paddr.value);
-                    std::cerr << "[DEBUG] [MMU] paddr = " << paddr_bitset << std::endl;
-                #endif
+#ifndef NDEBUG
+                std::bitset<bitops::BitSizeof<paddr_t>()> paddr_bitset(paddr.value);
+                std::cerr << "[DEBUG] [MMU] paddr = " << paddr_bitset << std::endl;
+#endif
 
             } else // TODO: support other types of pages
                 return std::make_pair(paddr, MMU::Exception::INVALID_PAGE_SIZE);
