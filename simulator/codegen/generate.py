@@ -78,6 +78,11 @@ def write_fields_fill(decoder_leaf, fields, mode):
 
             print(f'({get_bits_str(msb, lsb, "raw_instr")})', end='')
             print(';' if move == 0 else f' << {move};')
+
+            if (name == 'rd'):
+                print(f'if (instr->{name} == 0) {{')
+                print(f'instr->{name} = SINK_REG_IDX;\n', end='')
+                print(f'}}\n')
     
     print(f'\niexec::{instr_name}(this, *instr);\n', end='')
 
