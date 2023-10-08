@@ -11,9 +11,10 @@ int Main(int argc, char *argv[])
     // MemoryCtl memory;
     // Supervisor supervisor(&hart, &memory);
 
-    // ArgParser parser(argc, argv);
-    // if (!parser.Parse())
-    //    return EXIT_FAILURE
+    ArgParser parser(argc, argv);
+    if (!parser.Parse()) {
+        return EXIT_FAILURE;
+    }
 
     (void)argc;
     (void)argv;
