@@ -1,46 +1,8 @@
 #include "hart.h"
 
-#include <cassert>
 #include <iostream>
 
 namespace rvsim {
-
-void Hart::SetExceptionHandlers(const ExceptionHandlers &handlers)
-{
-    handlers_ = handlers;
-}
-
-reg_t Hart::GetPC() const
-{
-    return pc_;
-}
-
-reg_t Hart::GetPCTarget() const
-{
-    return pc_target_;
-}
-
-void Hart::SetPC(reg_t pc)
-{
-    pc_ = pc;
-}
-
-void Hart::SetPCTarget(reg_t pc_target)
-{
-    pc_target_ = pc_target;
-}
-
-gpr_t Hart::GetGPR(gpr_idx_t reg_idx) const
-{
-    assert(reg_idx < N_GPR);
-    return gpr_table_[reg_idx];
-}
-
-void Hart::SetGPR(gpr_idx_t reg_idx, gpr_t value)
-{
-    assert(reg_idx < N_GPR);
-    gpr_table_[reg_idx] = value;
-}
 
 void Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags) const
 {
@@ -100,29 +62,23 @@ void Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_fl
     }
 }
 
-template <typename ValueType>
-ValueType Hart::LoadFromMemory(vaddr_t src, uint8_t rwx_flags) const
+instr_size_t Hart::FetchInstruction()
 {
-    auto pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
-    if (pair_paddr.second != MMU::Exception::NONE) {
-        handlers_.mmu_handler(pair_paddr.second, GetPC(), rwx_flags);
-        pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
-    }
-
-    auto load_pair = memory_->Load<ValueType>(pair_paddr.first.value);
-    return load_pair.second;
+    instr_size_t raw_instr = LoadFromMemory<instr_size_t>(vaddr_t(pc_), 0 | PF_R | PF_X);
+    return raw_instr;
 }
 
-template <typename ValueType>
-void Hart::StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags) const
+void Hart::Interpret()
 {
-    auto pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
-    if (pair_paddr.second != MMU::Exception::NONE) {
-        handlers_.mmu_handler(pair_paddr.second, GetPC(), rwx_flags);
-        pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
-    }
+    // start interpreting instructions
+    is_idle_ = false;
 
-    memory_->Store<ValueType>(pair_paddr.first.value, value);
+    while (!is_idle_) {
+        instr_size_t raw_instr = FetchInstruction();
+        Instruction instr;
+        DecodeAndExecute(&instr, raw_instr);
+        pc_ += sizeof(instr_size_t);
+    }
 }
 
 } // namespace rvsim

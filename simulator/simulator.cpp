@@ -15,6 +15,8 @@ int Main(int argc, char *argv[])
     const char *elf_file = argv[1];
     supervisor.LoadElfFile(elf_file);
 
+    hart.Interpret();
+
     return 0;
 }
 

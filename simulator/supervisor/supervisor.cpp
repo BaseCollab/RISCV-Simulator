@@ -52,6 +52,9 @@ void Supervisor::LoadElfFile(const std::string &elf_pathname)
 
     ElfLoader elf_loader(elf_pathname);
     elf_loader.LoadElf(*hart_);
+
+    hart_->SetPC(elf_loader.GetElfEntryPoint());
+    hart_->SetGPR(0x2, STACK_PTR);
 }
 
 void Supervisor::SetExceptionHandlers()

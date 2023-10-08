@@ -41,6 +41,8 @@ private:
     void MMUExceptionHandler(MMU::Exception exception);
 
 private:
+    static constexpr reg_t STACK_PTR = 0x600000000;
+
     Hart *hart_ {nullptr};
 
     PhysMemoryCtl *memory_ {nullptr};

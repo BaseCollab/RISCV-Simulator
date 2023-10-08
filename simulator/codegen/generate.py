@@ -32,29 +32,29 @@ def sign_extend_str(old_size, new_size):
 
 def set_invalid_id():
     print('/* Instruction wasn\'t found */\n' \
-          'id_ = InstructionId::INVALID_ID;\n' \
+          'instr->id = InstructionId::INVALID_ID;\n' \
           'return;\n')
 
 def write_fields_fill(decoder_leaf, fields, mode):
     instr_fields = decoder_leaf['fields']
     instr_name = decoder_leaf['mnemonic'].upper().replace('.', '_')
 
-    print(f'id_ = InstructionId::{instr_name};\n')
+    print(f'instr->id = InstructionId::{instr_name};\n')
 
     if decoder_leaf['format'] == 'B' or decoder_leaf['mnemonic'] in ['jalr', 'jal', 'ecall']:
-        print('attributes_.is_branch = true;\n')
+        print('instr->attributes.is_branch = true;\n')
     elif decoder_leaf['format'] == 'S':
-        print('attributes_.is_store = true;\n')
+        print('instr->attributes.is_store = true;\n')
     elif decoder_leaf['format'] == 'I' and instr_name[0] == 'L':
-        print('attributes_.is_load = true;\n')
+        print('instr->attributes.is_load = true;\n')
 
     if mode == "privileged":
         if instr_name == 'WFI' or instr_name[0] == 'M':
-            print('attributes_.mode = Mode::MACHINE_MODE;\n')
+            print('instr->attributes.mode = Mode::MACHINE_MODE;\n')
         elif instr_name[0] == 'H':
-            print('attributes_.mode = Mode::HYPERVISOR_MODE;\n')
+            print('instr->attributes.mode = Mode::HYPERVISOR_MODE;\n')
         elif instr_name[0] == 'S':
-            print('attributes_.mode = Mode::SUPERVISOR_MODE;\n')
+            print('instr->attributes.mode = Mode::SUPERVISOR_MODE;\n')
 
     for field in instr_fields:
         name = fields[field]['name']
@@ -72,16 +72,18 @@ def write_fields_fill(decoder_leaf, fields, mode):
                     msb = 31
                 name = 'imm'
 
-            print(f'{name}_ |= ', end='')
+            print(f'instr->{name} |= ', end='')
             if name == 'imm' and msb == 31:
                 print(f'{sign_extend_str(msb - lsb + 1, "bitops::BitSizeof<word_t>()")}')
 
-            print(f'({get_bits_str(msb, lsb, "instr")})', end='')
+            print(f'({get_bits_str(msb, lsb, "raw_instr")})', end='')
             print(';' if move == 0 else f' << {move};')
+    
+    print(f'\niexec::{instr_name}(this, *instr);\n', end='')
 
 def recursive_parse(decoder_tree, fields, mode):
     if 'range' in decoder_tree:
-        opcode_str = get_bits_str(decoder_tree['range']['msb'], decoder_tree['range']['lsb'], 'instr')
+        opcode_str = get_bits_str(decoder_tree['range']['msb'], decoder_tree['range']['lsb'], 'raw_instr')
         var_name = f'var_bits_{recursive_parse.var_cnt}'
 
         recursive_parse.var_cnt += 1
@@ -116,12 +118,14 @@ def decode_gen(fout, yaml_dict):
     sys.stdout = stdout_bak
 
 def generate_decode_logic(yaml_dict):
-    with open('instruction_decode.cpp', 'w') as fout:
+    with open('execute.cpp', 'w') as fout:
         fout.write(COMMENT_NO_CHANGE_STR)
+        fout.write('#include \"hart/hart.h\"\n')
         fout.write('#include \"common/utils/bit_ops.h\"\n')
-        fout.write('#include \"instruction.h\"\n\n')
+        fout.write('#include \"instruction/instruction.h\"\n')
+        fout.write('#include \"instruction/instruction_exec.h\"\n\n')
         fout.write('namespace rvsim {\n\n')
-        fout.write('void Instruction::Decode(instr_size_t instr)\n{\n')
+        fout.write('void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)\n{\n')
 
         decode_gen(fout, yaml_dict)
 
