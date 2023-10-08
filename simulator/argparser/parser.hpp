@@ -8,6 +8,7 @@
 #include <string>
 #include <cstring>
 #include <iostream>
+#include <vector>
 
 namespace rvsim {
 
@@ -22,17 +23,21 @@ enum OPT_NAMES {
     OPT_OUTFILE = 'o',
     OPT_REGIME = 'r',
     OPT_HELP = 'h',
+    OPT_PLUGIN = 'p'
 };
 
 
 class ArgParser {
 public:
-    std::string exec_fn;
-    std::string out_fn;
 
     ArgParser(int argc, char *argv[]);
+
     bool Parse();
+    
     SIM_MODES GetMode() { return mode; }
+    std::string& GetExecFn() { return exec_fn; }
+    std::string& GetOutFn() { return out_fn; }
+    std::vector<std::string>& GetPlugins() { return plugins; }
 
 private:
     int argc_;
@@ -40,6 +45,13 @@ private:
     SIM_MODES mode;
 
     void PrintHelp();
+
+    /* All above filled by Parse() method */
+    std::string exec_fn; 
+    std::string out_fn;
+    std::vector<std::string> plugins;
+
+
 };
 
 } // end of rvsim namespace

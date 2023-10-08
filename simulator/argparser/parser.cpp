@@ -27,7 +27,7 @@ bool ArgParser::Parse()
 
 
     int opt = 0;
-    while ((opt = getopt_long(argc_, argv_, "-o:r:h", options, NULL)) != -1) {
+    while ((opt = getopt_long(argc_, argv_, "-o:p:r:h", options, NULL)) != -1) {
         switch (opt) {
         case OPT_REGIME:
             if (!strcmp(optarg, "llvm")) {
@@ -37,6 +37,9 @@ bool ArgParser::Parse()
                 mode = MODE_INVALID;
                 return false;
             }
+            break;
+        case OPT_PLUGIN:
+            plugins.push_back(std::string(optarg));
             break;
         case OPT_EXFILE:
             exec_fn = optarg;
@@ -56,10 +59,11 @@ bool ArgParser::Parse()
 }
 
 void ArgParser::PrintHelp() {
-    printf("USAGE: %s <file> [options]\nRISC-V Options:\n", argv_[0]);
-    printf("-o <file> - output file\n");
-    printf("--h - print this help and exit\n");
-    printf("--r <regime> -- for simulator regimes (ex: llvm)\n");
+    printf("USAGE: %s <exec_file> [options]\n\tSimulator options:\n", argv_[0]);
+    printf("-o <out_fn> -- output file.\n");
+    printf("-h          -- print this help and exit.\n");
+    printf("-r <regime> -- for simulator regimes (ex: llvm).\n");
+    printf("-p <*.so>   -- path to library to be used as plugin.");
 }
 
 } // end of rvsim namespace
