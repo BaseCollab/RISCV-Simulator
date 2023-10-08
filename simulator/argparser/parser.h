@@ -2,31 +2,37 @@
 #define SIMULATOR_ARGPARSER_PARSER_H
 
 #include "common/constants.h"
+#include "common/macros.h"
+
 #include <getopt.h>
-#include <cstddef>
 
 #include <string>
-#include <cstring>
-#include <iostream>
 #include <vector>
-#include "common/macros.h"
 
 namespace rvsim {
 
-enum class SimModes : int {
-    MODE_INVALID = -1,
-    MODE_LLVM = 0, /*  */
-    MODE_2 = 1,    /* to be discussed */
-};
-
-enum class OptNames : int { OPT_EXFILE = 1, OPT_OUTFILE = 'o', OPT_REGIME = 'r', OPT_HELP = 'h', OPT_PLUGIN = 'p' };
-
 class ArgParser {
+public:
+    // clang-format off
+    enum class SimModes : int {
+        MODE_INVALID = -1,
+        MODE_LLVM    = 0
+    };
+
+    enum class OptNames : int {
+        OPT_EXFILE  = 1,
+        OPT_OUTFILE = 'o',
+        OPT_REGIME  = 'r',
+        OPT_HELP    = 'h',
+        OPT_PLUGIN  = 'p'
+    };
+    // clang-format on
 public:
     NO_COPY_SEMANTIC(ArgParser);
     NO_MOVE_SEMANTIC(ArgParser);
 
-    explicit ArgParser(int argc, char *argv[]);
+    explicit ArgParser(int argc, char *argv[]) : argc_(argc), argv_(argv) {};
+    ~ArgParser() = default;
 
     bool Parse();
 
@@ -34,32 +40,36 @@ public:
     {
         return mode;
     }
-    const std::string &GetExecFn() const
+
+    const std::string &GetElfFileName() const
     {
-        return elf_fn;
+        return elf_filename;
     }
+
     const std::string &GetOutFn() const
     {
-        return out_fn;
+        return out_filename;
     }
+
     const std::vector<std::string> &GetPlugins() const
     {
         return plugins;
     }
 
 private:
-    int argc_;
-    char **argv_;
-    SimModes mode;
-
     void PrintHelp();
 
+private:
+    int argc_ {0};
+    char **argv_ {nullptr};
+    SimModes mode {SimModes::MODE_INVALID};
+
     /* All above filled by Parse() method */
-    std::string elf_fn;
-    std::string out_fn;
+    std::string elf_filename;
+    std::string out_filename;
     std::vector<std::string> plugins;
 };
 
 } // namespace rvsim
 
-#endif
+#endif // SIMULATOR_ARGPARSER_PARSER_H

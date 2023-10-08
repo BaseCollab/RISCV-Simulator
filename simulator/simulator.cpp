@@ -8,16 +8,15 @@ namespace rvsim {
 int Main(int argc, char *argv[])
 {
     auto parser = ArgParser(argc, argv);
+    if (!parser.Parse()) {
+        return EXIT_FAILURE;
+    }
+
     auto memory = PhysMemoryCtl();
     auto hart = Hart(&memory);
     auto supervisor = Supervisor(&hart, &memory);
-    
-    if (!parser.Parse()) {
-        return EXIT_FAILURE;
-    } 
-  
-    std::string& elf_file = parser.GetExecFn();
-    supervisor.LoadElfFile(elf_file);
+
+    supervisor.LoadElfFile(parser.GetElfFileName());
 
     hart.Interpret();
 
@@ -28,8 +27,5 @@ int Main(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-    if (argc < 2)
-        errx(EX_NOINPUT, "Error: 1 argument required (.elf filename)");
-
     return rvsim::Main(argc, argv);
 }
