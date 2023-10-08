@@ -27,5 +27,8 @@ int Main(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
+    if (argc < 2)
+        errx(EX_NOINPUT, "Error: 1 argument required (.elf filename)");
+
     return rvsim::Main(argc, argv);
 }
