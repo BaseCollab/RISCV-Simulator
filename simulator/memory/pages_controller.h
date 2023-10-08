@@ -5,6 +5,7 @@
 #include "common/config.h"
 #include "memory.h"
 
+#include <iostream>
 #include <memory>
 
 namespace rvsim {
@@ -34,7 +35,8 @@ public:
 
     void InitializePagesStack()
     {
-        for (size_t i = pages_number_; i > 0; --i) {
+        // Stack is constant size
+        for (long i = pages_number_ - 1; i >= 0; --i) {
             clean_pages_stack_->Push(i);
         }
     }

@@ -25,13 +25,17 @@ ElfLoader::ElfLoader(const std::string &elf_pathname) : elf_pathname_(elf_pathna
     elf_buffer_size_ = lseek(elf_fd_, 0, SEEK_END);
     lseek(elf_fd_, 0, SEEK_SET);
 
+    #ifndef NDEBUG
+        std::cerr << "[DEBUG] Elf file size is = " << elf_buffer_size_ << std::endl;
+    #endif
+
     elf_buffer_ = (unsigned char *)calloc(elf_buffer_size_ + 1, sizeof(unsigned char));
     if (elf_buffer_ == nullptr) {
         err(EX_OSERR, "File \"%s\" buffering failed (calloc())", elf_pathname_.c_str());
     }
 
     int read_error = read(elf_fd_, elf_buffer_, elf_buffer_size_);
-    if (read_error != 0) {
+    if (read_error == -1) {
         err(EX_OSERR, "Read of \"%s\" failed (read()): %s", elf_pathname_.c_str(), strerror(errno));
     }
 
@@ -54,31 +58,43 @@ void ElfLoader::LoadElf(const Hart &hart)
 {
     GElf_Ehdr elf_header;
     if (gelf_getehdr(elf_, &elf_header) == nullptr) {
-        errx(EX_DATAERR, "getehdr() failed : %s. ", elf_errmsg(-1));
+        errx(EX_DATAERR, "getehdr() failed: %s.", elf_errmsg(-1));
     }
 
     int elf_class = gelf_getclass(elf_);
     if (elf_class == ELFCLASSNONE) {
-        errx(EX_DATAERR, "getclass() failed: %s. ", elf_errmsg(-1));
+        errx(EX_DATAERR, "getclass() failed: %s.", elf_errmsg(-1));
     } else if (elf_class == ELFCLASS32) {
         std::cerr << "ElfLoader error: the file is 32 bit, 64 bit is required" << std::endl;
     }
 
     Elf64_Half segments_count = elf_header.e_phnum;
 
+    #ifndef NDEBUG
+        std::cerr << "[DEBUG] Amount of elf segments = " << segments_count << std::endl;
+    #endif
+
     for (size_t i = 0; i < segments_count; ++i) {
         // Get next header
-        GElf_Phdr *curr_segment_header = gelf_getphdr(elf_, i, nullptr);
-        if (curr_segment_header == nullptr) {
-            errx(EX_DATAERR, "gelf_getphdr() result is nullptr: %s. ", elf_errmsg(-1));
+        GElf_Phdr curr_segment_header;
+        if (gelf_getphdr(elf_, i, &curr_segment_header) == nullptr) {
+            errx(EX_DATAERR, "gelf_getphdr() result is nullptr: %s.", elf_errmsg(-1));
         }
 
-        if (curr_segment_header->p_type == PT_LOAD) {
+        if (curr_segment_header.p_type == PT_LOAD) {
             // If curr_segment_header is loadable program segment then load it to virtual memory
-            Elf64_Xword segment_vaddr = curr_segment_header->p_vaddr;
-            Elf64_Xword segment_elf_size = curr_segment_header->p_filesz;
-            Elf64_Off segment_file_offset = curr_segment_header->p_offset;
-            Elf64_Word segment_flags = curr_segment_header->p_flags;
+            Elf64_Xword segment_vaddr = curr_segment_header.p_vaddr;
+            Elf64_Xword segment_elf_size = curr_segment_header.p_filesz;
+            Elf64_Off segment_file_offset = curr_segment_header.p_offset;
+            Elf64_Word segment_flags = curr_segment_header.p_flags;
+
+            #ifndef NDEBUG
+                std::cerr << "[DEBUG] Segment " << i << " is PT_LOAD:" << std::endl;
+                std::cerr << "[DEBUG]     p_vaddr = "  << segment_vaddr << std::endl;
+                std::cerr << "[DEBUG]     p_filesz = " << segment_elf_size << std::endl;
+                std::cerr << "[DEBUG]     p_offset = " << segment_file_offset << std::endl;
+                std::cerr << "[DEBUG]     p_flags = "  << segment_flags << std::endl;
+            #endif
 
             hart.StoreToMemory(segment_vaddr, elf_buffer_ + segment_file_offset, segment_elf_size, segment_flags);
         }

@@ -1,6 +1,7 @@
 #include "hart.h"
 
 #include <cassert>
+#include <iostream>
 
 namespace rvsim {
 
@@ -48,7 +49,7 @@ void Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_f
     if (vpage_padding != 0) {
         auto pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
         if (pair_paddr.second != MMU::Exception::NONE) {
-            handlers_.mmu_handler(pair_paddr.second, rwx_flags);
+            handlers_.mmu_handler(pair_paddr.second, src.value, rwx_flags);
             pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
         }
 
@@ -59,7 +60,7 @@ void Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_f
     {
         auto pair_paddr = mmu_.VirtToPhysAddr(src.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
         if (pair_paddr.second != MMU::Exception::NONE) {
-            handlers_.mmu_handler(pair_paddr.second, rwx_flags);
+            handlers_.mmu_handler(pair_paddr.second, src.value, rwx_flags);
             pair_paddr = mmu_.VirtToPhysAddr(src.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
         }
 
@@ -78,7 +79,7 @@ void Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_fl
     if (vpage_padding != 0) {
         auto pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
         if (pair_paddr.second != MMU::Exception::NONE) {
-            handlers_.mmu_handler(pair_paddr.second, rwx_flags);
+            handlers_.mmu_handler(pair_paddr.second, dst.value, rwx_flags);
             pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
         }
 
@@ -89,7 +90,7 @@ void Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_fl
     {
         auto pair_paddr = mmu_.VirtToPhysAddr(dst.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
         if (pair_paddr.second != MMU::Exception::NONE) {
-            handlers_.mmu_handler(pair_paddr.second, rwx_flags);
+            handlers_.mmu_handler(pair_paddr.second, dst.value, rwx_flags);
             pair_paddr = mmu_.VirtToPhysAddr(dst.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
         }
 
@@ -106,7 +107,7 @@ ValueType Hart::LoadFromMemory(vaddr_t src, uint8_t rwx_flags) const
 {
     auto pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
     if (pair_paddr.second != MMU::Exception::NONE) {
-        handlers_.mmu_handler(pair_paddr.second, rwx_flags);
+        handlers_.mmu_handler(pair_paddr.second, GetPC(), rwx_flags);
         pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
     }
 
@@ -119,7 +120,7 @@ void Hart::StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags) const
 {
     auto pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
     if (pair_paddr.second != MMU::Exception::NONE) {
-        handlers_.mmu_handler(pair_paddr.second, rwx_flags);
+        handlers_.mmu_handler(pair_paddr.second, GetPC(), rwx_flags);
         pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
     }
 
