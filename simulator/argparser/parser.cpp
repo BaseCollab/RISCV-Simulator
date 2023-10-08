@@ -20,45 +20,41 @@ bool ArgParser::Parse()
     }
 
     static struct option options[] = {
-            {"help",        no_argument,       0,  OPT_HELP },
-            {"regime",      required_argument, 0,  OPT_REGIME },
-            {0, 0, 0, 0}
-        };
-
+        {"help", no_argument, 0, OPT_HELP}, {"regime", required_argument, 0, OPT_REGIME}, {0, 0, 0, 0}};
 
     int opt = 0;
     while ((opt = getopt_long(argc_, argv_, "-o:p:r:h", options, NULL)) != -1) {
         switch (opt) {
-        case OPT_REGIME:
-            if (!strcmp(optarg, "llvm")) {
-                mode = MODE_LLVM;
-            }
-            else {
-                mode = MODE_INVALID;
+            case OPT_REGIME:
+                if (!strcmp(optarg, "llvm")) {
+                    mode = MODE_LLVM;
+                } else {
+                    mode = MODE_INVALID;
+                    return false;
+                }
+                break;
+            case OPT_PLUGIN:
+                plugins.push_back(std::string(optarg));
+                break;
+            case OPT_EXFILE:
+                exec_fn = optarg;
+                break;
+            case OPT_OUTFILE:
+                out_fn = optarg;
+                break;
+            case OPT_HELP:
+                PrintHelp();
+                exit(EXIT_SUCCESS);
+            default:
                 return false;
-            }
-            break;
-        case OPT_PLUGIN:
-            plugins.push_back(std::string(optarg));
-            break;
-        case OPT_EXFILE:
-            exec_fn = optarg;
-            break;
-        case OPT_OUTFILE:
-            out_fn = optarg;
-            break;
-        case OPT_HELP:
-            PrintHelp();
-            exit(EXIT_SUCCESS);
-        default:
-            return false;
         }
     }
 
     return true;
 }
 
-void ArgParser::PrintHelp() {
+void ArgParser::PrintHelp()
+{
     printf("USAGE: %s <exec_file> [options]\n\tSimulator options:\n", argv_[0]);
     printf("-o <out_fn> -- output file.\n");
     printf("-h          -- print this help and exit.\n");
@@ -66,4 +62,4 @@ void ArgParser::PrintHelp() {
     printf("-p <*.so>   -- path to library to be used as plugin.");
 }
 
-} // end of rvsim namespace
+} // namespace rvsim
