@@ -9,36 +9,40 @@
 #include <cstring>
 #include <iostream>
 #include <vector>
+#include "common/macros.h"
 
 namespace rvsim {
 
-enum SIM_MODES {
+enum class SimModes : int {
     MODE_INVALID = -1,
     MODE_LLVM = 0, /*  */
     MODE_2 = 1,    /* to be discussed */
 };
 
-enum OPT_NAMES { OPT_EXFILE = 1, OPT_OUTFILE = 'o', OPT_REGIME = 'r', OPT_HELP = 'h', OPT_PLUGIN = 'p' };
+enum class OptNames : int { OPT_EXFILE = 1, OPT_OUTFILE = 'o', OPT_REGIME = 'r', OPT_HELP = 'h', OPT_PLUGIN = 'p' };
 
 class ArgParser {
 public:
-    ArgParser(int argc, char *argv[]);
+    NO_COPY_SEMANTIC(ArgParser);
+    NO_MOVE_SEMANTIC(ArgParser);
+
+    explicit ArgParser(int argc, char *argv[]);
 
     bool Parse();
 
-    SIM_MODES GetMode()
+    SimModes GetMode() const
     {
         return mode;
     }
-    std::string &GetExecFn()
+    const std::string &GetExecFn() const
     {
-        return exec_fn;
+        return elf_fn;
     }
-    std::string &GetOutFn()
+    const std::string &GetOutFn() const
     {
         return out_fn;
     }
-    std::vector<std::string> &GetPlugins()
+    const std::vector<std::string> &GetPlugins() const
     {
         return plugins;
     }
@@ -46,12 +50,12 @@ public:
 private:
     int argc_;
     char **argv_;
-    SIM_MODES mode;
+    SimModes mode;
 
     void PrintHelp();
 
     /* All above filled by Parse() method */
-    std::string exec_fn;
+    std::string elf_fn;
     std::string out_fn;
     std::vector<std::string> plugins;
 };

@@ -6,10 +6,10 @@ ArgParser::ArgParser(int argc, char *argv[])
 {
     argc_ = argc;
     argv_ = argv;
-    mode = MODE_INVALID;
+    mode  = SimModes::MODE_INVALID;
 }
 
-/*  Get [input file (exec_fn)/output file(out_fn)/sim modes] and return true on success.
+/*  Get [input file (elf_fn)/output file(out_fn)/sim modes] and return true on success.
     On the parse error: print help message and return false
     Simulator mode stored in 'mode' variable */
 bool ArgParser::Parse()
@@ -20,29 +20,28 @@ bool ArgParser::Parse()
     }
 
     static struct option options[] = {
-        {"help", no_argument, 0, OPT_HELP}, {"regime", required_argument, 0, OPT_REGIME}, {0, 0, 0, 0}};
+        {"help", no_argument, 0, static_cast<int>(OptNames::OPT_HELP)}, {"regime", required_argument, 0, static_cast<int>(OptNames::OPT_REGIME)}, {0, 0, 0, 0}};
 
     int opt = 0;
     while ((opt = getopt_long(argc_, argv_, "-o:p:r:h", options, NULL)) != -1) {
-        switch (opt) {
-            case OPT_REGIME:
+        switch (OptNames(opt)) {
+            case OptNames::OPT_REGIME:
                 if (!strcmp(optarg, "llvm")) {
-                    mode = MODE_LLVM;
+                    mode = SimModes::MODE_LLVM;
                 } else {
-                    mode = MODE_INVALID;
                     return false;
                 }
                 break;
-            case OPT_PLUGIN:
+            case OptNames::OPT_PLUGIN:
                 plugins.push_back(std::string(optarg));
                 break;
-            case OPT_EXFILE:
-                exec_fn = optarg;
+            case OptNames::OPT_EXFILE:
+                elf_fn = optarg;
                 break;
-            case OPT_OUTFILE:
+            case OptNames::OPT_OUTFILE:
                 out_fn = optarg;
                 break;
-            case OPT_HELP:
+            case OptNames::OPT_HELP:
                 PrintHelp();
                 exit(EXIT_SUCCESS);
             default:
@@ -55,11 +54,11 @@ bool ArgParser::Parse()
 
 void ArgParser::PrintHelp()
 {
-    printf("USAGE: %s <exec_file> [options]\n\tSimulator options:\n", argv_[0]);
+    printf("USAGE: %s <elf_fn> [options]\n\tSimulator options:\n", argv_[0]);
     printf("-o <out_fn> -- output file.\n");
     printf("-h          -- print this help and exit.\n");
     printf("-r <regime> -- for simulator regimes (ex: llvm).\n");
-    printf("-p <*.so>   -- path to library to be used as plugin.");
+    printf("-p <*.so>   -- path to library to be used as plugin.\n");
 }
 
 } // namespace rvsim
