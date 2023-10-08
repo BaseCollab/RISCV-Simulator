@@ -49,8 +49,9 @@ void ExceptionHandler::VirtualPageMapping(Hart *hart, PhysMemoryCtl *memory, vad
     std::cerr << "[DEBUG] [EXCEPTION: INVALID_PAGE_ENTRY] Start restoring VPT" << std::endl;
 
     std::bitset<bitops::BitSizeof<vaddr_t>()> vaddr_bitset(vaddr.value);
-    std::cerr << "[DEBUG] [EXCEPTION] vaddr = " << vaddr.value << std::endl;
     std::cerr << "[DEBUG] [EXCEPTION] vaddr = " << vaddr_bitset << std::endl;
+    std::cerr << "[DEBUG] [EXCEPTION] vaddr = 0x" << std::hex << vaddr.value << std::dec << std::endl;
+
     std::cerr << "[DEBUG] [EXCEPTION] vaddr.offset = " << vaddr.GetPageOffset() << std::endl;
 #endif
 

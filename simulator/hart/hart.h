@@ -91,7 +91,7 @@ public:
     {
         auto pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
         if (pair_paddr.second != MMU::Exception::NONE) {
-            handlers_.mmu_handler(pair_paddr.second, GetPC(), rwx_flags);
+            handlers_.mmu_handler(pair_paddr.second, src, rwx_flags);
             pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
         }
 
@@ -104,7 +104,7 @@ public:
     {
         auto pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
         if (pair_paddr.second != MMU::Exception::NONE) {
-            handlers_.mmu_handler(pair_paddr.second, GetPC(), rwx_flags);
+            handlers_.mmu_handler(pair_paddr.second, dst, rwx_flags);
             pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
         }
 

@@ -50,8 +50,9 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
 
 #ifndef NDEBUG
     std::bitset<bitops::BitSizeof<vaddr_t>()> vaddr_bitset(vaddr.value);
-    std::cerr << "[DEBUG] [MMU] vaddr = " << vaddr.value << std::endl;
+    std::cerr << "[DEBUG] [MMU: Start]" << std::endl;
     std::cerr << "[DEBUG] [MMU] vaddr = " << vaddr_bitset << std::endl;
+    std::cerr << "[DEBUG] [MMU] vaddr = 0x" << std::hex << vaddr.value << std::dec << std::endl;
     std::cerr << "[DEBUG] [MMU] vaddr.offset = " << vaddr.GetPageOffset() << std::endl;
 
     std::cerr << "[DEBUG] [MMU] satp.ppn = " << satp.ppn << std::endl;
@@ -118,6 +119,8 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
 #ifndef NDEBUG
                 std::bitset<bitops::BitSizeof<paddr_t>()> paddr_bitset(paddr.value);
                 std::cerr << "[DEBUG] [MMU] paddr = " << paddr_bitset << std::endl;
+                std::cerr << "[DEBUG] [MMU] paddr = 0x" << std::hex << paddr.value << std::dec << std::endl;
+                std::cerr << "[DEBUG] [MMU: End]" << std::endl;
 #endif
 
             } else // TODO: support other types of pages
