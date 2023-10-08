@@ -16,7 +16,7 @@ namespace rvsim {
 class Hart {
 public:
     struct ExceptionHandlers {
-        std::function<void(MMU::Exception, uint8_t)> mmu_handler;
+        std::function<void(MMU::Exception, addr_t, uint8_t)> mmu_handler;
     };
 
 public:
