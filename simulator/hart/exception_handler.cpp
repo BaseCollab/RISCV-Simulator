@@ -183,8 +183,6 @@ void ExceptionHandler::VirtualPageMapping(Hart *hart, PhysMemoryCtl *memory, vad
         pte_0.SetPPN(page_idx);
         pte_0.SetV(1);
 
-        std::bitset<64> PTE1(pte_0.value);
-
         pte_0.SetR(!!(rwx_flags & PF_R));
         pte_0.SetW(!!(rwx_flags & PF_W));
         pte_0.SetX(!!(rwx_flags & PF_X));
