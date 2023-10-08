@@ -60,12 +60,8 @@ struct paddr_t {
     static constexpr dword_t mask_page_offset = bitops::Ones<11, 0>();
 
     paddr_t():           value(0)   {}
-    // paddr_t(addr_t val): value(val) {}
-
-    paddr_t(const addr_t  &val)    { value = val; }
-    paddr_t(const addr_t  &&val)   { value = val; }
+    paddr_t(addr_t val): value(val) {}
     paddr_t(const paddr_t &paddr)  { value = paddr.value; }
-    paddr_t(const paddr_t &&paddr) { value = paddr.value; }
 
     addr_t operator=(const addr_t &val) { value = val; return value;}
     paddr_t &operator=(const paddr_t &paddr) { value = paddr.value; return *this;}
@@ -88,12 +84,8 @@ struct vaddr_t {
     static constexpr dword_t mask_page_offset = bitops::Ones<11, 0>();
 
     vaddr_t():           value(0)   {}
-    // vaddr_t(addr_t val): value(val) {}
-
-    vaddr_t(const addr_t &val)     { value = val; }
-    vaddr_t(const addr_t &&val)    { value = val; }
+    vaddr_t(addr_t val): value(val) {}
     vaddr_t(const vaddr_t &vaddr)  { value = vaddr.value; }
-    vaddr_t(const vaddr_t &&vaddr) { value = vaddr.value; }
 
     addr_t operator=(const addr_t &val) { value = val; return value; }
     vaddr_t &operator=(const vaddr_t &vaddr) { value = vaddr.value; return *this; }
