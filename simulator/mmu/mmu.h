@@ -3,7 +3,7 @@
 
 #include "common/macros.h"
 #include "common/constants.h"
-#include "supervisor/vpt.h"
+#include "hart/vpt.h"
 #include "hart/csr.h"
 #include "memory/memory_controller.h"
 
@@ -21,25 +21,22 @@ public:
         PAGE_ACCESS_WRITE   = 5,
         PAGE_ACCESS_EXECUTE = 6,
     };
-
-    enum class Target {
-        NONE    = -1,
-        READ    = 1,
-        WRITE   = 2,
-        EXECUTE = 3,
-    };
-    // clang-format off
-
-private:
-    Exception ValidatePTE(const pte_t &pte, MMU::Target target) const;
-
-    // TODO: TLB implementation
+    // clang-format on
 
 public:
+    NO_COPY_SEMANTIC(MMU);
+    NO_MOVE_SEMANTIC(MMU);
+
     MMU() = default;
     ~MMU() = default;
 
-    std::pair<paddr_t, Exception> VirtToPhysAddr(vaddr_t vaddr, Target target, const CSRs &csr_regs, MemoryCtl &memory);
+    std::pair<paddr_t, MMU::Exception> VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_flags, const CSRs &csr_regs,
+                                                      const PhysMemoryCtl &memory) const;
+
+private:
+    Exception ValidatePTE(const pte_t &pte, uint8_t rwx_flags) const;
+
+    // TODO: TLB implementation
 };
 
 } // namespace rvsim

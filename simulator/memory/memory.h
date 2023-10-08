@@ -3,6 +3,7 @@
 
 #include "common/macros.h"
 #include "common/constants.h"
+#include "common/config.h"
 #include "common/utils/stack.h"
 
 #include <cstdint>
@@ -13,13 +14,23 @@
 namespace rvsim {
 
 // Class that simulate physical memory
-class Memory {
+class PhysMemory {
 public:
-    NO_COPY_SEMANTIC(Memory);
-    NO_MOVE_SEMANTIC(Memory);
+    static constexpr size_t DEFAULT_MEMORY_SIZE = 32 * MBYTE_SIZE; // 1 << 25
 
-    Memory() = default;
-    ~Memory() = default;
+public:
+    NO_COPY_SEMANTIC(PhysMemory);
+    NO_MOVE_SEMANTIC(PhysMemory);
+
+    explicit PhysMemory(size_t mem_size = DEFAULT_MEMORY_SIZE) : mem_size_(mem_size)
+    {
+        ram_ = new uint8_t[mem_size];
+    }
+
+    ~PhysMemory()
+    {
+        delete[] ram_;
+    }
 
     // Store ValueType value in dst
     template <typename ValueType>
@@ -49,15 +60,15 @@ public:
         std::memcpy(dst, ram_ + src, dst_size);
     }
 
-    static constexpr size_t GetMemorySize()
+    size_t GetMemorySize() const
     {
-        return MEMORY_SIZE;
+        return mem_size_;
     }
 
 private:
-    static constexpr size_t MEMORY_SIZE = 32 * MBYTE_SIZE; // 1 << 25
+    uint8_t *ram_ {nullptr};
 
-    uint8_t ram_[MEMORY_SIZE];
+    size_t mem_size_ {0};
 };
 
 } // namespace rvsim

@@ -3,17 +3,13 @@
 
 #include "common/macros.h"
 #include "common/constants.h"
+#include "common/config.h"
 
 #include <cstdint>
 
 namespace rvsim {
 
-// clang-format off
-static constexpr size_t N_CSR = 4096;
-using csr_t     = uint64_t;
-using csr_idx_t = uint16_t;
-// clang-format off
-
+// Control and Status Register
 class CSRs {
 private:
     csr_t csr_table_[N_CSR];
@@ -44,7 +40,7 @@ struct csr_satp_t {
     csr_t ppn : 44;  // physical page number (PPN) of the root page table
 };
 
-static_assert(sizeof(csr_satp_t) == sizeof(csr_t), "sizeof(csr_satp_t) != sizeof(csr)");
+static_assert(sizeof(csr_satp_t) == sizeof(csr_t), "sizeof(csr_satp_t) != sizeof(csr_t)");
 
 } // namespace rvsim
 

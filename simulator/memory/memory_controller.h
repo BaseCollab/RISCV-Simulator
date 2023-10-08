@@ -2,6 +2,7 @@
 #define SIMULATOR_MEMORY_MEMORY_CONTROLLER_H
 
 #include "common/constants.h"
+#include "common/config.h"
 #include "memory.h"
 #include "pages_controller.h"
 
@@ -11,7 +12,7 @@
 
 namespace rvsim {
 
-class MemoryCtl {
+class PhysMemoryCtl {
 public:
     enum class Error {
         NONE = -1,
@@ -22,11 +23,11 @@ public:
     using PageError = PagesController::Error;
 
 public:
-    NO_COPY_SEMANTIC(MemoryCtl);
-    NO_MOVE_SEMANTIC(MemoryCtl);
+    NO_COPY_SEMANTIC(PhysMemoryCtl);
+    NO_MOVE_SEMANTIC(PhysMemoryCtl);
 
-    MemoryCtl() = default;
-    ~MemoryCtl() = default;
+    explicit PhysMemoryCtl() : pages_controller_(memory_.GetMemorySize() / PPAGE_SIZE) {};
+    ~PhysMemoryCtl() = default;
 
     template <typename ValueType>
     std::optional<Error> Store(addr_t dst, ValueType value)
@@ -36,16 +37,18 @@ public:
         }
 
         memory_.Store<ValueType>(dst, value);
+
+        return std::nullopt;
     }
 
     template <typename ValueType>
     std::pair<ValueType, std::optional<Error>> Load(addr_t src) const
     {
         if (!BoundaryCheck(src, sizeof(ValueType))) {
-            return Error::LOAD_BOUNDARY_CHK;
+            return {0, Error::LOAD_BOUNDARY_CHK};
         }
 
-        memory_.Load<ValueType>(src);
+        return {memory_.Load<ValueType>(src), std::nullopt};
     }
 
     // Store src_size bytes from src to dst in ram_
@@ -60,6 +63,7 @@ public:
         return std::nullopt;
     }
 
+    // Load dst_size bytes to dst from src
     std::optional<Error> Load(void *dst, size_t dst_size, addr_t src) const
     {
         if (!BoundaryCheck(src, dst_size)) {
@@ -71,9 +75,14 @@ public:
         return std::nullopt;
     }
 
-    std::pair<uint16_t, std::optional<PageError>> GetCleanPage()
+    std::pair<reg_t, std::optional<PageError>> GetCleanPage()
     {
         return pages_controller_.GetCleanPage();
+    }
+
+    std::optional<Error> StoreByPageIdx(reg_t page_idx, void *src, size_t src_size)
+    {
+        return Store(page_idx * PPAGE_SIZE, src, src_size);
     }
 
 private:
@@ -83,7 +92,7 @@ private:
     }
 
 private:
-    Memory memory_;
+    PhysMemory memory_;
     PagesController pages_controller_;
 };
 
