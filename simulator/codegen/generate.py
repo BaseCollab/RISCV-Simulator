@@ -33,7 +33,10 @@ def sign_extend_str(old_size, new_size):
 def set_invalid_id():
     print('/* Instruction wasn\'t found */\n' \
           'instr->id = InstructionId::INVALID_ID;\n' \
-          'return;\n')
+          '\n' \
+          'iexec::INVALID(this, *instr);\n' \
+          '\n' \
+          'return;')
 
 def write_fields_fill(decoder_leaf, fields, mode):
     instr_fields = decoder_leaf['fields']

@@ -214,6 +214,7 @@ void FMADD_Q    (Hart *hart, const Instruction &instr);
 void FMSUB_Q    (Hart *hart, const Instruction &instr);
 void FNMSUB_Q   (Hart *hart, const Instruction &instr);
 void FNMADD_Q   (Hart *hart, const Instruction &instr);
+void INVALID    (Hart *hart, const Instruction &instr);
 
 // clang-format on
 

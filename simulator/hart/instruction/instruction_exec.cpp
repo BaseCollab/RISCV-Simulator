@@ -7,6 +7,8 @@
 
 #include "common/utils/bit_ops.h"
 #include "instruction_exec.h"
+#include <err.h>
+#include <sysexits.h>
 
 #include <iostream>
 
@@ -1590,6 +1592,12 @@ void FNMADD_Q(Hart *hart, const Instruction &instr)
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FNMADD_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+}
+
+void INVALID([[maybe_unused]] Hart *hart, [[maybe_unused]] const Instruction &instr)
+{
+    // TODO(skurnevich): change abort to hart->SetException(InvalidInstr)
+    err(EX_DATAERR, "Invalid instruction\n");
 }
 
 } // namespace iexec

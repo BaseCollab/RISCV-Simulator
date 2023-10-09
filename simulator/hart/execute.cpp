@@ -121,6 +121,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -310,6 +313,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -347,6 +353,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -484,6 +493,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -523,6 +535,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -658,11 +673,17 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -736,11 +757,17 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -798,6 +825,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -837,6 +867,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -924,11 +957,17 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -1062,6 +1101,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -1129,6 +1171,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -1168,6 +1213,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -1211,6 +1259,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -1252,6 +1303,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -1293,6 +1347,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -1334,6 +1391,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -1375,6 +1435,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -1416,6 +1479,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -1457,6 +1523,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -1498,6 +1567,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -1539,6 +1611,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -1582,11 +1657,17 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
                 /* Instruction wasn't found */
                 instr->id = InstructionId::INVALID_ID;
+
+                iexec::INVALID(this, *instr);
+
                 return;
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -1628,11 +1709,17 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -1670,6 +1757,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
                 /* Instruction wasn't found */
                 instr->id = InstructionId::INVALID_ID;
+
+                iexec::INVALID(this, *instr);
+
                 return;
             }
 
@@ -1697,6 +1787,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
                 /* Instruction wasn't found */
                 instr->id = InstructionId::INVALID_ID;
+
+                iexec::INVALID(this, *instr);
+
                 return;
             }
 
@@ -1759,6 +1852,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -1860,6 +1956,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -1985,6 +2084,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2024,6 +2126,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2163,6 +2268,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2202,6 +2310,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2241,6 +2352,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2280,6 +2394,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2419,6 +2536,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2458,6 +2578,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2497,6 +2620,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2568,6 +2694,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2623,6 +2752,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2678,6 +2810,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2749,6 +2884,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2788,11 +2926,17 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
                 /* Instruction wasn't found */
                 instr->id = InstructionId::INVALID_ID;
+
+                iexec::INVALID(this, *instr);
+
                 return;
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2864,6 +3008,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2903,11 +3050,17 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
                 /* Instruction wasn't found */
                 instr->id = InstructionId::INVALID_ID;
+
+                iexec::INVALID(this, *instr);
+
                 return;
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -2979,6 +3132,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -3018,11 +3174,17 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
                 /* Instruction wasn't found */
                 instr->id = InstructionId::INVALID_ID;
+
+                iexec::INVALID(this, *instr);
+
                 return;
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -3094,6 +3256,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -3180,6 +3345,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -3266,6 +3434,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
+
+            iexec::INVALID(this, *instr);
+
             return;
         }
 
@@ -3286,6 +3457,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -3341,6 +3515,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -3393,6 +3570,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -3454,6 +3634,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -3515,6 +3698,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -3576,6 +3762,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
@@ -3637,11 +3826,17 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
+
+        iexec::INVALID(this, *instr);
+
         return;
     }
 
     /* Instruction wasn't found */
     instr->id = InstructionId::INVALID_ID;
+
+    iexec::INVALID(this, *instr);
+
     return;
 }
 
