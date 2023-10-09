@@ -73,13 +73,17 @@ void Hart::Interpret()
     // start interpreting instructions
     is_idle_ = false;
 
-    while (!is_idle_) {
+    while (true) {
         instr_size_t raw_instr = FetchInstruction();
 
         Instruction instr;
         DecodeAndExecute(&instr, raw_instr);
 
         pc_ = pc_target_;
+
+        if (pc_ == 0 || is_idle_) {
+            break;
+        }
     }
 }
 
