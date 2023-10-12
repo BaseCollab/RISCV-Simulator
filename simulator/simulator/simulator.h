@@ -1,5 +1,5 @@
-#ifndef SIMULATOR_SUPERVISOR_SUPERVISOR_H
-#define SIMULATOR_SUPERVISOR_SUPERVISOR_H
+#ifndef SIMULATOR_SIMULATOR_SIMULATOR_H
+#define SIMULATOR_SIMULATOR_SIMULATOR_H
 
 #include "common/macros.h"
 #include "common/constants.h"
@@ -14,19 +14,19 @@
 
 namespace rvsim {
 
-class Supervisor {
+class Simulator {
 public:
-    NO_COPY_SEMANTIC(Supervisor);
-    NO_MOVE_SEMANTIC(Supervisor);
+    NO_COPY_SEMANTIC(Simulator);
+    NO_MOVE_SEMANTIC(Simulator);
 
-    explicit Supervisor(Hart *hart, PhysMemoryCtl *memory);
-    ~Supervisor() = default;
+    explicit Simulator(Hart *hart, PhysMemoryCtl *memory);
+    ~Simulator() = default;
 
     void LoadElfFile(const std::string &elf_pathname);
 
     /*
     In case of MMU::Exception::INVALID_PAGE_ENTRY or PAGE_FAULT
-    operation systam aka Supervisor need to handle this exception
+    operation systam aka Simulator need to handle this exception
     and take steps to highlight the table
     */
     void VirtualPageMapping(vaddr_t vaddr, uint8_t rwx_flags);
@@ -50,4 +50,4 @@ private:
 
 } // namespace rvsim
 
-#endif // SIMULATOR_SUPERVISOR_SUPERVISOR_H
+#endif // SIMULATOR_SIMULATOR_SIMULATOR_H

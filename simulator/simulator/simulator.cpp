@@ -1,4 +1,4 @@
-#include "supervisor.h"
+#include "simulator.h"
 
 #include <cstring>
 #include <cassert>
@@ -6,7 +6,7 @@
 
 namespace rvsim {
 
-Supervisor::Supervisor(Hart *hart, PhysMemoryCtl *memory) : hart_(hart), memory_(memory)
+Simulator::Simulator(Hart *hart, PhysMemoryCtl *memory) : hart_(hart), memory_(memory)
 {
     assert(hart);
     assert(memory);
@@ -14,7 +14,7 @@ Supervisor::Supervisor(Hart *hart, PhysMemoryCtl *memory) : hart_(hart), memory_
     SetExceptionHandlers();
 }
 
-void Supervisor::InitializeCSR(CSRs *csr_regs, reg_t root_page_idx)
+void Simulator::InitializeCSR(CSRs *csr_regs, reg_t root_page_idx)
 {
     assert(csr_regs);
 
@@ -27,7 +27,7 @@ void Supervisor::InitializeCSR(CSRs *csr_regs, reg_t root_page_idx)
     // TODO: map all CSRs to physical memory as specification requires
 }
 
-reg_t Supervisor::AllocRootPageTable()
+reg_t Simulator::AllocRootPageTable()
 {
     auto page_idx_pair = memory_->GetCleanPage();
     reg_t page_idx = page_idx_pair.first;
@@ -43,7 +43,7 @@ reg_t Supervisor::AllocRootPageTable()
     return page_idx;
 }
 
-void Supervisor::LoadElfFile(const std::string &elf_pathname)
+void Simulator::LoadElfFile(const std::string &elf_pathname)
 {
     CSRs *csr_regs = &(hart_->csr_regs);
 
@@ -57,7 +57,7 @@ void Supervisor::LoadElfFile(const std::string &elf_pathname)
     hart_->SetGPR(0x2, STACK_PTR);
 }
 
-void Supervisor::SetExceptionHandlers()
+void Simulator::SetExceptionHandlers()
 {
     Hart::ExceptionHandlers handlers;
     handlers.mmu_handler = std::bind(&ExceptionHandler::MMUExceptionHandler, hart_, memory_, std::placeholders::_1,

@@ -12,7 +12,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -Werror -Wshadow
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
 
 add_subdirectory(memory)
-add_subdirectory(supervisor)
+add_subdirectory(simulator)
 add_subdirectory(hart)
 add_subdirectory(mmu)
 add_subdirectory(argparser)
@@ -23,10 +23,9 @@ target_link_libraries(simulator_static PUBLIC
     memory_impl
     hart_impl
     mmu_impl
-    supervisor_impl
+    simulator_impl
     parser_impl
     common_impl
-
 )
 
 # --------------------------clang-format--------------------------------------
@@ -56,6 +55,6 @@ add_subdirectory(tests)
 
 # ----------------------------------------------------------------------------
 
-add_executable(simulator simulator.cpp)
-target_link_libraries(simulator PUBLIC simulator_static)
+add_executable(rvsim rvsim.cpp)
+target_link_libraries(rvsim PUBLIC simulator_static)
 
