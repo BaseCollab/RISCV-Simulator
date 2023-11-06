@@ -45,11 +45,6 @@ void ExceptionHandler::MMUExceptionHandler(Hart *hart, PhysMemoryCtl *memory, MM
 
 void ExceptionHandler::VirtualPageMapping(Hart *hart, PhysMemoryCtl *memory, vaddr_t vaddr, uint8_t rwx_flags)
 {
-#ifdef DEBUG
-        std::cerr << "[DEBUG] ============================================="
-                             "============================================="<< std::endl;
-#endif
-
 #ifdef DEBUG_EXCEPTION
     std::cerr << "[DEBUG] [EXCEPTION: INVALID_PAGE_ENTRY] Start restoring VPT" << std::endl;
 
