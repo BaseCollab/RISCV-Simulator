@@ -45,7 +45,7 @@ void ExceptionHandler::MMUExceptionHandler(Hart *hart, PhysMemoryCtl *memory, MM
 
 void ExceptionHandler::VirtualPageMapping(Hart *hart, PhysMemoryCtl *memory, vaddr_t vaddr, uint8_t rwx_flags)
 {
-#ifndef NDEBUG
+#ifdef DEBUG_EXCEPTION
     std::cerr << "[DEBUG] [EXCEPTION: INVALID_PAGE_ENTRY] Start restoring VPT" << std::endl;
 
     std::bitset<bitops::BitSizeof<vaddr_t>()> vaddr_bitset(vaddr.value);
@@ -70,7 +70,7 @@ void ExceptionHandler::VirtualPageMapping(Hart *hart, PhysMemoryCtl *memory, vad
 
     memory->Load(&pte_3, sizeof(pte_3), satp.ppn * VPAGE_SIZE + vaddr.GetVPN3());
 
-#ifndef NDEBUG
+#ifdef DEBUG_EXCEPTION
     std::cerr << "[DEBUG] [EXCEPTION] satp.ppn = " << satp.ppn << ", vaddr.vpn3 = " << vaddr.GetVPN3()
               << " => pte_3_entry_addr = " << satp.ppn * VPAGE_SIZE + vaddr.GetVPN3() << std::endl;
 #endif
@@ -88,13 +88,13 @@ void ExceptionHandler::VirtualPageMapping(Hart *hart, PhysMemoryCtl *memory, vad
 
         memory->Store(satp.ppn * VPAGE_SIZE + vaddr.GetVPN3(), &pte_3, sizeof(pte_3));
 
-#ifndef NDEBUG
+#ifdef DEBUG_EXCEPTION
         std::cerr << "[DEBUG] [EXCEPTION] pte_3_entry is invalid" << std::endl;
         std::cerr << "[DEBUG] [EXCEPTION] Store PPN " << page_idx
                   << " to pte_3_entry = " << satp.ppn * VPAGE_SIZE + vaddr.GetVPN3() << std::endl;
 #endif
     } else {
-#ifndef NDEBUG
+#ifdef DEBUG_EXCEPTION
         std::cerr << "[DEBUG] [EXCEPTION] pte_3_entry is valid" << std::endl;
 #endif
 
@@ -103,7 +103,7 @@ void ExceptionHandler::VirtualPageMapping(Hart *hart, PhysMemoryCtl *memory, vad
 
     memory->Load(&pte_2, sizeof(pte_2), ppn_3 * VPAGE_SIZE + vaddr.GetVPN2());
 
-#ifndef NDEBUG
+#ifdef DEBUG_EXCEPTION
     std::cerr << "[DEBUG] [EXCEPTION] pte_3_entry.ppn = " << ppn_3 << ", vaddr.vpn2 = " << vaddr.GetVPN2()
               << " => pte_2_entry_addr = " << ppn_3 * VPAGE_SIZE + vaddr.GetVPN2() << std::endl;
 #endif
@@ -121,13 +121,13 @@ void ExceptionHandler::VirtualPageMapping(Hart *hart, PhysMemoryCtl *memory, vad
 
         memory->Store(ppn_3 * VPAGE_SIZE + vaddr.GetVPN2(), &pte_2, sizeof(pte_2));
 
-#ifndef NDEBUG
+#ifdef DEBUG_EXCEPTION
         std::cerr << "[DEBUG] [EXCEPTION] pte_2_entry is invalid" << std::endl;
         std::cerr << "[DEBUG] [EXCEPTION] Store PPN " << page_idx
                   << " to pte_2_entry = " << ppn_3 * VPAGE_SIZE + vaddr.GetVPN2() << std::endl;
 #endif
     } else {
-#ifndef NDEBUG
+#ifdef DEBUG_EXCEPTION
         std::cerr << "[DEBUG] [EXCEPTION] pte_2_entry is valid" << std::endl;
 #endif
 
@@ -136,7 +136,7 @@ void ExceptionHandler::VirtualPageMapping(Hart *hart, PhysMemoryCtl *memory, vad
 
     memory->Load(&pte_1, sizeof(pte_1), ppn_2 * VPAGE_SIZE + vaddr.GetVPN1());
 
-#ifndef NDEBUG
+#ifdef DEBUG_EXCEPTION
     std::cerr << "[DEBUG] [EXCEPTION] pte_2_entry.ppn = " << ppn_2 << ", vaddr.vpn1 = " << vaddr.GetVPN1()
               << " => pte_1_entry_addr = " << ppn_2 * VPAGE_SIZE + vaddr.GetVPN1() << std::endl;
 #endif
@@ -154,13 +154,13 @@ void ExceptionHandler::VirtualPageMapping(Hart *hart, PhysMemoryCtl *memory, vad
 
         memory->Store(ppn_2 * VPAGE_SIZE + vaddr.GetVPN1(), &pte_1, sizeof(pte_1));
 
-#ifndef NDEBUG
+#ifdef DEBUG_EXCEPTION
         std::cerr << "[DEBUG] [EXCEPTION] pte_1_entry is invalid" << std::endl;
         std::cerr << "[DEBUG] [EXCEPTION] Store PPN " << page_idx
                   << " to pte_1_entry = " << ppn_2 * VPAGE_SIZE + vaddr.GetVPN1() << std::endl;
 #endif
     } else {
-#ifndef NDEBUG
+#ifdef DEBUG_EXCEPTION
         std::cerr << "[DEBUG] [EXCEPTION] pte_1_entry is valid" << std::endl;
 #endif
 
@@ -169,7 +169,7 @@ void ExceptionHandler::VirtualPageMapping(Hart *hart, PhysMemoryCtl *memory, vad
 
     memory->Load(&pte_0, sizeof(pte_0), ppn_1 * VPAGE_SIZE + vaddr.GetVPN0());
 
-#ifndef NDEBUG
+#ifdef DEBUG_EXCEPTION
     std::cerr << "[DEBUG] [EXCEPTION] pte_1_entry.ppn = " << ppn_1 << ", vaddr.vpn0 = " << vaddr.GetVPN0()
               << " => pte_0_entry_addr = " << ppn_1 * VPAGE_SIZE + vaddr.GetVPN0() << std::endl;
 #endif
@@ -190,14 +190,14 @@ void ExceptionHandler::VirtualPageMapping(Hart *hart, PhysMemoryCtl *memory, vad
 
         memory->Store(ppn_1 * VPAGE_SIZE + vaddr.GetVPN0(), &pte_0, sizeof(pte_0));
 
-#ifndef NDEBUG
+#ifdef DEBUG_EXCEPTION
         std::cerr << "[DEBUG] [EXCEPTION] pte_0_entry is invalid" << std::endl;
         std::cerr << "[DEBUG] [EXCEPTION] Store PPN " << page_idx
                   << " to pte_0_entry = " << ppn_1 * VPAGE_SIZE + vaddr.GetVPN0() << std::endl;
 #endif
     }
 
-#ifndef NDEBUG
+#ifdef DEBUG_EXCEPTION
     std::cerr << "[DEBUG] [EXCEPTION: INVALID_PAGE_ENTRY] End restoring VPT" << std::endl;
 #endif
 }

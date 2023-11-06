@@ -86,7 +86,11 @@ def write_fields_fill(decoder_leaf, fields, mode):
                 print(f'if (instr->{name} == 0) {{')
                 print(f'instr->{name} = SINK_REG_IDX;\n', end='')
                 print(f'}}\n')
-    
+
+    print(f'\n#ifdef DEBUG_HART\n', end='')
+    print(f'std::cerr << \"[DEBUG] [DECODE] \" << std::hex << \"{instr_name}: 0x\" << raw_instr << std::dec << std::endl;\n', end='')
+    print(f'#endif // DEBUG_HART\n', end='')
+
     print(f'\niexec::{instr_name}(this, *instr);\n', end='')
 
 def recursive_parse(decoder_tree, fields, mode):

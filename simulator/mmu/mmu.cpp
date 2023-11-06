@@ -48,7 +48,7 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
 
     memory.Load(&pte_3, sizeof(pte_3), satp.ppn * VPAGE_SIZE + vaddr.GetVPN3());
 
-#ifndef NDEBUG
+#ifdef DEBUG_MMU
     std::bitset<bitops::BitSizeof<vaddr_t>()> vaddr_bitset(vaddr.value);
     std::cerr << "[DEBUG] [MMU: Start]" << std::endl;
     std::cerr << "[DEBUG] [MMU] vaddr = " << vaddr_bitset << std::endl;
@@ -68,7 +68,7 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
 
         memory.Load(&pte_2, sizeof(pte_2), pte_3.GetPPN() * VPAGE_SIZE + vaddr.GetVPN2());
 
-#ifndef NDEBUG
+#ifdef DEBUG_MMU
         std::cerr << "[DEBUG] [MMU] pte_3.ppn = " << pte_3.GetPPN() << std::endl;
         std::cerr << "[DEBUG] [MMU] vaddr.vpn2 = " << vaddr.GetVPN2() << std::endl;
         std::cerr << "[DEBUG] [MMU] pte_2_entry_addr = " << pte_3.GetPPN() * VPAGE_SIZE + vaddr.GetVPN2() << std::endl;
@@ -82,7 +82,7 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
 
             memory.Load(&pte_1, sizeof(pte_1), pte_2.GetPPN() * VPAGE_SIZE + vaddr.GetVPN1());
 
-#ifndef NDEBUG
+#ifdef DEBUG_MMU
             std::cerr << "[DEBUG] [MMU] pte_2.ppn = " << pte_2.GetPPN() << std::endl;
             std::cerr << "[DEBUG] [MMU] vaddr.vpn1 = " << vaddr.GetVPN1() << std::endl;
             std::cerr << "[DEBUG] [MMU] pte_1_entry_addr = " << pte_2.GetPPN() * VPAGE_SIZE + vaddr.GetVPN1()
@@ -97,7 +97,7 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
 
                 memory.Load(&pte_0, sizeof(pte_0), pte_1.GetPPN() * VPAGE_SIZE + vaddr.GetVPN0());
 
-#ifndef NDEBUG
+#ifdef DEBUG_MMU
                 std::cerr << "[DEBUG] [MMU] pte_1.ppn = " << pte_1.GetPPN() << std::endl;
                 std::cerr << "[DEBUG] [MMU] vaddr.vpn0 = " << vaddr.GetVPN0() << std::endl;
                 std::cerr << "[DEBUG] [MMU] pte_0_entry_addr = " << pte_1.GetPPN() * VPAGE_SIZE + vaddr.GetVPN0()
@@ -106,7 +106,7 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
 
                 exception = ValidatePTE(pte_0, rwx_flags);
 
-#ifndef NDEBUG
+#ifdef DEBUG_MMU
                 std::cerr << "[DEBUG] [MMU] pte_0_entry->ppn exception: " << (int)exception << std::endl;
 #endif
 
@@ -116,7 +116,7 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
                 paddr.SetPageOffset(vaddr.GetPageOffset());
                 paddr.SetPPN(pte_0.GetPPN());
 
-#ifndef NDEBUG
+#ifdef DEBUG_MMU
                 std::bitset<bitops::BitSizeof<paddr_t>()> paddr_bitset(paddr.value);
                 std::cerr << "[DEBUG] [MMU] paddr = " << paddr_bitset << std::endl;
                 std::cerr << "[DEBUG] [MMU] paddr = 0x" << std::hex << paddr.value << std::dec << std::endl;
