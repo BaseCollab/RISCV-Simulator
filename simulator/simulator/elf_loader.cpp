@@ -1,5 +1,5 @@
 #include "elf_loader.h"
-#include "supervisor.h"
+#include "simulator.h"
 
 #include <unistd.h>
 #include <iostream>
