@@ -121,7 +121,7 @@ private:
     PhysMemoryCtl *memory_ {nullptr};
     MMU mmu_;
 
-    gpr_t gpr_table_[N_GPR];
+    gpr_t gpr_table_[N_GPR] = {0};
 
     reg_t pc_;
     reg_t pc_target_;
