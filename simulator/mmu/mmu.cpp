@@ -48,6 +48,11 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
 
     memory.Load(&pte_3, sizeof(pte_3), satp.ppn * VPAGE_SIZE + vaddr.GetVPN3());
 
+#ifdef DEBUG
+    std::cerr << "[DEBUG] ============================================="
+                         "============================================="<< std::endl;
+#endif
+
 #ifdef DEBUG_MMU
     std::bitset<bitops::BitSizeof<vaddr_t>()> vaddr_bitset(vaddr.value);
     std::cerr << "[DEBUG] [MMU: Start]" << std::endl;

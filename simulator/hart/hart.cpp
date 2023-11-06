@@ -74,6 +74,13 @@ void Hart::Interpret()
     is_idle_ = false;
 
     while (true) {
+#ifdef DEBUG_HART
+#ifdef DEBUG
+        std::cerr << "[DEBUG] ============================================="
+                             "============================================="<< std::endl;
+#endif
+        DumpRegs(std::cerr);
+#endif
         instr_size_t raw_instr = FetchInstruction();
 
         Instruction instr;

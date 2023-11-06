@@ -114,6 +114,18 @@ public:
     void LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
     void StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
 
+#ifdef DEBUG_HART
+    template <typename T>
+    void DumpRegs(T &out)
+    {
+        out << "[DEBUG] [REGS_DUMP: Start]" << std::endl;
+        for (size_t i = 0; i < N_GPR; ++i) {
+            out << "[DEBUG] [REGS_DUMP] X" << i << " = " << std::hex << gpr_table_[i] << std::dec << std::endl;
+        }
+        out << "[DEBUG] [REGS_DUMP: End]" << std::endl;
+    }
+#endif
+
 public:
     CSRs csr_regs;
 
