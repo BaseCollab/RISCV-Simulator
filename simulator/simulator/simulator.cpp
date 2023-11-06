@@ -35,7 +35,7 @@ reg_t Simulator::AllocRootPageTable()
     vpt_t vpt;
     memory_->StoreByPageIdx(page_idx, &vpt, sizeof(vpt));
 
-#ifndef NDEBUG
+#ifdef DEBUG
     std::cerr << "[DEBUG] Root page table is allocated at: phys page index = " << page_idx
               << ", phys address = " << page_idx * VPAGE_SIZE << std::endl;
 #endif

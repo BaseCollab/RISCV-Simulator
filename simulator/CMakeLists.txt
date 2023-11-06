@@ -10,6 +10,7 @@ set(SIMULATOR_BINARY_ROOT ${CMAKE_CURRENT_BINARY_DIR})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -Werror -Wshadow")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG -DDEBUG_MMU -DDEBUG_ELF -DDEBUG_EXCEPTION")
 
 add_subdirectory(memory)
 add_subdirectory(simulator)
