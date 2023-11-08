@@ -18,7 +18,7 @@ namespace iexec {
 void BEQ(Hart *hart, const Instruction &instr)
 {
     if (hart->GetGPR(instr.rs1) == hart->GetGPR(instr.rs2))
-        hart->SetPCTarget(hart->GetPC() + bitops::MakeSigned<>(instr.imm));
+        hart->SetPCTarget(hart->GetPC() + instr.imm);
     else
         hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
@@ -26,7 +26,7 @@ void BEQ(Hart *hart, const Instruction &instr)
 void BNE(Hart *hart, const Instruction &instr)
 {
     if (hart->GetGPR(instr.rs1) != hart->GetGPR(instr.rs2))
-        hart->SetPCTarget(hart->GetPC() + bitops::MakeSigned<>(instr.imm));
+        hart->SetPCTarget(hart->GetPC() + instr.imm);
     else
         hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
@@ -37,7 +37,7 @@ void BLT(Hart *hart, const Instruction &instr)
     auto rs2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
 
     if (rs1 < rs2)
-        hart->SetPCTarget(hart->GetPC() + bitops::MakeSigned<>(instr.imm));
+        hart->SetPCTarget(hart->GetPC() + instr.imm);
     else
         hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
@@ -48,7 +48,7 @@ void BGE(Hart *hart, const Instruction &instr)
     auto rs2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
 
     if (rs1 >= rs2)
-        hart->SetPCTarget(hart->GetPC() + bitops::MakeSigned<>(instr.imm));
+        hart->SetPCTarget(hart->GetPC() + instr.imm);
     else
         hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
@@ -59,7 +59,7 @@ void BLTU(Hart *hart, const Instruction &instr)
     auto rs2 = hart->GetGPR(instr.rs2);
 
     if (rs1 < rs2)
-        hart->SetPCTarget(hart->GetPC() + bitops::MakeSigned<>(instr.imm));
+        hart->SetPCTarget(hart->GetPC() + instr.imm);
     else
         hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
@@ -70,7 +70,7 @@ void BGEU(Hart *hart, const Instruction &instr)
     auto rs2 = hart->GetGPR(instr.rs2);
 
     if (rs1 >= rs2)
-        hart->SetPCTarget(hart->GetPC() + bitops::MakeSigned<>(instr.imm));
+        hart->SetPCTarget(hart->GetPC() + instr.imm);
     else
         hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
@@ -78,25 +78,24 @@ void BGEU(Hart *hart, const Instruction &instr)
 void JALR(Hart *hart, const Instruction &instr)
 {
     hart->SetGPR(instr.rd, hart->GetPC() + sizeof(instr_size_t));
-    hart->SetPCTarget((hart->GetGPR(instr.rs1) + bitops::MakeSigned<>(instr.imm)) & ~reg_t {1});
+    hart->SetPCTarget((hart->GetGPR(instr.rs1) + instr.imm) & ~reg_t {1});
 }
 
 void JAL(Hart *hart, const Instruction &instr)
 {
     hart->SetGPR(instr.rd, hart->GetPC() + sizeof(instr_size_t));
-    hart->SetPCTarget(hart->GetPC() + bitops::MakeSigned<>(instr.imm));
+    hart->SetPCTarget(hart->GetPC() + instr.imm);
 }
 
 void LUI(Hart *hart, const Instruction &instr)
 {
-    hart->SetGPR(instr.rd, bitops::SignExtend(bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>(), instr.imm));
+    hart->SetGPR(instr.rd, instr.imm);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
 
 void AUIPC(Hart *hart, const Instruction &instr)
 {
-    hart->SetGPR(instr.rd, bitops::SignExtend(bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>(), instr.imm) +
-                               hart->GetPC());
+    hart->SetGPR(instr.rd, instr.imm + hart->GetPC());
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
 
@@ -104,8 +103,7 @@ void ADDI(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
 
-    hart->SetGPR(instr.rd,
-                 rv1 + bitops::SignExtend(bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>(), instr.imm));
+    hart->SetGPR(instr.rd, rv1 + instr.imm);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
 
@@ -123,7 +121,7 @@ void SLLI(Hart *hart, const Instruction &instr)
 void SLTI(Hart *hart, const Instruction &instr)
 {
     auto rv1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
-    auto imm = bitops::MakeSigned(instr.imm);
+    auto imm = instr.imm;
 
     hart->SetGPR(instr.rd, rv1 < imm);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
@@ -132,7 +130,7 @@ void SLTI(Hart *hart, const Instruction &instr)
 void SLTIU(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
-    auto imm = instr.imm;
+    auto imm = bitops::MakeUnsigned(instr.imm);
 
     hart->SetGPR(instr.rd, rv1 < imm);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
@@ -384,9 +382,8 @@ void SRAW(Hart *hart, const Instruction &instr)
 void LB(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    reg_t load_value = hart->LoadFromMemory<byte_t>(rv1 + imm);
+    reg_t load_value = hart->LoadFromMemory<byte_t>(rv1 + instr.imm);
     hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<byte_t>(), bitops::BitSizeof<reg_t>()>(load_value));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
@@ -394,9 +391,8 @@ void LB(Hart *hart, const Instruction &instr)
 void LH(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    reg_t load_value = hart->LoadFromMemory<hword_t>(rv1 + imm);
+    reg_t load_value = hart->LoadFromMemory<hword_t>(rv1 + instr.imm);
     hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<hword_t>(), bitops::BitSizeof<reg_t>()>(load_value));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
@@ -404,9 +400,8 @@ void LH(Hart *hart, const Instruction &instr)
 void LW(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    reg_t load_value = hart->LoadFromMemory<word_t>(rv1 + imm);
+    reg_t load_value = hart->LoadFromMemory<word_t>(rv1 + instr.imm);
     hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(load_value));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
@@ -414,18 +409,16 @@ void LW(Hart *hart, const Instruction &instr)
 void LD(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    hart->SetGPR(instr.rd, hart->LoadFromMemory<reg_t>(rv1 + imm));
+    hart->SetGPR(instr.rd, hart->LoadFromMemory<reg_t>(rv1 + instr.imm));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
 
 void LBU(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    reg_t load_value = hart->LoadFromMemory<byte_t>(rv1 + imm);
+    reg_t load_value = hart->LoadFromMemory<byte_t>(rv1 + instr.imm);
     hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
@@ -433,9 +426,8 @@ void LBU(Hart *hart, const Instruction &instr)
 void LHU(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    reg_t load_value = hart->LoadFromMemory<hword_t>(rv1 + imm);
+    reg_t load_value = hart->LoadFromMemory<hword_t>(rv1 + instr.imm);
     hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
@@ -443,9 +435,8 @@ void LHU(Hart *hart, const Instruction &instr)
 void LWU(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    reg_t load_value = hart->LoadFromMemory<word_t>(rv1 + imm);
+    reg_t load_value = hart->LoadFromMemory<word_t>(rv1 + instr.imm);
     hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
@@ -454,9 +445,8 @@ void SB(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
     auto rv2 = hart->GetGPR(instr.rs2);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    hart->StoreToMemory<byte_t>(rv1 + imm, bitops::GetBits<bitops::BitSizeof<byte_t>() - 1, 0>(rv2));
+    hart->StoreToMemory<byte_t>(rv1 + instr.imm, bitops::GetBits<bitops::BitSizeof<byte_t>() - 1, 0>(rv2));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
 
@@ -464,9 +454,8 @@ void SH(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
     auto rv2 = hart->GetGPR(instr.rs2);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    hart->StoreToMemory<hword_t>(rv1 + imm, bitops::GetBits<bitops::BitSizeof<hword_t>() - 1, 0>(rv2));
+    hart->StoreToMemory<hword_t>(rv1 + instr.imm, bitops::GetBits<bitops::BitSizeof<hword_t>() - 1, 0>(rv2));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
 
@@ -474,9 +463,8 @@ void SW(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
     auto rv2 = hart->GetGPR(instr.rs2);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    hart->StoreToMemory<word_t>(rv1 + imm, bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv2));
+    hart->StoreToMemory<word_t>(rv1 + instr.imm, bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv2));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
 
@@ -484,9 +472,8 @@ void SD(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
     auto rv2 = hart->GetGPR(instr.rs2);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    hart->StoreToMemory<reg_t>(rv1 + imm, rv2);
+    hart->StoreToMemory<reg_t>(rv1 + instr.imm, rv2);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
 }
 

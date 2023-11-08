@@ -8,6 +8,7 @@
 #include "instruction_id.h"
 
 #include <cstdint>
+#include <type_traits>
 
 namespace rvsim {
 
@@ -33,7 +34,7 @@ public:
 
     gpr_idx_t rm {0};
 
-    word_t imm {0};
+    std::make_signed_t<word_t> imm {0};
 
     instr_attrs_t attributes;
 
