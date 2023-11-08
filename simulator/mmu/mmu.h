@@ -5,24 +5,12 @@
 #include "common/constants.h"
 #include "hart/vpt.h"
 #include "hart/csr.h"
+#include "hart/exception.h"
 #include "memory/memory_controller.h"
 
 namespace rvsim {
 
 class MMU {
-public:
-    // clang-format off
-    enum class Exception {
-        NONE                = -1,
-        INVALID_PAGE_ENTRY  = 1,
-        INVALID_PAGE_SIZE   = 2, // not all types of memory are supported (such as superpages)
-        PAGE_WRITE_NO_READ  = 3,
-        PAGE_ACCESS_READ    = 4,
-        PAGE_ACCESS_WRITE   = 5,
-        PAGE_ACCESS_EXECUTE = 6,
-    };
-    // clang-format on
-
 public:
     NO_COPY_SEMANTIC(MMU);
     NO_MOVE_SEMANTIC(MMU);
@@ -30,8 +18,8 @@ public:
     MMU() = default;
     ~MMU() = default;
 
-    std::pair<paddr_t, MMU::Exception> VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_flags, const CSRs &csr_regs,
-                                                      const PhysMemoryCtl &memory) const;
+    std::pair<paddr_t, Exception> VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_flags, const CSRs &csr_regs,
+                                                 const PhysMemoryCtl &memory) const;
 
 private:
     Exception ValidatePTE(const pte_t &pte, uint8_t rwx_flags) const;

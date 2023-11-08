@@ -18,7 +18,7 @@ namespace rvsim {
 class Hart {
 public:
     struct ExceptionHandlers {
-        std::function<void(MMU::Exception, addr_t, uint8_t)> mmu_handler;
+        std::function<void(Exception, addr_t, uint8_t)> mmu_handler;
     };
 
 public:
@@ -90,7 +90,7 @@ public:
     ValueType LoadFromMemory(vaddr_t src, uint8_t rwx_flags = 0 | PF_R | PF_W) const
     {
         auto pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != MMU::Exception::NONE) {
+        if (pair_paddr.second != Exception::NONE) {
             handlers_.mmu_handler(pair_paddr.second, src, rwx_flags);
             pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
         }
@@ -103,7 +103,7 @@ public:
     void StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags = 0 | PF_R | PF_W) const
     {
         auto pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != MMU::Exception::NONE) {
+        if (pair_paddr.second != Exception::NONE) {
             handlers_.mmu_handler(pair_paddr.second, dst, rwx_flags);
             pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
         }

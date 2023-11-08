@@ -8,30 +8,30 @@
 
 namespace rvsim {
 
-MMU::Exception MMU::ValidatePTE(const pte_t &pte, uint8_t rwx_flags) const
+Exception MMU::ValidatePTE(const pte_t &pte, uint8_t rwx_flags) const
 {
     if (pte.GetV() == 0) // not valid page table entry
-        return MMU::Exception::INVALID_PAGE_ENTRY;
+        return Exception::MMU_INVALID_PAGE_ENTRY;
 
     if (pte.GetW() == 1 && pte.GetR() == 0)
-        return MMU::Exception::PAGE_WRITE_NO_READ;
+        return Exception::MMU_PAGE_WRITE_NO_READ;
 
     if ((rwx_flags & PF_R) && (pte.GetR() == 0))
-        return MMU::Exception::PAGE_ACCESS_READ;
+        return Exception::MMU_PAGE_ACCESS_READ;
 
     if ((rwx_flags & PF_W) && (pte.GetW() == 0))
-        return MMU::Exception::PAGE_ACCESS_WRITE;
+        return Exception::MMU_PAGE_ACCESS_WRITE;
 
     if ((rwx_flags & PF_X) && (pte.GetX() == 0))
-        return MMU::Exception::PAGE_ACCESS_EXECUTE;
+        return Exception::MMU_PAGE_ACCESS_EXECUTE;
 
     // TODO: add all other possible exceptions
 
-    return MMU::Exception::NONE;
+    return Exception::NONE;
 }
 
-std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_flags, const CSRs &csr_regs,
-                                                       const PhysMemoryCtl &memory) const
+std::pair<paddr_t, Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_flags, const CSRs &csr_regs,
+                                                  const PhysMemoryCtl &memory) const
 {
     paddr_t paddr = 0;
 
@@ -40,7 +40,7 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
     pte_t pte_1;
     pte_t pte_0;
 
-    MMU::Exception exception;
+    Exception exception;
 
     csr_t satp_reg = csr_regs.LoadCSR(CSR_SATP_IDX);
     csr_satp_t satp;
@@ -63,7 +63,7 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
     if (pte_3.GetX() == 0 && pte_3.GetW() == 0 && pte_3.GetR() == 0) // pointer to next level
     {
         exception = ValidatePTE(pte_3, 0);
-        if (exception != MMU::Exception::NONE)
+        if (exception != Exception::NONE)
             return std::make_pair(paddr, exception);
 
         memory.Load(&pte_2, sizeof(pte_2), pte_3.GetPPN() * VPAGE_SIZE + vaddr.GetVPN2());
@@ -77,7 +77,7 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
         if (pte_2.GetX() == 0 && pte_2.GetW() == 0 && pte_2.GetR() == 0) // pointer to next level
         {
             exception = ValidatePTE(pte_2, 0);
-            if (exception != MMU::Exception::NONE)
+            if (exception != Exception::NONE)
                 return std::make_pair(paddr, exception);
 
             memory.Load(&pte_1, sizeof(pte_1), pte_2.GetPPN() * VPAGE_SIZE + vaddr.GetVPN1());
@@ -92,7 +92,7 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
             if (pte_1.GetX() == 0 && pte_1.GetW() == 0 && pte_1.GetR() == 0) // pointer to next level
             {
                 exception = ValidatePTE(pte_1, 0);
-                if (exception != MMU::Exception::NONE)
+                if (exception != Exception::NONE)
                     return std::make_pair(paddr, exception);
 
                 memory.Load(&pte_0, sizeof(pte_0), pte_1.GetPPN() * VPAGE_SIZE + vaddr.GetVPN0());
@@ -110,7 +110,7 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
                 std::cerr << "[DEBUG] [MMU] pte_0_entry->ppn exception: " << (int)exception << std::endl;
 #endif
 
-                if (exception != MMU::Exception::NONE)
+                if (exception != Exception::NONE)
                     return std::make_pair(paddr, exception);
 
                 paddr.SetPageOffset(vaddr.GetPageOffset());
@@ -124,13 +124,13 @@ std::pair<paddr_t, MMU::Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rw
 #endif
 
             } else // TODO: support other types of pages
-                return std::make_pair(paddr, MMU::Exception::INVALID_PAGE_SIZE);
+                return std::make_pair(paddr, Exception::MMU_INVALID_PAGE_SIZE);
         } else // TODO: support other types of pages
-            return std::make_pair(paddr, MMU::Exception::INVALID_PAGE_SIZE);
+            return std::make_pair(paddr, Exception::MMU_INVALID_PAGE_SIZE);
     } else // TODO: support other types of pages
-        return std::make_pair(paddr, MMU::Exception::INVALID_PAGE_SIZE);
+        return std::make_pair(paddr, Exception::MMU_INVALID_PAGE_SIZE);
 
-    return std::make_pair(paddr, MMU::Exception::NONE);
+    return std::make_pair(paddr, Exception::NONE);
 }
 
 } // namespace rvsim

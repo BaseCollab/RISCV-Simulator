@@ -25,8 +25,8 @@ public:
     void LoadElfFile(const std::string &elf_pathname);
 
     /*
-    In case of MMU::Exception::INVALID_PAGE_ENTRY or PAGE_FAULT
-    operation systam aka Simulator need to handle this exception
+    In case of Exception::MMU_INVALID_PAGE_ENTRY or PAGE_FAULT
+    operation system aka Simulator need to handle this exception
     and take steps to highlight the table
     */
     void VirtualPageMapping(vaddr_t vaddr, uint8_t rwx_flags);
@@ -38,7 +38,7 @@ private:
 
     void SetExceptionHandlers();
 
-    void MMUExceptionHandler(MMU::Exception exception);
+    void MMUExceptionHandler(Exception exception);
 
 private:
     static constexpr reg_t STACK_PTR = 0x600000000;
