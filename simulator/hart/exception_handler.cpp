@@ -38,6 +38,9 @@ void ExceptionHandler::MMUExceptionHandler(Hart *hart, PhysMemoryCtl *memory, Ex
         case Exception::MMU_PAGE_ACCESS_EXECUTE:
             err(EX_SOFTWARE, "Page access fault: execute without execute permission [addr %lx]", vaddr);
 
+        case Exception::MMU_ADDRESS_MISALIGNED:
+            err(EX_SOFTWARE, "Misaligned address: [addr %lx]", vaddr);
+
         default:
             break;
     }

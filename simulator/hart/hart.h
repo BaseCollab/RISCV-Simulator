@@ -6,9 +6,11 @@
 #include "common/macros.h"
 #include "common/config.h"
 #include "mmu/mmu.h"
-#include "csr.h"
+#include "hart/csr.h"
+#include "hart/exception.h"
 
 #include <functional>
+#include <optional>
 #include <cstdint>
 #include <cassert>
 #include <elf.h>
@@ -28,7 +30,7 @@ public:
     explicit Hart(PhysMemoryCtl *memory) : memory_(memory) {};
     ~Hart() = default;
 
-    instr_size_t FetchInstruction();
+    Exception FetchInstruction(instr_size_t *raw_instr);
 
     void Interpret();
 
@@ -87,7 +89,7 @@ public:
     }
 
     template <typename ValueType>
-    ValueType LoadFromMemory(vaddr_t src, uint8_t rwx_flags = 0 | PF_R | PF_W) const
+    Exception LoadFromMemory(vaddr_t src, ValueType *value, uint8_t rwx_flags = PF_R) const
     {
         auto pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
         if (pair_paddr.second != Exception::NONE) {
@@ -96,11 +98,13 @@ public:
         }
 
         auto load_pair = memory_->Load<ValueType>(pair_paddr.first.value);
-        return load_pair.first;
+        *value = load_pair.first;
+
+        return Exception::NONE;
     }
 
     template <typename ValueType>
-    void StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags = 0 | PF_R | PF_W) const
+    Exception StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags = PF_W) const
     {
         auto pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
         if (pair_paddr.second != Exception::NONE) {
@@ -109,10 +113,12 @@ public:
         }
 
         memory_->Store<ValueType>(pair_paddr.first.value, value);
+
+        return Exception::NONE;
     }
 
-    void LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
-    void StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
+    void LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags = PF_R) const;
+    void StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags = PF_W) const;
 
 #ifdef DEBUG_HART
     template <typename T>

@@ -62,7 +62,7 @@ void Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_fl
     }
 }
 
-instr_size_t Hart::FetchInstruction()
+Exception Hart::FetchInstruction(instr_size_t *raw_instr)
 {
 #ifdef DEBUG_HART
 #ifdef DEBUG
@@ -73,8 +73,7 @@ instr_size_t Hart::FetchInstruction()
     std::cerr << "[DEBUG] [FETCH] PC = 0x" << std::hex << pc_ << std::dec << std::endl;
 #endif
 
-    instr_size_t raw_instr = LoadFromMemory<instr_size_t>(vaddr_t(pc_), 0 | PF_R | PF_X);
-    return raw_instr;
+    return LoadFromMemory<instr_size_t>(vaddr_t(pc_), raw_instr, PF_R | PF_X);
 }
 
 void Hart::Interpret()
@@ -83,7 +82,11 @@ void Hart::Interpret()
     is_idle_ = false;
 
     while (true) {
-        instr_size_t raw_instr = FetchInstruction();
+        instr_size_t raw_instr {0};
+        Exception exception = FetchInstruction(&raw_instr);
+        if (exception != Exception::NONE) {
+            handlers_.mmu_handler(exception, vaddr_t(pc_), PF_R | PF_X);
+        }
 
         Instruction instr;
         DecodeAndExecute(&instr, raw_instr);

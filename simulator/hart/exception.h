@@ -16,7 +16,7 @@ enum class Exception {
     MMU_PAGE_ACCESS_EXECUTE = 0x06,
 
     // Load/store exceptions
-    ADDRESS_MISALIGNED      = 0x10,
+    MMU_ADDRESS_MISALIGNED  = 0x10,
 };
 // clang-format on
 
