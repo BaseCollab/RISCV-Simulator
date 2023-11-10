@@ -156,6 +156,7 @@ def generate_execution_decls(yaml_dict):
         fout.write("#ifndef SIMULATOR_INSTRUCTION_EXEC_INSTRUCTION_EXEC_H\n"
                    "#define SIMULATOR_INSTRUCTION_EXEC_INSTRUCTION_EXEC_H\n\n")
         fout.write('#include \"hart/hart.h\"\n')
+        fout.write('#include \"hart/exception.h\"\n')
         fout.write('#include \"instruction.h\"\n\n')
 
         fout.write('namespace rvsim {\n'
@@ -165,7 +166,7 @@ def generate_execution_decls(yaml_dict):
         max_instr_len = max([len(instr) for instr in instrs_mnemonic_list])
 
         for i in range(len(instrs_mnemonic_list)):
-            fout.write(f'void {instrs_mnemonic_list[i]}' + \
+            fout.write(f'Exception {instrs_mnemonic_list[i]}' + \
                         ' ' * (max_instr_len - len(instrs_mnemonic_list[i])) + '(Hart &hart, const Instruction &instr);\n')
 
         fout.write('\n// clang-format on\n')
