@@ -34,7 +34,7 @@ public:
 
     void Interpret();
 
-    void DecodeAndExecute(Instruction *instr, instr_size_t raw_instr);
+    Exception DecodeAndExecute(Instruction *instr, instr_size_t raw_instr);
 
     bool IsIdle() const
     {
@@ -91,6 +91,13 @@ public:
     template <typename ValueType>
     Exception LoadFromMemory(vaddr_t src, ValueType *value, uint8_t rwx_flags = PF_R) const
     {
+        static_assert((sizeof(ValueType) == sizeof(byte_t)) || sizeof(ValueType) == sizeof(hword_t) ||
+                      (sizeof(ValueType) == sizeof(word_t)) || sizeof(ValueType) == sizeof(dword_t));
+
+        if ((src & (sizeof(ValueType) - 1)) != 0) {
+            return Exception::MMU_ADDRESS_MISALIGNED;
+        }
+
         auto pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
         if (pair_paddr.second != Exception::NONE) {
             handlers_.mmu_handler(pair_paddr.second, src, rwx_flags);
@@ -106,6 +113,13 @@ public:
     template <typename ValueType>
     Exception StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags = PF_W) const
     {
+        static_assert((sizeof(ValueType) == sizeof(byte_t)) || sizeof(ValueType) == sizeof(hword_t) ||
+                      (sizeof(ValueType) == sizeof(word_t)) || sizeof(ValueType) == sizeof(dword_t));
+
+        if ((dst & (sizeof(ValueType) - 1)) != 0) {
+            return Exception::MMU_ADDRESS_MISALIGNED;
+        }
+
         auto pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
         if (pair_paddr.second != Exception::NONE) {
             handlers_.mmu_handler(pair_paddr.second, dst, rwx_flags);
@@ -117,8 +131,8 @@ public:
         return Exception::NONE;
     }
 
-    void LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags = PF_R) const;
-    void StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags = PF_W) const;
+    Exception LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags = PF_R) const;
+    Exception StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags = PF_W) const;
 
 #ifdef DEBUG_HART
     template <typename T>

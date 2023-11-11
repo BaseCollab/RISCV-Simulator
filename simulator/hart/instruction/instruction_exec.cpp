@@ -476,7 +476,7 @@ Exception LH(Hart *hart, const Instruction &instr)
 
     using load_type_t = std::make_signed_t<hword_t>;
     load_type_t load_value {0};
-    
+
     Exception exception = hart->LoadFromMemory<load_type_t>(rv1 + instr.imm, &load_value);
     hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
@@ -490,7 +490,7 @@ Exception LW(Hart *hart, const Instruction &instr)
 
     using load_type_t = std::make_signed_t<word_t>;
     load_type_t load_value {0};
-    
+
     Exception exception = hart->LoadFromMemory<load_type_t>(rv1 + instr.imm, &load_value);
     hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
@@ -504,7 +504,7 @@ Exception LD(Hart *hart, const Instruction &instr)
 
     using load_type_t = dword_t;
     load_type_t load_value {0};
-    
+
     Exception exception = hart->LoadFromMemory<load_type_t>(rv1 + instr.imm, &load_value);
     hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
@@ -518,7 +518,7 @@ Exception LBU(Hart *hart, const Instruction &instr)
 
     using load_type_t = byte_t;
     load_type_t load_value {0};
-    
+
     Exception exception = hart->LoadFromMemory<load_type_t>(rv1 + instr.imm, &load_value);
     hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
@@ -532,7 +532,7 @@ Exception LHU(Hart *hart, const Instruction &instr)
 
     using load_type_t = hword_t;
     load_type_t load_value {0};
-    
+
     Exception exception = hart->LoadFromMemory<load_type_t>(rv1 + instr.imm, &load_value);
     hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
@@ -546,7 +546,7 @@ Exception LWU(Hart *hart, const Instruction &instr)
 
     using load_type_t = word_t;
     load_type_t load_value {0};
-    
+
     Exception exception = hart->LoadFromMemory<load_type_t>(rv1 + instr.imm, &load_value);
     hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
@@ -870,7 +870,7 @@ Exception AMOSWAP_W(Hart *hart, const Instruction &instr)
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOSWAP_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
-    
+
     return Exception::NONE;
 }
 

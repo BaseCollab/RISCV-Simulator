@@ -4,7 +4,7 @@
 
 namespace rvsim {
 
-void Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags) const
+Exception Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags) const
 {
     addr_t vpage_padding = (VPAGE_SIZE - src.value % VPAGE_SIZE) % VPAGE_SIZE;
 
@@ -31,9 +31,11 @@ void Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_f
 
         memory_->Load((char *)dst + vpage_padding + vpage_offset, load_size, pair_paddr.first.value);
     }
+
+    return Exception::NONE;
 }
 
-void Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags) const
+Exception Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags) const
 {
     addr_t vpage_padding = (VPAGE_SIZE - dst.value % VPAGE_SIZE) % VPAGE_SIZE;
 
@@ -60,6 +62,8 @@ void Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_fl
 
         memory_->Store(pair_paddr.first.value, (char *)src + vpage_padding + vpage_offset, store_size);
     }
+
+    return Exception::NONE;
 }
 
 Exception Hart::FetchInstruction(instr_size_t *raw_instr)
@@ -83,13 +87,19 @@ void Hart::Interpret()
 
     while (true) {
         instr_size_t raw_instr {0};
-        Exception exception = FetchInstruction(&raw_instr);
+        Instruction instr;
+        Exception exception = Exception::NONE;
+
+        exception = FetchInstruction(&raw_instr);
         if (exception != Exception::NONE) {
             handlers_.mmu_handler(exception, vaddr_t(pc_), PF_R | PF_X);
         }
 
-        Instruction instr;
-        DecodeAndExecute(&instr, raw_instr);
+        // TODO: rewrite exception handling here
+        exception = DecodeAndExecute(&instr, raw_instr);
+        if (exception != Exception::NONE) {
+            handlers_.mmu_handler(exception, vaddr_t(pc_), PF_R | PF_X);
+        }
 
 #ifdef DEBUG_HART
         DumpRegs(std::cerr);

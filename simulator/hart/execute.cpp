@@ -6,13 +6,14 @@
  */
 
 #include "hart/hart.h"
+#include "hart/exception.h"
 #include "common/utils/bit_ops.h"
 #include "instruction/instruction.h"
 #include "instruction/instruction_exec.h"
 
 namespace rvsim {
 
-void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
+Exception Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
 {
     word_t var_bits_0 = bitops::GetBits<6, 0>(raw_instr);
     if (var_bits_0 == 99) {
@@ -33,9 +34,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "BEQ: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::BEQ(this, *instr);
-
-            return;
+            return iexec::BEQ(this, *instr);
         }
 
         if (var_bits_1 == 1) {
@@ -54,9 +53,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "BNE: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::BNE(this, *instr);
-
-            return;
+            return iexec::BNE(this, *instr);
         }
 
         if (var_bits_1 == 4) {
@@ -75,9 +72,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "BLT: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::BLT(this, *instr);
-
-            return;
+            return iexec::BLT(this, *instr);
         }
 
         if (var_bits_1 == 5) {
@@ -96,9 +91,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "BGE: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::BGE(this, *instr);
-
-            return;
+            return iexec::BGE(this, *instr);
         }
 
         if (var_bits_1 == 6) {
@@ -117,9 +110,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "BLTU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::BLTU(this, *instr);
-
-            return;
+            return iexec::BLTU(this, *instr);
         }
 
         if (var_bits_1 == 7) {
@@ -138,17 +129,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "BGEU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::BGEU(this, *instr);
-
-            return;
+            return iexec::BGEU(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 103) {
@@ -168,9 +155,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
         std::cerr << "[DEBUG] [DECODE] " << std::hex << "JALR: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-        iexec::JALR(this, *instr);
-
-        return;
+        return iexec::JALR(this, *instr);
     }
 
     if (var_bits_0 == 111) {
@@ -192,9 +177,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
         std::cerr << "[DEBUG] [DECODE] " << std::hex << "JAL: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-        iexec::JAL(this, *instr);
-
-        return;
+        return iexec::JAL(this, *instr);
     }
 
     if (var_bits_0 == 55) {
@@ -211,9 +194,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
         std::cerr << "[DEBUG] [DECODE] " << std::hex << "LUI: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-        iexec::LUI(this, *instr);
-
-        return;
+        return iexec::LUI(this, *instr);
     }
 
     if (var_bits_0 == 23) {
@@ -230,9 +211,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
         std::cerr << "[DEBUG] [DECODE] " << std::hex << "AUIPC: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-        iexec::AUIPC(this, *instr);
-
-        return;
+        return iexec::AUIPC(this, *instr);
     }
 
     if (var_bits_0 == 19) {
@@ -252,9 +231,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "ADDI: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::ADDI(this, *instr);
-
-            return;
+            return iexec::ADDI(this, *instr);
         }
 
         if (var_bits_1 == 1) {
@@ -272,9 +249,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "SLLI: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::SLLI(this, *instr);
-
-            return;
+            return iexec::SLLI(this, *instr);
         }
 
         if (var_bits_1 == 2) {
@@ -292,9 +267,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "SLTI: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::SLTI(this, *instr);
-
-            return;
+            return iexec::SLTI(this, *instr);
         }
 
         if (var_bits_1 == 3) {
@@ -312,9 +285,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "SLTIU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::SLTIU(this, *instr);
-
-            return;
+            return iexec::SLTIU(this, *instr);
         }
 
         if (var_bits_1 == 4) {
@@ -332,9 +303,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "XORI: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::XORI(this, *instr);
-
-            return;
+            return iexec::XORI(this, *instr);
         }
 
         if (var_bits_1 == 5) {
@@ -354,9 +323,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SRLI: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SRLI(this, *instr);
-
-                return;
+                return iexec::SRLI(this, *instr);
             }
 
             if (var_bits_2 == 16) {
@@ -374,17 +341,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SRAI: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SRAI(this, *instr);
-
-                return;
+                return iexec::SRAI(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 6) {
@@ -402,9 +365,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "ORI: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::ORI(this, *instr);
-
-            return;
+            return iexec::ORI(this, *instr);
         }
 
         if (var_bits_1 == 7) {
@@ -422,17 +383,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "ANDI: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::ANDI(this, *instr);
-
-            return;
+            return iexec::ANDI(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 51) {
@@ -454,9 +411,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "ADD: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::ADD(this, *instr);
-
-                return;
+                return iexec::ADD(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -474,9 +429,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SLL: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SLL(this, *instr);
-
-                return;
+                return iexec::SLL(this, *instr);
             }
 
             if (var_bits_2 == 2) {
@@ -494,9 +447,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SLT: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SLT(this, *instr);
-
-                return;
+                return iexec::SLT(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -514,9 +465,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SLTU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SLTU(this, *instr);
-
-                return;
+                return iexec::SLTU(this, *instr);
             }
 
             if (var_bits_2 == 4) {
@@ -534,9 +483,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "XOR: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::XOR(this, *instr);
-
-                return;
+                return iexec::XOR(this, *instr);
             }
 
             if (var_bits_2 == 5) {
@@ -554,9 +501,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SRL: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SRL(this, *instr);
-
-                return;
+                return iexec::SRL(this, *instr);
             }
 
             if (var_bits_2 == 6) {
@@ -574,9 +519,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "OR: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::OR(this, *instr);
-
-                return;
+                return iexec::OR(this, *instr);
             }
 
             if (var_bits_2 == 7) {
@@ -594,17 +537,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AND: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AND(this, *instr);
-
-                return;
+                return iexec::AND(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 32) {
@@ -624,9 +563,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SUB: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SUB(this, *instr);
-
-                return;
+                return iexec::SUB(this, *instr);
             }
 
             if (var_bits_2 == 5) {
@@ -644,17 +581,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SRA: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SRA(this, *instr);
-
-                return;
+                return iexec::SRA(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 1) {
@@ -674,9 +607,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "MUL: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::MUL(this, *instr);
-
-                return;
+                return iexec::MUL(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -694,9 +625,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "MULH: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::MULH(this, *instr);
-
-                return;
+                return iexec::MULH(this, *instr);
             }
 
             if (var_bits_2 == 2) {
@@ -714,9 +643,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "MULHSU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::MULHSU(this, *instr);
-
-                return;
+                return iexec::MULHSU(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -734,9 +661,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "MULHU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::MULHU(this, *instr);
-
-                return;
+                return iexec::MULHU(this, *instr);
             }
 
             if (var_bits_2 == 4) {
@@ -754,9 +679,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "DIV: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::DIV(this, *instr);
-
-                return;
+                return iexec::DIV(this, *instr);
             }
 
             if (var_bits_2 == 5) {
@@ -774,9 +697,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "DIVU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::DIVU(this, *instr);
-
-                return;
+                return iexec::DIVU(this, *instr);
             }
 
             if (var_bits_2 == 6) {
@@ -794,9 +715,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "REM: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::REM(this, *instr);
-
-                return;
+                return iexec::REM(this, *instr);
             }
 
             if (var_bits_2 == 7) {
@@ -814,25 +733,19 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "REMU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::REMU(this, *instr);
-
-                return;
+                return iexec::REMU(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 27) {
@@ -852,9 +765,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "ADDIW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::ADDIW(this, *instr);
-
-            return;
+            return iexec::ADDIW(this, *instr);
         }
 
         if (var_bits_1 == 1) {
@@ -872,9 +783,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "SLLIW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::SLLIW(this, *instr);
-
-            return;
+            return iexec::SLLIW(this, *instr);
         }
 
         if (var_bits_1 == 5) {
@@ -894,9 +803,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SRLIW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SRLIW(this, *instr);
-
-                return;
+                return iexec::SRLIW(this, *instr);
             }
 
             if (var_bits_2 == 32) {
@@ -914,25 +821,19 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SRAIW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SRAIW(this, *instr);
-
-                return;
+                return iexec::SRAIW(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 59) {
@@ -954,9 +855,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "ADDW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::ADDW(this, *instr);
-
-                return;
+                return iexec::ADDW(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -974,9 +873,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SLLW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SLLW(this, *instr);
-
-                return;
+                return iexec::SLLW(this, *instr);
             }
 
             if (var_bits_2 == 5) {
@@ -994,17 +891,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SRLW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SRLW(this, *instr);
-
-                return;
+                return iexec::SRLW(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 32) {
@@ -1024,9 +917,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SUBW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SUBW(this, *instr);
-
-                return;
+                return iexec::SUBW(this, *instr);
             }
 
             if (var_bits_2 == 5) {
@@ -1044,17 +935,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SRAW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SRAW(this, *instr);
-
-                return;
+                return iexec::SRAW(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 1) {
@@ -1074,9 +961,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "MULW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::MULW(this, *instr);
-
-                return;
+                return iexec::MULW(this, *instr);
             }
 
             if (var_bits_2 == 4) {
@@ -1094,9 +979,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "DIVW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::DIVW(this, *instr);
-
-                return;
+                return iexec::DIVW(this, *instr);
             }
 
             if (var_bits_2 == 5) {
@@ -1114,9 +997,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "DIVUW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::DIVUW(this, *instr);
-
-                return;
+                return iexec::DIVUW(this, *instr);
             }
 
             if (var_bits_2 == 6) {
@@ -1134,9 +1015,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "REMW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::REMW(this, *instr);
-
-                return;
+                return iexec::REMW(this, *instr);
             }
 
             if (var_bits_2 == 7) {
@@ -1154,25 +1033,19 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "REMUW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::REMUW(this, *instr);
-
-                return;
+                return iexec::REMUW(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 3) {
@@ -1194,9 +1067,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "LB: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::LB(this, *instr);
-
-            return;
+            return iexec::LB(this, *instr);
         }
 
         if (var_bits_1 == 1) {
@@ -1216,9 +1087,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "LH: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::LH(this, *instr);
-
-            return;
+            return iexec::LH(this, *instr);
         }
 
         if (var_bits_1 == 2) {
@@ -1238,9 +1107,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "LW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::LW(this, *instr);
-
-            return;
+            return iexec::LW(this, *instr);
         }
 
         if (var_bits_1 == 3) {
@@ -1260,9 +1127,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "LD: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::LD(this, *instr);
-
-            return;
+            return iexec::LD(this, *instr);
         }
 
         if (var_bits_1 == 4) {
@@ -1282,9 +1147,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "LBU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::LBU(this, *instr);
-
-            return;
+            return iexec::LBU(this, *instr);
         }
 
         if (var_bits_1 == 5) {
@@ -1304,9 +1167,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "LHU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::LHU(this, *instr);
-
-            return;
+            return iexec::LHU(this, *instr);
         }
 
         if (var_bits_1 == 6) {
@@ -1326,17 +1187,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "LWU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::LWU(this, *instr);
-
-            return;
+            return iexec::LWU(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 35) {
@@ -1355,9 +1212,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "SB: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::SB(this, *instr);
-
-            return;
+            return iexec::SB(this, *instr);
         }
 
         if (var_bits_1 == 1) {
@@ -1374,9 +1229,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "SH: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::SH(this, *instr);
-
-            return;
+            return iexec::SH(this, *instr);
         }
 
         if (var_bits_1 == 2) {
@@ -1393,9 +1246,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "SW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::SW(this, *instr);
-
-            return;
+            return iexec::SW(this, *instr);
         }
 
         if (var_bits_1 == 3) {
@@ -1412,17 +1263,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "SD: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::SD(this, *instr);
-
-            return;
+            return iexec::SD(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 15) {
@@ -1443,9 +1290,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FENCE: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FENCE(this, *instr);
-
-            return;
+            return iexec::FENCE(this, *instr);
         }
 
         if (var_bits_1 == 1) {
@@ -1462,17 +1307,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FENCE_I: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FENCE_I(this, *instr);
-
-            return;
+            return iexec::FENCE_I(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 47) {
@@ -1495,9 +1336,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOADD_W: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOADD_W(this, *instr);
-
-                return;
+                return iexec::AMOADD_W(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -1516,17 +1355,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOADD_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOADD_D(this, *instr);
-
-                return;
+                return iexec::AMOADD_D(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 4) {
@@ -1547,9 +1382,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOXOR_W: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOXOR_W(this, *instr);
-
-                return;
+                return iexec::AMOXOR_W(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -1568,17 +1401,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOXOR_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOXOR_D(this, *instr);
-
-                return;
+                return iexec::AMOXOR_D(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 8) {
@@ -1599,9 +1428,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOOR_W: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOOR_W(this, *instr);
-
-                return;
+                return iexec::AMOOR_W(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -1620,17 +1447,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOOR_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOOR_D(this, *instr);
-
-                return;
+                return iexec::AMOOR_D(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 12) {
@@ -1651,9 +1474,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOAND_W: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOAND_W(this, *instr);
-
-                return;
+                return iexec::AMOAND_W(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -1672,17 +1493,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOAND_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOAND_D(this, *instr);
-
-                return;
+                return iexec::AMOAND_D(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 16) {
@@ -1703,9 +1520,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOMIN_W: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOMIN_W(this, *instr);
-
-                return;
+                return iexec::AMOMIN_W(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -1724,17 +1539,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOMIN_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOMIN_D(this, *instr);
-
-                return;
+                return iexec::AMOMIN_D(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 20) {
@@ -1755,9 +1566,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOMAX_W: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOMAX_W(this, *instr);
-
-                return;
+                return iexec::AMOMAX_W(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -1776,17 +1585,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOMAX_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOMAX_D(this, *instr);
-
-                return;
+                return iexec::AMOMAX_D(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 24) {
@@ -1807,9 +1612,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOMINU_W: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOMINU_W(this, *instr);
-
-                return;
+                return iexec::AMOMINU_W(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -1828,17 +1631,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOMINU_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOMINU_D(this, *instr);
-
-                return;
+                return iexec::AMOMINU_D(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 28) {
@@ -1859,9 +1658,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOMAXU_W: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOMAXU_W(this, *instr);
-
-                return;
+                return iexec::AMOMAXU_W(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -1880,17 +1677,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOMAXU_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOMAXU_D(this, *instr);
-
-                return;
+                return iexec::AMOMAXU_D(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 1) {
@@ -1911,9 +1704,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOSWAP_W: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOSWAP_W(this, *instr);
-
-                return;
+                return iexec::AMOSWAP_W(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -1932,17 +1723,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "AMOSWAP_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::AMOSWAP_D(this, *instr);
-
-                return;
+                return iexec::AMOSWAP_D(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 2) {
@@ -1965,9 +1752,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     std::cerr << "[DEBUG] [DECODE] " << std::hex << "LR_W: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                    iexec::LR_W(this, *instr);
-
-                    return;
+                    return iexec::LR_W(this, *instr);
                 }
 
                 if (var_bits_3 == 3) {
@@ -1986,25 +1771,19 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     std::cerr << "[DEBUG] [DECODE] " << std::hex << "LR_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                    iexec::LR_D(this, *instr);
-
-                    return;
+                    return iexec::LR_D(this, *instr);
                 }
 
                 /* Instruction wasn't found */
                 instr->id = InstructionId::INVALID_ID;
 
-                iexec::INVALID(this, *instr);
-
-                return;
+                return iexec::INVALID(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 3) {
@@ -2025,9 +1804,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SC_W: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SC_W(this, *instr);
-
-                return;
+                return iexec::SC_W(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -2046,25 +1823,19 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SC_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SC_D(this, *instr);
-
-                return;
+                return iexec::SC_D(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 115) {
@@ -2082,9 +1853,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     std::cerr << "[DEBUG] [DECODE] " << std::hex << "ECALL: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                    iexec::ECALL(this, *instr);
-
-                    return;
+                    return iexec::ECALL(this, *instr);
                 }
 
                 if (var_bits_3 == 32) {
@@ -2094,9 +1863,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     std::cerr << "[DEBUG] [DECODE] " << std::hex << "EBREAK: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                    iexec::EBREAK(this, *instr);
-
-                    return;
+                    return iexec::EBREAK(this, *instr);
                 }
 
                 if (var_bits_3 == 64) {
@@ -2106,17 +1873,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     std::cerr << "[DEBUG] [DECODE] " << std::hex << "URET: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                    iexec::URET(this, *instr);
-
-                    return;
+                    return iexec::URET(this, *instr);
                 }
 
                 /* Instruction wasn't found */
                 instr->id = InstructionId::INVALID_ID;
 
-                iexec::INVALID(this, *instr);
-
-                return;
+                return iexec::INVALID(this, *instr);
             }
 
             if (var_bits_2 == 8) {
@@ -2130,9 +1893,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     std::cerr << "[DEBUG] [DECODE] " << std::hex << "SRET: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                    iexec::SRET(this, *instr);
-
-                    return;
+                    return iexec::SRET(this, *instr);
                 }
 
                 if (var_bits_3 == 160) {
@@ -2144,17 +1905,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     std::cerr << "[DEBUG] [DECODE] " << std::hex << "WFI: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                    iexec::WFI(this, *instr);
-
-                    return;
+                    return iexec::WFI(this, *instr);
                 }
 
                 /* Instruction wasn't found */
                 instr->id = InstructionId::INVALID_ID;
 
-                iexec::INVALID(this, *instr);
-
-                return;
+                return iexec::INVALID(this, *instr);
             }
 
             if (var_bits_2 == 24) {
@@ -2166,9 +1923,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "MRET: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::MRET(this, *instr);
-
-                return;
+                return iexec::MRET(this, *instr);
             }
 
             if (var_bits_2 == 61) {
@@ -2178,9 +1933,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "DRET: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::DRET(this, *instr);
-
-                return;
+                return iexec::DRET(this, *instr);
             }
 
             if (var_bits_2 == 9) {
@@ -2195,9 +1948,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "SFENCE_VMA: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::SFENCE_VMA(this, *instr);
-
-                return;
+                return iexec::SFENCE_VMA(this, *instr);
             }
 
             if (var_bits_2 == 17) {
@@ -2212,9 +1963,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "HFENCE_VVMA: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::HFENCE_VVMA(this, *instr);
-
-                return;
+                return iexec::HFENCE_VVMA(this, *instr);
             }
 
             if (var_bits_2 == 49) {
@@ -2229,17 +1978,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "HFENCE_GVMA: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::HFENCE_GVMA(this, *instr);
-
-                return;
+                return iexec::HFENCE_GVMA(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 1) {
@@ -2257,9 +2002,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "CSRRW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::CSRRW(this, *instr);
-
-            return;
+            return iexec::CSRRW(this, *instr);
         }
 
         if (var_bits_1 == 2) {
@@ -2277,9 +2020,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "CSRRS: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::CSRRS(this, *instr);
-
-            return;
+            return iexec::CSRRS(this, *instr);
         }
 
         if (var_bits_1 == 3) {
@@ -2297,9 +2038,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "CSRRC: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::CSRRC(this, *instr);
-
-            return;
+            return iexec::CSRRC(this, *instr);
         }
 
         if (var_bits_1 == 5) {
@@ -2317,9 +2056,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "CSRRWI: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::CSRRWI(this, *instr);
-
-            return;
+            return iexec::CSRRWI(this, *instr);
         }
 
         if (var_bits_1 == 6) {
@@ -2337,9 +2074,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "CSRRSI: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::CSRRSI(this, *instr);
-
-            return;
+            return iexec::CSRRSI(this, *instr);
         }
 
         if (var_bits_1 == 7) {
@@ -2357,17 +2092,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "CSRRCI: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::CSRRCI(this, *instr);
-
-            return;
+            return iexec::CSRRCI(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 83) {
@@ -2388,9 +2119,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FADD_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FADD_S(this, *instr);
-
-            return;
+            return iexec::FADD_S(this, *instr);
         }
 
         if (var_bits_1 == 4) {
@@ -2409,9 +2138,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSUB_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FSUB_S(this, *instr);
-
-            return;
+            return iexec::FSUB_S(this, *instr);
         }
 
         if (var_bits_1 == 8) {
@@ -2430,9 +2157,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMUL_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FMUL_S(this, *instr);
-
-            return;
+            return iexec::FMUL_S(this, *instr);
         }
 
         if (var_bits_1 == 12) {
@@ -2451,9 +2176,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FDIV_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FDIV_S(this, *instr);
-
-            return;
+            return iexec::FDIV_S(this, *instr);
         }
 
         if (var_bits_1 == 16) {
@@ -2473,9 +2196,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSGNJ_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FSGNJ_S(this, *instr);
-
-                return;
+                return iexec::FSGNJ_S(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -2493,9 +2214,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSGNJN_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FSGNJN_S(this, *instr);
-
-                return;
+                return iexec::FSGNJN_S(this, *instr);
             }
 
             if (var_bits_2 == 2) {
@@ -2513,17 +2232,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSGNJX_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FSGNJX_S(this, *instr);
-
-                return;
+                return iexec::FSGNJX_S(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 20) {
@@ -2543,9 +2258,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMIN_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FMIN_S(this, *instr);
-
-                return;
+                return iexec::FMIN_S(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -2563,17 +2276,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMAX_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FMAX_S(this, *instr);
-
-                return;
+                return iexec::FMAX_S(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 44) {
@@ -2591,9 +2300,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSQRT_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FSQRT_S(this, *instr);
-
-            return;
+            return iexec::FSQRT_S(this, *instr);
         }
 
         if (var_bits_1 == 1) {
@@ -2612,9 +2319,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FADD_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FADD_D(this, *instr);
-
-            return;
+            return iexec::FADD_D(this, *instr);
         }
 
         if (var_bits_1 == 5) {
@@ -2633,9 +2338,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSUB_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FSUB_D(this, *instr);
-
-            return;
+            return iexec::FSUB_D(this, *instr);
         }
 
         if (var_bits_1 == 9) {
@@ -2654,9 +2357,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMUL_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FMUL_D(this, *instr);
-
-            return;
+            return iexec::FMUL_D(this, *instr);
         }
 
         if (var_bits_1 == 13) {
@@ -2675,9 +2376,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FDIV_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FDIV_D(this, *instr);
-
-            return;
+            return iexec::FDIV_D(this, *instr);
         }
 
         if (var_bits_1 == 17) {
@@ -2697,9 +2396,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSGNJ_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FSGNJ_D(this, *instr);
-
-                return;
+                return iexec::FSGNJ_D(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -2717,9 +2414,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSGNJN_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FSGNJN_D(this, *instr);
-
-                return;
+                return iexec::FSGNJN_D(this, *instr);
             }
 
             if (var_bits_2 == 2) {
@@ -2737,17 +2432,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSGNJX_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FSGNJX_D(this, *instr);
-
-                return;
+                return iexec::FSGNJX_D(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 21) {
@@ -2767,9 +2458,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMIN_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FMIN_D(this, *instr);
-
-                return;
+                return iexec::FMIN_D(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -2787,17 +2476,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMAX_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FMAX_D(this, *instr);
-
-                return;
+                return iexec::FMAX_D(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 32) {
@@ -2817,9 +2502,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_S_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_S_D(this, *instr);
-
-                return;
+                return iexec::FCVT_S_D(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -2837,17 +2520,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_S_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_S_Q(this, *instr);
-
-                return;
+                return iexec::FCVT_S_Q(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 33) {
@@ -2867,9 +2546,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_D_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_D_S(this, *instr);
-
-                return;
+                return iexec::FCVT_D_S(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -2887,17 +2564,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_D_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_D_Q(this, *instr);
-
-                return;
+                return iexec::FCVT_D_Q(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 45) {
@@ -2915,9 +2588,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSQRT_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FSQRT_D(this, *instr);
-
-            return;
+            return iexec::FSQRT_D(this, *instr);
         }
 
         if (var_bits_1 == 3) {
@@ -2936,9 +2607,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FADD_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FADD_Q(this, *instr);
-
-            return;
+            return iexec::FADD_Q(this, *instr);
         }
 
         if (var_bits_1 == 7) {
@@ -2957,9 +2626,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSUB_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FSUB_Q(this, *instr);
-
-            return;
+            return iexec::FSUB_Q(this, *instr);
         }
 
         if (var_bits_1 == 11) {
@@ -2978,9 +2645,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMUL_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FMUL_Q(this, *instr);
-
-            return;
+            return iexec::FMUL_Q(this, *instr);
         }
 
         if (var_bits_1 == 15) {
@@ -2999,9 +2664,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FDIV_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FDIV_Q(this, *instr);
-
-            return;
+            return iexec::FDIV_Q(this, *instr);
         }
 
         if (var_bits_1 == 19) {
@@ -3021,9 +2684,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSGNJ_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FSGNJ_Q(this, *instr);
-
-                return;
+                return iexec::FSGNJ_Q(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -3041,9 +2702,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSGNJN_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FSGNJN_Q(this, *instr);
-
-                return;
+                return iexec::FSGNJN_Q(this, *instr);
             }
 
             if (var_bits_2 == 2) {
@@ -3061,17 +2720,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSGNJX_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FSGNJX_Q(this, *instr);
-
-                return;
+                return iexec::FSGNJX_Q(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 23) {
@@ -3091,9 +2746,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMIN_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FMIN_Q(this, *instr);
-
-                return;
+                return iexec::FMIN_Q(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -3111,17 +2764,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMAX_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FMAX_Q(this, *instr);
-
-                return;
+                return iexec::FMAX_Q(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 35) {
@@ -3141,9 +2790,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_Q_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_Q_S(this, *instr);
-
-                return;
+                return iexec::FCVT_Q_S(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -3161,17 +2808,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_Q_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_Q_D(this, *instr);
-
-                return;
+                return iexec::FCVT_Q_D(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 47) {
@@ -3189,9 +2832,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSQRT_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FSQRT_Q(this, *instr);
-
-            return;
+            return iexec::FSQRT_Q(this, *instr);
         }
 
         if (var_bits_1 == 80) {
@@ -3211,9 +2852,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FLE_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FLE_S(this, *instr);
-
-                return;
+                return iexec::FLE_S(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -3231,9 +2870,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FLT_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FLT_S(this, *instr);
-
-                return;
+                return iexec::FLT_S(this, *instr);
             }
 
             if (var_bits_2 == 2) {
@@ -3251,17 +2888,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FEQ_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FEQ_S(this, *instr);
-
-                return;
+                return iexec::FEQ_S(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 81) {
@@ -3281,9 +2914,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FLE_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FLE_D(this, *instr);
-
-                return;
+                return iexec::FLE_D(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -3301,9 +2932,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FLT_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FLT_D(this, *instr);
-
-                return;
+                return iexec::FLT_D(this, *instr);
             }
 
             if (var_bits_2 == 2) {
@@ -3321,17 +2950,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FEQ_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FEQ_D(this, *instr);
-
-                return;
+                return iexec::FEQ_D(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 83) {
@@ -3351,9 +2976,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FLE_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FLE_Q(this, *instr);
-
-                return;
+                return iexec::FLE_Q(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -3371,9 +2994,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FLT_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FLT_Q(this, *instr);
-
-                return;
+                return iexec::FLT_Q(this, *instr);
             }
 
             if (var_bits_2 == 2) {
@@ -3391,17 +3012,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FEQ_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FEQ_Q(this, *instr);
-
-                return;
+                return iexec::FEQ_Q(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 96) {
@@ -3421,9 +3038,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_W_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_W_S(this, *instr);
-
-                return;
+                return iexec::FCVT_W_S(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -3441,9 +3056,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_WU_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_WU_S(this, *instr);
-
-                return;
+                return iexec::FCVT_WU_S(this, *instr);
             }
 
             if (var_bits_2 == 2) {
@@ -3461,9 +3074,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_L_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_L_S(this, *instr);
-
-                return;
+                return iexec::FCVT_L_S(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -3481,17 +3092,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_LU_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_LU_S(this, *instr);
-
-                return;
+                return iexec::FCVT_LU_S(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 112) {
@@ -3512,9 +3119,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMV_X_W: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                    iexec::FMV_X_W(this, *instr);
-
-                    return;
+                    return iexec::FMV_X_W(this, *instr);
                 }
 
                 if (var_bits_3 == 1) {
@@ -3532,25 +3137,19 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                               << std::endl;
 #endif // DEBUG_HART
 
-                    iexec::FCLASS_S(this, *instr);
-
-                    return;
+                    return iexec::FCLASS_S(this, *instr);
                 }
 
                 /* Instruction wasn't found */
                 instr->id = InstructionId::INVALID_ID;
 
-                iexec::INVALID(this, *instr);
-
-                return;
+                return iexec::INVALID(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 97) {
@@ -3570,9 +3169,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_W_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_W_D(this, *instr);
-
-                return;
+                return iexec::FCVT_W_D(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -3590,9 +3187,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_WU_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_WU_D(this, *instr);
-
-                return;
+                return iexec::FCVT_WU_D(this, *instr);
             }
 
             if (var_bits_2 == 2) {
@@ -3610,9 +3205,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_L_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_L_D(this, *instr);
-
-                return;
+                return iexec::FCVT_L_D(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -3630,17 +3223,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_LU_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_LU_D(this, *instr);
-
-                return;
+                return iexec::FCVT_LU_D(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 113) {
@@ -3661,9 +3250,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMV_X_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                    iexec::FMV_X_D(this, *instr);
-
-                    return;
+                    return iexec::FMV_X_D(this, *instr);
                 }
 
                 if (var_bits_3 == 1) {
@@ -3681,25 +3268,19 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                               << std::endl;
 #endif // DEBUG_HART
 
-                    iexec::FCLASS_D(this, *instr);
-
-                    return;
+                    return iexec::FCLASS_D(this, *instr);
                 }
 
                 /* Instruction wasn't found */
                 instr->id = InstructionId::INVALID_ID;
 
-                iexec::INVALID(this, *instr);
-
-                return;
+                return iexec::INVALID(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 99) {
@@ -3719,9 +3300,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_W_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_W_Q(this, *instr);
-
-                return;
+                return iexec::FCVT_W_Q(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -3739,9 +3318,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_WU_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_WU_Q(this, *instr);
-
-                return;
+                return iexec::FCVT_WU_Q(this, *instr);
             }
 
             if (var_bits_2 == 2) {
@@ -3759,9 +3336,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_L_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_L_Q(this, *instr);
-
-                return;
+                return iexec::FCVT_L_Q(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -3779,17 +3354,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_LU_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_LU_Q(this, *instr);
-
-                return;
+                return iexec::FCVT_LU_Q(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 115) {
@@ -3810,9 +3381,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMV_X_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                    iexec::FMV_X_Q(this, *instr);
-
-                    return;
+                    return iexec::FMV_X_Q(this, *instr);
                 }
 
                 if (var_bits_3 == 1) {
@@ -3830,25 +3399,19 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                               << std::endl;
 #endif // DEBUG_HART
 
-                    iexec::FCLASS_Q(this, *instr);
-
-                    return;
+                    return iexec::FCLASS_Q(this, *instr);
                 }
 
                 /* Instruction wasn't found */
                 instr->id = InstructionId::INVALID_ID;
 
-                iexec::INVALID(this, *instr);
-
-                return;
+                return iexec::INVALID(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 104) {
@@ -3868,9 +3431,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_S_W: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_S_W(this, *instr);
-
-                return;
+                return iexec::FCVT_S_W(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -3888,9 +3449,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_S_WU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_S_WU(this, *instr);
-
-                return;
+                return iexec::FCVT_S_WU(this, *instr);
             }
 
             if (var_bits_2 == 2) {
@@ -3908,9 +3467,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_S_L: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_S_L(this, *instr);
-
-                return;
+                return iexec::FCVT_S_L(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -3928,17 +3485,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_S_LU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_S_LU(this, *instr);
-
-                return;
+                return iexec::FCVT_S_LU(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 120) {
@@ -3955,9 +3508,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMV_W_X: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FMV_W_X(this, *instr);
-
-            return;
+            return iexec::FMV_W_X(this, *instr);
         }
 
         if (var_bits_1 == 105) {
@@ -3977,9 +3528,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_D_W: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_D_W(this, *instr);
-
-                return;
+                return iexec::FCVT_D_W(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -3997,9 +3546,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_D_WU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_D_WU(this, *instr);
-
-                return;
+                return iexec::FCVT_D_WU(this, *instr);
             }
 
             if (var_bits_2 == 2) {
@@ -4017,9 +3564,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_D_L: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_D_L(this, *instr);
-
-                return;
+                return iexec::FCVT_D_L(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -4037,17 +3582,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_D_LU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_D_LU(this, *instr);
-
-                return;
+                return iexec::FCVT_D_LU(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 121) {
@@ -4064,9 +3605,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMV_D_X: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FMV_D_X(this, *instr);
-
-            return;
+            return iexec::FMV_D_X(this, *instr);
         }
 
         if (var_bits_1 == 107) {
@@ -4086,9 +3625,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_Q_W: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_Q_W(this, *instr);
-
-                return;
+                return iexec::FCVT_Q_W(this, *instr);
             }
 
             if (var_bits_2 == 1) {
@@ -4106,9 +3643,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_Q_WU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_Q_WU(this, *instr);
-
-                return;
+                return iexec::FCVT_Q_WU(this, *instr);
             }
 
             if (var_bits_2 == 2) {
@@ -4126,9 +3661,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_Q_L: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_Q_L(this, *instr);
-
-                return;
+                return iexec::FCVT_Q_L(this, *instr);
             }
 
             if (var_bits_2 == 3) {
@@ -4146,17 +3679,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 std::cerr << "[DEBUG] [DECODE] " << std::hex << "FCVT_Q_LU: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-                iexec::FCVT_Q_LU(this, *instr);
-
-                return;
+                return iexec::FCVT_Q_LU(this, *instr);
             }
 
             /* Instruction wasn't found */
             instr->id = InstructionId::INVALID_ID;
 
-            iexec::INVALID(this, *instr);
-
-            return;
+            return iexec::INVALID(this, *instr);
         }
 
         if (var_bits_1 == 123) {
@@ -4173,17 +3702,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMV_Q_X: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FMV_Q_X(this, *instr);
-
-            return;
+            return iexec::FMV_Q_X(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 7) {
@@ -4203,9 +3728,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FLW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FLW(this, *instr);
-
-            return;
+            return iexec::FLW(this, *instr);
         }
 
         if (var_bits_1 == 3) {
@@ -4223,9 +3746,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FLD: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FLD(this, *instr);
-
-            return;
+            return iexec::FLD(this, *instr);
         }
 
         if (var_bits_1 == 4) {
@@ -4243,17 +3764,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FLQ: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FLQ(this, *instr);
-
-            return;
+            return iexec::FLQ(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 39) {
@@ -4272,9 +3789,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSW: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FSW(this, *instr);
-
-            return;
+            return iexec::FSW(this, *instr);
         }
 
         if (var_bits_1 == 3) {
@@ -4291,9 +3806,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSD: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FSD(this, *instr);
-
-            return;
+            return iexec::FSD(this, *instr);
         }
 
         if (var_bits_1 == 4) {
@@ -4310,17 +3823,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FSQ: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FSQ(this, *instr);
-
-            return;
+            return iexec::FSQ(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 67) {
@@ -4342,9 +3851,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMADD_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FMADD_S(this, *instr);
-
-            return;
+            return iexec::FMADD_S(this, *instr);
         }
 
         if (var_bits_1 == 1) {
@@ -4364,9 +3871,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMADD_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FMADD_D(this, *instr);
-
-            return;
+            return iexec::FMADD_D(this, *instr);
         }
 
         if (var_bits_1 == 3) {
@@ -4386,17 +3891,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMADD_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FMADD_Q(this, *instr);
-
-            return;
+            return iexec::FMADD_Q(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 71) {
@@ -4418,9 +3919,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMSUB_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FMSUB_S(this, *instr);
-
-            return;
+            return iexec::FMSUB_S(this, *instr);
         }
 
         if (var_bits_1 == 1) {
@@ -4440,9 +3939,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMSUB_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FMSUB_D(this, *instr);
-
-            return;
+            return iexec::FMSUB_D(this, *instr);
         }
 
         if (var_bits_1 == 3) {
@@ -4462,17 +3959,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FMSUB_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FMSUB_Q(this, *instr);
-
-            return;
+            return iexec::FMSUB_Q(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 75) {
@@ -4494,9 +3987,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FNMSUB_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FNMSUB_S(this, *instr);
-
-            return;
+            return iexec::FNMSUB_S(this, *instr);
         }
 
         if (var_bits_1 == 1) {
@@ -4516,9 +4007,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FNMSUB_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FNMSUB_D(this, *instr);
-
-            return;
+            return iexec::FNMSUB_D(this, *instr);
         }
 
         if (var_bits_1 == 3) {
@@ -4538,17 +4027,13 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FNMSUB_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FNMSUB_Q(this, *instr);
-
-            return;
+            return iexec::FNMSUB_Q(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     if (var_bits_0 == 79) {
@@ -4570,9 +4055,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FNMADD_S: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FNMADD_S(this, *instr);
-
-            return;
+            return iexec::FNMADD_S(this, *instr);
         }
 
         if (var_bits_1 == 1) {
@@ -4592,9 +4075,7 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FNMADD_D: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FNMADD_D(this, *instr);
-
-            return;
+            return iexec::FNMADD_D(this, *instr);
         }
 
         if (var_bits_1 == 3) {
@@ -4614,25 +4095,19 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             std::cerr << "[DEBUG] [DECODE] " << std::hex << "FNMADD_Q: 0x" << raw_instr << std::dec << std::endl;
 #endif // DEBUG_HART
 
-            iexec::FNMADD_Q(this, *instr);
-
-            return;
+            return iexec::FNMADD_Q(this, *instr);
         }
 
         /* Instruction wasn't found */
         instr->id = InstructionId::INVALID_ID;
 
-        iexec::INVALID(this, *instr);
-
-        return;
+        return iexec::INVALID(this, *instr);
     }
 
     /* Instruction wasn't found */
     instr->id = InstructionId::INVALID_ID;
 
-    iexec::INVALID(this, *instr);
-
-    return;
+    return iexec::INVALID(this, *instr);
 }
 
 } // namespace rvsim
