@@ -1,5 +1,5 @@
-#include "elf_loader.h"
-#include "simulator.h"
+#include "simulator/elf_loader.h"
+#include "simulator/simulator.h"
 
 #include <unistd.h>
 #include <iostream>
@@ -55,7 +55,7 @@ ElfLoader::~ElfLoader()
     close(elf_fd_);
 }
 
-void ElfLoader::LoadElf(const Hart &hart)
+void ElfLoader::LoadElf(const Simulator &sim, const Hart &hart)
 {
     GElf_Ehdr elf_header;
     if (gelf_getehdr(elf_, &elf_header) == nullptr) {
@@ -100,6 +100,7 @@ void ElfLoader::LoadElf(const Hart &hart)
             std::cerr << "[DEBUG] [ELF]    p_flags = " << segment_flags << std::endl;
 #endif
 
+            sim.CreatePageTableWalk(segment_vaddr);
             hart.StoreToMemory(segment_vaddr, elf_buffer_ + segment_file_offset, segment_elf_size, segment_flags);
         }
     }

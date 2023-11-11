@@ -8,7 +8,6 @@
 #include "hart/vpt.h"
 #include "hart/exception_handler.h"
 #include "memory/memory_controller.h"
-#include "elf_loader.h"
 
 #include <functional>
 
@@ -23,6 +22,7 @@ public:
     ~Simulator() = default;
 
     void LoadElfFile(const std::string &elf_pathname);
+    void CreatePageTableWalk(vaddr_t vaddr) const;
 
 private:
     void InitializeCSR(CSRs *csr_regs, reg_t root_page_idx);
@@ -32,7 +32,9 @@ private:
     void SetExceptionHandlers();
 
     void PreparePageTable();
-    dword_t CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn);
+
+    template <bool IsLastLevel>
+    dword_t CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t rwx_flags = PF_R | PF_W) const;
 
 private:
     static constexpr reg_t STACK_PTR = 0x600000000;

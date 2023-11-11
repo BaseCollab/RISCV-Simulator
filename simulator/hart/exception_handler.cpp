@@ -9,17 +9,18 @@
 
 namespace rvsim {
 
-void ExceptionHandler::MMUExceptionHandler(Hart *hart, PhysMemoryCtl *memory, Exception exception, addr_t vaddr,
-                                           uint8_t rwx_flags)
+void ExceptionHandler::MMUExceptionHandler(Hart *hart, PhysMemoryCtl *memory, Exception exception, addr_t vaddr)
 {
+    (void)hart;
+    (void)memory;
+
     if (exception == Exception::NONE) {
         return;
     }
 
     switch (exception) {
         case Exception::MMU_INVALID_PAGE_ENTRY:
-            VirtualPageMapping(hart, memory, vaddr, rwx_flags);
-            break;
+            err(EX_SOFTWARE, "Page access fault: invalid page entry [addr %lx]", vaddr);
 
         case Exception::MMU_INVALID_PAGE_SIZE:
             err(EX_SOFTWARE,
