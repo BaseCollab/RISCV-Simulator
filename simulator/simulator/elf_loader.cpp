@@ -89,6 +89,7 @@ void ElfLoader::LoadElf(const Simulator &sim, const Hart &hart)
             // If curr_segment_header is loadable program segment then load it to virtual memory
             Elf64_Xword segment_vaddr = curr_segment_header.p_vaddr;
             Elf64_Xword segment_elf_size = curr_segment_header.p_filesz;
+            Elf64_Xword segment_mem_size = curr_segment_header.p_memsz;
             Elf64_Off segment_file_offset = curr_segment_header.p_offset;
             Elf64_Word segment_flags = curr_segment_header.p_flags;
 
@@ -96,11 +97,12 @@ void ElfLoader::LoadElf(const Simulator &sim, const Hart &hart)
             std::cerr << "[DEBUG] [ELF] Segment " << i << " is PT_LOAD:" << std::endl;
             std::cerr << "[DEBUG] [ELF]    p_vaddr = " << segment_vaddr << std::endl;
             std::cerr << "[DEBUG] [ELF]    p_filesz = " << segment_elf_size << std::endl;
+            std::cerr << "[DEBUG] [ELF]    p_memsz = " << segment_mem_size << std::endl;
             std::cerr << "[DEBUG] [ELF]    p_offset = " << segment_file_offset << std::endl;
             std::cerr << "[DEBUG] [ELF]    p_flags = " << segment_flags << std::endl;
 #endif
 
-            sim.CreatePageTableWalk(segment_vaddr);
+            sim.MapVirtualRange(segment_vaddr, segment_vaddr + segment_mem_size);
             hart.StoreToMemory(segment_vaddr, elf_buffer_ + segment_file_offset, segment_elf_size, segment_flags);
         }
     }

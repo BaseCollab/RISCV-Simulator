@@ -112,17 +112,47 @@ dword_t Simulator::CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t rwx_
 }
 
 // clang-format off
-void Simulator::CreatePageTableWalk(vaddr_t vaddr) const
+void Simulator::MapVirtualPage(vaddr_t page_vaddr) const
 {
     csr_t satp_reg = hart_->csr_regs.LoadCSR(CSR_SATP_IDX);
     csr_satp_t satp;
     std::memcpy(&satp, &satp_reg, sizeof(satp_reg));
 
-    dword_t ppn_3 = CreatePageTableLVL<false>(satp.ppn, vaddr.GetVPN3());
-    dword_t ppn_2 = CreatePageTableLVL<false>(ppn_3,    vaddr.GetVPN2());
-    dword_t ppn_1 = CreatePageTableLVL<false>(ppn_2,    vaddr.GetVPN1());
-                    CreatePageTableLVL<true> (ppn_1,    vaddr.GetVPN0());
+    dword_t ppn_3 = CreatePageTableLVL<false>(satp.ppn, page_vaddr.GetVPN3());
+    dword_t ppn_2 = CreatePageTableLVL<false>(ppn_3,    page_vaddr.GetVPN2());
+    dword_t ppn_1 = CreatePageTableLVL<false>(ppn_2,    page_vaddr.GetVPN1());
+                    CreatePageTableLVL<true> (ppn_1,    page_vaddr.GetVPN0());
 }
 // clang-format on
+
+// TODO: rewrite the whole function
+void Simulator::MapVirtualRange(vaddr_t vaddr_start, vaddr_t vaddr_end) const
+{
+    addr_t vpage_padding = (VPAGE_SIZE - src.value % VPAGE_SIZE) % VPAGE_SIZE;
+
+    if (vpage_padding != 0) {
+        auto pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
+        if (pair_paddr.second != Exception::NONE) {
+            handlers_.mmu_handler(pair_paddr.second, src.value);
+            pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
+        }
+
+        memory_->Load(dst, vpage_padding, pair_paddr.first.value);
+    }
+
+    for (addr_t vpage_offset = 0; vpage_offset < dst_size - vpage_padding; vpage_offset += VPAGE_SIZE) {
+        auto pair_paddr = mmu_.VirtToPhysAddr(src.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
+        if (pair_paddr.second != Exception::NONE) {
+            handlers_.mmu_handler(pair_paddr.second, src.value);
+            pair_paddr = mmu_.VirtToPhysAddr(src.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
+        }
+
+        size_t load_size = VPAGE_SIZE;
+        if ((dst_size - vpage_padding - vpage_offset) < VPAGE_SIZE)
+            load_size = dst_size - vpage_padding - vpage_offset;
+
+        memory_->Load((char *)dst + vpage_padding + vpage_offset, load_size, pair_paddr.first.value);
+    }
+}
 
 } // namespace rvsim

@@ -22,7 +22,8 @@ public:
     ~Simulator() = default;
 
     void LoadElfFile(const std::string &elf_pathname);
-    void CreatePageTableWalk(vaddr_t vaddr) const;
+    void MapVirtualPage(vaddr_t page_vaddr) const;
+    void MapVirtualRange(vaddr_t vaddr_start, vaddr_t vaddr_end) const;
 
 private:
     void InitializeCSR(CSRs *csr_regs, reg_t root_page_idx);
