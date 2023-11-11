@@ -88,8 +88,9 @@ public:
         gpr_table_[reg_idx] = value;
     }
 
+    // TODO: remove page-fault handling + rwx_flags argument
     template <typename ValueType>
-    Exception LoadFromMemory(vaddr_t src, ValueType *value, uint8_t rwx_flags = PF_R) const
+    Exception LoadFromMemory(vaddr_t src, ValueType *value, uint8_t rwx_flags = PF_W | PF_R) const
     {
         static_assert((sizeof(ValueType) == sizeof(byte_t)) || sizeof(ValueType) == sizeof(hword_t) ||
                       (sizeof(ValueType) == sizeof(word_t)) || sizeof(ValueType) == sizeof(dword_t));
@@ -110,8 +111,9 @@ public:
         return Exception::NONE;
     }
 
+    // TODO: remove page-fault handling + rwx_flags argument
     template <typename ValueType>
-    Exception StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags = PF_W) const
+    Exception StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags = PF_W | PF_R) const
     {
         static_assert((sizeof(ValueType) == sizeof(byte_t)) || sizeof(ValueType) == sizeof(hword_t) ||
                       (sizeof(ValueType) == sizeof(word_t)) || sizeof(ValueType) == sizeof(dword_t));
@@ -140,7 +142,7 @@ public:
     {
         out << "[DEBUG] [REGS_DUMP: Start]" << std::endl;
         for (size_t i = 0; i < N_GPR; ++i) {
-            out << "[DEBUG] [REGS_DUMP] X" << i << " = " << std::hex << gpr_table_[i] << std::dec << std::endl;
+            out << "[DEBUG] [REGS_DUMP] X" << i << " = 0x" << std::hex << gpr_table_[i] << std::dec << std::endl;
         }
         out << "[DEBUG] [REGS_DUMP: End]" << std::endl;
     }

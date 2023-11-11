@@ -4,6 +4,7 @@
 
 namespace rvsim {
 
+// TODO: remove page-fault handling + rwx_flags argument
 Exception Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags) const
 {
     addr_t vpage_padding = (VPAGE_SIZE - src.value % VPAGE_SIZE) % VPAGE_SIZE;
@@ -35,6 +36,7 @@ Exception Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t 
     return Exception::NONE;
 }
 
+// TODO: remove page-fault handling + rwx_flags argument
 Exception Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags) const
 {
     addr_t vpage_padding = (VPAGE_SIZE - dst.value % VPAGE_SIZE) % VPAGE_SIZE;
