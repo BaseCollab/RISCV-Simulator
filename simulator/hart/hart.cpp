@@ -4,13 +4,14 @@
 
 namespace rvsim {
 
-void Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags) const
+// TODO: remove page-fault handling + rwx_flags argument
+Exception Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags) const
 {
     addr_t vpage_padding = (VPAGE_SIZE - src.value % VPAGE_SIZE) % VPAGE_SIZE;
 
     if (vpage_padding != 0) {
         auto pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != MMU::Exception::NONE) {
+        if (pair_paddr.second != Exception::NONE) {
             handlers_.mmu_handler(pair_paddr.second, src.value, rwx_flags);
             pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
         }
@@ -20,7 +21,7 @@ void Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_f
 
     for (addr_t vpage_offset = 0; vpage_offset < dst_size - vpage_padding; vpage_offset += VPAGE_SIZE) {
         auto pair_paddr = mmu_.VirtToPhysAddr(src.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != MMU::Exception::NONE) {
+        if (pair_paddr.second != Exception::NONE) {
             handlers_.mmu_handler(pair_paddr.second, src.value, rwx_flags);
             pair_paddr = mmu_.VirtToPhysAddr(src.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
         }
@@ -31,15 +32,18 @@ void Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_f
 
         memory_->Load((char *)dst + vpage_padding + vpage_offset, load_size, pair_paddr.first.value);
     }
+
+    return Exception::NONE;
 }
 
-void Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags) const
+// TODO: remove page-fault handling + rwx_flags argument
+Exception Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags) const
 {
     addr_t vpage_padding = (VPAGE_SIZE - dst.value % VPAGE_SIZE) % VPAGE_SIZE;
 
     if (vpage_padding != 0) {
         auto pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != MMU::Exception::NONE) {
+        if (pair_paddr.second != Exception::NONE) {
             handlers_.mmu_handler(pair_paddr.second, dst.value, rwx_flags);
             pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
         }
@@ -49,7 +53,7 @@ void Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_fl
 
     for (addr_t vpage_offset = 0; vpage_offset < src_size - vpage_padding; vpage_offset += VPAGE_SIZE) {
         auto pair_paddr = mmu_.VirtToPhysAddr(dst.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != MMU::Exception::NONE) {
+        if (pair_paddr.second != Exception::NONE) {
             handlers_.mmu_handler(pair_paddr.second, dst.value, rwx_flags);
             pair_paddr = mmu_.VirtToPhysAddr(dst.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
         }
@@ -60,9 +64,11 @@ void Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_fl
 
         memory_->Store(pair_paddr.first.value, (char *)src + vpage_padding + vpage_offset, store_size);
     }
+
+    return Exception::NONE;
 }
 
-instr_size_t Hart::FetchInstruction()
+Exception Hart::FetchInstruction(instr_size_t *raw_instr)
 {
 #ifdef DEBUG_HART
 #ifdef DEBUG
@@ -73,8 +79,7 @@ instr_size_t Hart::FetchInstruction()
     std::cerr << "[DEBUG] [FETCH] PC = 0x" << std::hex << pc_ << std::dec << std::endl;
 #endif
 
-    instr_size_t raw_instr = LoadFromMemory<instr_size_t>(vaddr_t(pc_), 0 | PF_R | PF_X);
-    return raw_instr;
+    return LoadFromMemory<instr_size_t>(vaddr_t(pc_), raw_instr, PF_R | PF_X);
 }
 
 void Hart::Interpret()
@@ -83,10 +88,20 @@ void Hart::Interpret()
     is_idle_ = false;
 
     while (true) {
-        instr_size_t raw_instr = FetchInstruction();
-
+        instr_size_t raw_instr {0};
         Instruction instr;
-        DecodeAndExecute(&instr, raw_instr);
+        Exception exception = Exception::NONE;
+
+        exception = FetchInstruction(&raw_instr);
+        if (exception != Exception::NONE) {
+            handlers_.mmu_handler(exception, vaddr_t(pc_), PF_R | PF_X);
+        }
+
+        // TODO: rewrite exception handling here
+        exception = DecodeAndExecute(&instr, raw_instr);
+        if (exception != Exception::NONE) {
+            handlers_.mmu_handler(exception, vaddr_t(pc_), PF_R | PF_X);
+        }
 
 #ifdef DEBUG_HART
         DumpRegs(std::cerr);

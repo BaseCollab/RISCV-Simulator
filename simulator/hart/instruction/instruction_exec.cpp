@@ -6,157 +6,188 @@
  */
 
 #include "common/utils/bit_ops.h"
-#include "instruction_exec.h"
+#include "hart/instruction/instruction_exec.h"
+#include "hart/exception.h"
+
 #include <err.h>
 #include <sysexits.h>
-
 #include <iostream>
 
 namespace rvsim {
 namespace iexec {
 
-void BEQ(Hart *hart, const Instruction &instr)
+Exception BEQ(Hart *hart, const Instruction &instr)
 {
     if (hart->GetGPR(instr.rs1) == hart->GetGPR(instr.rs2))
-        hart->SetPCTarget(hart->GetPC() + bitops::MakeSigned<>(instr.imm));
+        hart->SetPCTarget(hart->GetPC() + instr.imm);
     else
         hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void BNE(Hart *hart, const Instruction &instr)
+Exception BNE(Hart *hart, const Instruction &instr)
 {
     if (hart->GetGPR(instr.rs1) != hart->GetGPR(instr.rs2))
-        hart->SetPCTarget(hart->GetPC() + bitops::MakeSigned<>(instr.imm));
+        hart->SetPCTarget(hart->GetPC() + instr.imm);
     else
         hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void BLT(Hart *hart, const Instruction &instr)
+Exception BLT(Hart *hart, const Instruction &instr)
 {
     auto rs1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
     auto rs2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
 
     if (rs1 < rs2)
-        hart->SetPCTarget(hart->GetPC() + bitops::MakeSigned<>(instr.imm));
+        hart->SetPCTarget(hart->GetPC() + instr.imm);
     else
         hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void BGE(Hart *hart, const Instruction &instr)
+Exception BGE(Hart *hart, const Instruction &instr)
 {
     auto rs1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
     auto rs2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
 
     if (rs1 >= rs2)
-        hart->SetPCTarget(hart->GetPC() + bitops::MakeSigned<>(instr.imm));
+        hart->SetPCTarget(hart->GetPC() + instr.imm);
     else
         hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void BLTU(Hart *hart, const Instruction &instr)
+Exception BLTU(Hart *hart, const Instruction &instr)
 {
     auto rs1 = hart->GetGPR(instr.rs1);
     auto rs2 = hart->GetGPR(instr.rs2);
 
     if (rs1 < rs2)
-        hart->SetPCTarget(hart->GetPC() + bitops::MakeSigned<>(instr.imm));
+        hart->SetPCTarget(hart->GetPC() + instr.imm);
     else
         hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void BGEU(Hart *hart, const Instruction &instr)
+Exception BGEU(Hart *hart, const Instruction &instr)
 {
     auto rs1 = hart->GetGPR(instr.rs1);
     auto rs2 = hart->GetGPR(instr.rs2);
 
     if (rs1 >= rs2)
-        hart->SetPCTarget(hart->GetPC() + bitops::MakeSigned<>(instr.imm));
+        hart->SetPCTarget(hart->GetPC() + instr.imm);
     else
         hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void JALR(Hart *hart, const Instruction &instr)
+Exception JALR(Hart *hart, const Instruction &instr)
 {
     hart->SetGPR(instr.rd, hart->GetPC() + sizeof(instr_size_t));
-    hart->SetPCTarget((hart->GetGPR(instr.rs1) + bitops::MakeSigned<>(instr.imm)) & ~reg_t {1});
+    hart->SetPCTarget((hart->GetGPR(instr.rs1) + instr.imm) & ~reg_t {1});
+
+    return Exception::NONE;
 }
 
-void JAL(Hart *hart, const Instruction &instr)
+Exception JAL(Hart *hart, const Instruction &instr)
 {
     hart->SetGPR(instr.rd, hart->GetPC() + sizeof(instr_size_t));
-    hart->SetPCTarget(hart->GetPC() + bitops::MakeSigned<>(instr.imm));
+    hart->SetPCTarget(hart->GetPC() + instr.imm);
+
+    return Exception::NONE;
 }
 
-void LUI(Hart *hart, const Instruction &instr)
+Exception LUI(Hart *hart, const Instruction &instr)
 {
-    hart->SetGPR(instr.rd, bitops::SignExtend(bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>(), instr.imm));
+    hart->SetGPR(instr.rd, instr.imm);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void AUIPC(Hart *hart, const Instruction &instr)
+Exception AUIPC(Hart *hart, const Instruction &instr)
 {
-    hart->SetGPR(instr.rd, bitops::SignExtend(bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>(), instr.imm) +
-                               hart->GetPC());
+    hart->SetGPR(instr.rd, instr.imm + hart->GetPC());
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void ADDI(Hart *hart, const Instruction &instr)
+Exception ADDI(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
 
-    hart->SetGPR(instr.rd,
-                 rv1 + bitops::SignExtend(bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>(), instr.imm));
+    hart->SetGPR(instr.rd, rv1 + instr.imm);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
 static constexpr bit_size_t RV_SH_UPPER_BIT_INDEX = 4;
 
-void SLLI(Hart *hart, const Instruction &instr)
+Exception SLLI(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
     auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.imm);
 
     hart->SetGPR(instr.rd, rv1 << imm);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SLTI(Hart *hart, const Instruction &instr)
+Exception SLTI(Hart *hart, const Instruction &instr)
 {
     auto rv1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
-    auto imm = bitops::MakeSigned(instr.imm);
-
-    hart->SetGPR(instr.rd, rv1 < imm);
-    hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
-}
-
-void SLTIU(Hart *hart, const Instruction &instr)
-{
-    auto rv1 = hart->GetGPR(instr.rs1);
     auto imm = instr.imm;
 
     hart->SetGPR(instr.rd, rv1 < imm);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void XORI(Hart *hart, const Instruction &instr)
+Exception SLTIU(Hart *hart, const Instruction &instr)
+{
+    auto rv1 = hart->GetGPR(instr.rs1);
+    auto imm = bitops::MakeUnsigned(instr.imm);
+
+    hart->SetGPR(instr.rd, rv1 < imm);
+    hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
+}
+
+Exception XORI(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
 
     hart->SetGPR(instr.rd,
                  rv1 ^ bitops::SignExtend(bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>(), instr.imm));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SRLI(Hart *hart, const Instruction &instr)
+Exception SRLI(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
     auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.imm);
 
     hart->SetGPR(instr.rd, rv1 >> imm);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SRAI(Hart *hart, const Instruction &instr)
+Exception SRAI(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
     auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.imm);
@@ -166,90 +197,110 @@ void SRAI(Hart *hart, const Instruction &instr)
 
     hart->SetGPR(instr.rd, rv1);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void ORI(Hart *hart, const Instruction &instr)
+Exception ORI(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
 
     hart->SetGPR(instr.rd,
                  rv1 | bitops::SignExtend(bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>(), instr.imm));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void ANDI(Hart *hart, const Instruction &instr)
+Exception ANDI(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
 
     hart->SetGPR(instr.rd,
                  rv1 & bitops::SignExtend(bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>(), instr.imm));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void ADD(Hart *hart, const Instruction &instr)
+Exception ADD(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
 
     hart->SetGPR(instr.rd, rv1 + rv2);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SUB(Hart *hart, const Instruction &instr)
+Exception SUB(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
 
     hart->SetGPR(instr.rd, rv1 - rv2);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SLL(Hart *hart, const Instruction &instr)
+Exception SLL(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
 
     hart->SetGPR(instr.rd, rv1 << bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(rv2));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SLT(Hart *hart, const Instruction &instr)
+Exception SLT(Hart *hart, const Instruction &instr)
 {
     auto rv1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
     auto rv2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
 
     hart->SetGPR(instr.rd, rv1 < rv2);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SLTU(Hart *hart, const Instruction &instr)
+Exception SLTU(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
 
     hart->SetGPR(instr.rd, rv1 < rv2);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void XOR(Hart *hart, const Instruction &instr)
+Exception XOR(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
 
     hart->SetGPR(instr.rd, rv1 ^ rv2);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SRL(Hart *hart, const Instruction &instr)
+Exception SRL(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
 
     hart->SetGPR(instr.rd, rv1 >> bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(rv2));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SRA(Hart *hart, const Instruction &instr)
+Exception SRA(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -260,36 +311,44 @@ void SRA(Hart *hart, const Instruction &instr)
 
     hart->SetGPR(instr.rd, rv1);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void OR(Hart *hart, const Instruction &instr)
+Exception OR(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
 
     hart->SetGPR(instr.rd, rv1 | rv2);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void AND(Hart *hart, const Instruction &instr)
+Exception AND(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
 
     hart->SetGPR(instr.rd, rv1 & rv2);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void ADDIW(Hart *hart, const Instruction &instr)
+Exception ADDIW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 + instr.imm);
 
     hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SLLIW(Hart *hart, const Instruction &instr)
+Exception SLLIW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.imm);
@@ -298,9 +357,11 @@ void SLLIW(Hart *hart, const Instruction &instr)
 
     hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SRLIW(Hart *hart, const Instruction &instr)
+Exception SRLIW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.imm);
@@ -309,9 +370,11 @@ void SRLIW(Hart *hart, const Instruction &instr)
 
     hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SRAIW(Hart *hart, const Instruction &instr)
+Exception SRAIW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.imm);
@@ -320,9 +383,11 @@ void SRAIW(Hart *hart, const Instruction &instr)
 
     hart->SetGPR(instr.rd, bitops::SignExtend(bitops::BitSizeof<word_t>() - imm, bitops::BitSizeof<reg_t>(), res_w));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void ADDW(Hart *hart, const Instruction &instr)
+Exception ADDW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -331,9 +396,11 @@ void ADDW(Hart *hart, const Instruction &instr)
 
     hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SUBW(Hart *hart, const Instruction &instr)
+Exception SUBW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -342,9 +409,11 @@ void SUBW(Hart *hart, const Instruction &instr)
 
     hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SLLW(Hart *hart, const Instruction &instr)
+Exception SLLW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -354,9 +423,11 @@ void SLLW(Hart *hart, const Instruction &instr)
 
     hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SRLW(Hart *hart, const Instruction &instr)
+Exception SRLW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -366,9 +437,11 @@ void SRLW(Hart *hart, const Instruction &instr)
 
     hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void SRAW(Hart *hart, const Instruction &instr)
+Exception SRAW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -379,198 +452,253 @@ void SRAW(Hart *hart, const Instruction &instr)
 
     hart->SetGPR(instr.rd, bitops::SignExtend(bitops::BitSizeof<word_t>() - shift, bitops::BitSizeof<reg_t>(), res_w));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void LB(Hart *hart, const Instruction &instr)
+Exception LB(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    reg_t load_value = hart->LoadFromMemory<byte_t>(rv1 + imm);
-    hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<byte_t>(), bitops::BitSizeof<reg_t>()>(load_value));
-    hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
-}
+    using load_type_t = std::make_signed_t<byte_t>;
+    load_type_t load_value {0};
 
-void LH(Hart *hart, const Instruction &instr)
-{
-    auto rv1 = hart->GetGPR(instr.rs1);
-    auto imm = bitops::MakeSigned<>(instr.imm);
-
-    reg_t load_value = hart->LoadFromMemory<hword_t>(rv1 + imm);
-    hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<hword_t>(), bitops::BitSizeof<reg_t>()>(load_value));
-    hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
-}
-
-void LW(Hart *hart, const Instruction &instr)
-{
-    auto rv1 = hart->GetGPR(instr.rs1);
-    auto imm = bitops::MakeSigned<>(instr.imm);
-
-    reg_t load_value = hart->LoadFromMemory<word_t>(rv1 + imm);
-    hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(load_value));
-    hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
-}
-
-void LD(Hart *hart, const Instruction &instr)
-{
-    auto rv1 = hart->GetGPR(instr.rs1);
-    auto imm = bitops::MakeSigned<>(instr.imm);
-
-    hart->SetGPR(instr.rd, hart->LoadFromMemory<reg_t>(rv1 + imm));
-    hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
-}
-
-void LBU(Hart *hart, const Instruction &instr)
-{
-    auto rv1 = hart->GetGPR(instr.rs1);
-    auto imm = bitops::MakeSigned<>(instr.imm);
-
-    reg_t load_value = hart->LoadFromMemory<byte_t>(rv1 + imm);
+    Exception exception = hart->LoadFromMemory<load_type_t>(rv1 + instr.imm, &load_value);
     hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return exception;
 }
 
-void LHU(Hart *hart, const Instruction &instr)
+Exception LH(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    reg_t load_value = hart->LoadFromMemory<hword_t>(rv1 + imm);
+    using load_type_t = std::make_signed_t<hword_t>;
+    load_type_t load_value {0};
+
+    Exception exception = hart->LoadFromMemory<load_type_t>(rv1 + instr.imm, &load_value);
     hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return exception;
 }
 
-void LWU(Hart *hart, const Instruction &instr)
+Exception LW(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    reg_t load_value = hart->LoadFromMemory<word_t>(rv1 + imm);
+    using load_type_t = std::make_signed_t<word_t>;
+    load_type_t load_value {0};
+
+    Exception exception = hart->LoadFromMemory<load_type_t>(rv1 + instr.imm, &load_value);
     hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return exception;
 }
 
-void SB(Hart *hart, const Instruction &instr)
+Exception LD(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
-    auto rv2 = hart->GetGPR(instr.rs2);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    hart->StoreToMemory<byte_t>(rv1 + imm, bitops::GetBits<bitops::BitSizeof<byte_t>() - 1, 0>(rv2));
+    using load_type_t = dword_t;
+    load_type_t load_value {0};
+
+    Exception exception = hart->LoadFromMemory<load_type_t>(rv1 + instr.imm, &load_value);
+    hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return exception;
 }
 
-void SH(Hart *hart, const Instruction &instr)
+Exception LBU(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
-    auto rv2 = hart->GetGPR(instr.rs2);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    hart->StoreToMemory<hword_t>(rv1 + imm, bitops::GetBits<bitops::BitSizeof<hword_t>() - 1, 0>(rv2));
+    using load_type_t = byte_t;
+    load_type_t load_value {0};
+
+    Exception exception = hart->LoadFromMemory<load_type_t>(rv1 + instr.imm, &load_value);
+    hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return exception;
 }
 
-void SW(Hart *hart, const Instruction &instr)
+Exception LHU(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
-    auto rv2 = hart->GetGPR(instr.rs2);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    hart->StoreToMemory<word_t>(rv1 + imm, bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv2));
+    using load_type_t = hword_t;
+    load_type_t load_value {0};
+
+    Exception exception = hart->LoadFromMemory<load_type_t>(rv1 + instr.imm, &load_value);
+    hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return exception;
 }
 
-void SD(Hart *hart, const Instruction &instr)
+Exception LWU(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
-    auto rv2 = hart->GetGPR(instr.rs2);
-    auto imm = bitops::MakeSigned<>(instr.imm);
 
-    hart->StoreToMemory<reg_t>(rv1 + imm, rv2);
+    using load_type_t = word_t;
+    load_type_t load_value {0};
+
+    Exception exception = hart->LoadFromMemory<load_type_t>(rv1 + instr.imm, &load_value);
+    hart->SetGPR(instr.rd, load_value);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return exception;
 }
 
-void FENCE(Hart *hart, const Instruction &instr)
+Exception SB(Hart *hart, const Instruction &instr)
+{
+    auto rv1 = hart->GetGPR(instr.rs1);
+    byte_t rv2 = hart->GetGPR(instr.rs2);
+
+    Exception exception = hart->StoreToMemory<byte_t>(rv1 + instr.imm, rv2);
+    hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return exception;
+}
+
+Exception SH(Hart *hart, const Instruction &instr)
+{
+    auto rv1 = hart->GetGPR(instr.rs1);
+    hword_t rv2 = hart->GetGPR(instr.rs2);
+
+    Exception exception = hart->StoreToMemory<hword_t>(rv1 + instr.imm, rv2);
+    hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return exception;
+}
+
+Exception SW(Hart *hart, const Instruction &instr)
+{
+    auto rv1 = hart->GetGPR(instr.rs1);
+    word_t rv2 = hart->GetGPR(instr.rs2);
+
+    Exception exception = hart->StoreToMemory<word_t>(rv1 + instr.imm, rv2);
+    hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return exception;
+}
+
+Exception SD(Hart *hart, const Instruction &instr)
+{
+    auto rv1 = hart->GetGPR(instr.rs1);
+    dword_t rv2 = hart->GetGPR(instr.rs2);
+
+    Exception exception = hart->StoreToMemory<dword_t>(rv1 + instr.imm, rv2);
+    hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return exception;
+}
+
+Exception FENCE(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FENCE(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FENCE_I(Hart *hart, const Instruction &instr)
+Exception FENCE_I(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FENCE_I(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void MUL(Hart *hart, const Instruction &instr)
+Exception MUL(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
 
     hart->SetGPR(instr.rd, rv1 * rv2);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void MULH(Hart *hart, const Instruction &instr)
+Exception MULH(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::MULH(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void MULHSU(Hart *hart, const Instruction &instr)
+Exception MULHSU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::MULHSU(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void MULHU(Hart *hart, const Instruction &instr)
+Exception MULHU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::MULHU(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void DIV(Hart *hart, const Instruction &instr)
+Exception DIV(Hart *hart, const Instruction &instr)
 {
     auto rv1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
     auto rv2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
 
     hart->SetGPR(instr.rd, rv1 / rv2);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void DIVU(Hart *hart, const Instruction &instr)
+Exception DIVU(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
 
     hart->SetGPR(instr.rd, rv1 / rv2);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void REM(Hart *hart, const Instruction &instr)
+Exception REM(Hart *hart, const Instruction &instr)
 {
     auto rv1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
     auto rv2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
 
     hart->SetGPR(instr.rd, rv1 % rv2);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void REMU(Hart *hart, const Instruction &instr)
+Exception REMU(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
 
     hart->SetGPR(instr.rd, rv1 % rv2);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void MULW(Hart *hart, const Instruction &instr)
+Exception MULW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -585,9 +713,11 @@ void MULW(Hart *hart, const Instruction &instr)
 
     hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void DIVW(Hart *hart, const Instruction &instr)
+Exception DIVW(Hart *hart, const Instruction &instr)
 {
     auto rv1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
     auto rv2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
@@ -602,9 +732,11 @@ void DIVW(Hart *hart, const Instruction &instr)
 
     hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void DIVUW(Hart *hart, const Instruction &instr)
+Exception DIVUW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -619,9 +751,11 @@ void DIVUW(Hart *hart, const Instruction &instr)
 
     hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void REMW(Hart *hart, const Instruction &instr)
+Exception REMW(Hart *hart, const Instruction &instr)
 {
     auto rv1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
     auto rv2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
@@ -636,9 +770,11 @@ void REMW(Hart *hart, const Instruction &instr)
 
     hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void REMUW(Hart *hart, const Instruction &instr)
+Exception REMUW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -653,951 +789,1222 @@ void REMUW(Hart *hart, const Instruction &instr)
 
     hart->SetGPR(instr.rd, bitops::SignExtend<bitops::BitSizeof<word_t>(), bitops::BitSizeof<reg_t>()>(res_w));
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
+
+    return Exception::NONE;
 }
 
-void AMOADD_W(Hart *hart, const Instruction &instr)
+Exception AMOADD_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOADD_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOXOR_W(Hart *hart, const Instruction &instr)
+Exception AMOXOR_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOXOR_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOOR_W(Hart *hart, const Instruction &instr)
+Exception AMOOR_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOOR_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOAND_W(Hart *hart, const Instruction &instr)
+Exception AMOAND_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOAND_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOMIN_W(Hart *hart, const Instruction &instr)
+Exception AMOMIN_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOMIN_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOMAX_W(Hart *hart, const Instruction &instr)
+Exception AMOMAX_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOMAX_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOMINU_W(Hart *hart, const Instruction &instr)
+Exception AMOMINU_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOMINU_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOMAXU_W(Hart *hart, const Instruction &instr)
+Exception AMOMAXU_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOMAXU_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOSWAP_W(Hart *hart, const Instruction &instr)
+Exception AMOSWAP_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOSWAP_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void LR_W(Hart *hart, const Instruction &instr)
+Exception LR_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::LR_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void SC_W(Hart *hart, const Instruction &instr)
+Exception SC_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::SC_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOADD_D(Hart *hart, const Instruction &instr)
+Exception AMOADD_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOADD_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOXOR_D(Hart *hart, const Instruction &instr)
+Exception AMOXOR_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOXOR_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOOR_D(Hart *hart, const Instruction &instr)
+Exception AMOOR_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOOR_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOAND_D(Hart *hart, const Instruction &instr)
+Exception AMOAND_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOAND_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOMIN_D(Hart *hart, const Instruction &instr)
+Exception AMOMIN_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOMIN_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOMAX_D(Hart *hart, const Instruction &instr)
+Exception AMOMAX_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOMAX_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOMINU_D(Hart *hart, const Instruction &instr)
+Exception AMOMINU_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOMINU_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOMAXU_D(Hart *hart, const Instruction &instr)
+Exception AMOMAXU_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOMAXU_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void AMOSWAP_D(Hart *hart, const Instruction &instr)
+Exception AMOSWAP_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::AMOSWAP_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void LR_D(Hart *hart, const Instruction &instr)
+Exception LR_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::LR_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void SC_D(Hart *hart, const Instruction &instr)
+Exception SC_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::SC_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void ECALL(Hart *hart, [[maybe_unused]] const Instruction &instr)
+Exception ECALL(Hart *hart, [[maybe_unused]] const Instruction &instr)
 {
     hart->SetIdleStatus(true);
+
+    return Exception::NONE;
 }
 
-void EBREAK(Hart *hart, const Instruction &instr)
+Exception EBREAK(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::EBREAK(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void URET(Hart *hart, const Instruction &instr)
+Exception URET(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::URET(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void SRET(Hart *hart, const Instruction &instr)
+Exception SRET(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::SRET(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void MRET(Hart *hart, const Instruction &instr)
+Exception MRET(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::MRET(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void DRET(Hart *hart, const Instruction &instr)
+Exception DRET(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::DRET(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void SFENCE_VMA(Hart *hart, const Instruction &instr)
+Exception SFENCE_VMA(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::SFENCE_VMA(Hart *hart, const Instruction &instr) is not implemented yet!"
               << std::endl;
+
+    return Exception::NONE;
 }
 
-void WFI(Hart *hart, const Instruction &instr)
+Exception WFI(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::WFI(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void CSRRW(Hart *hart, const Instruction &instr)
+Exception CSRRW(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::CSRRW(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void CSRRS(Hart *hart, const Instruction &instr)
+Exception CSRRS(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::CSRRS(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void CSRRC(Hart *hart, const Instruction &instr)
+Exception CSRRC(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::CSRRC(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void CSRRWI(Hart *hart, const Instruction &instr)
+Exception CSRRWI(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::CSRRWI(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void CSRRSI(Hart *hart, const Instruction &instr)
+Exception CSRRSI(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::CSRRSI(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void CSRRCI(Hart *hart, const Instruction &instr)
+Exception CSRRCI(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::CSRRCI(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void HFENCE_VVMA(Hart *hart, const Instruction &instr)
+Exception HFENCE_VVMA(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::HFENCE_VVMA(Hart *hart, const Instruction &instr) is not implemented yet!"
               << std::endl;
+
+    return Exception::NONE;
 }
 
-void HFENCE_GVMA(Hart *hart, const Instruction &instr)
+Exception HFENCE_GVMA(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::HFENCE_GVMA(Hart *hart, const Instruction &instr) is not implemented yet!"
               << std::endl;
+
+    return Exception::NONE;
 }
 
-void FADD_S(Hart *hart, const Instruction &instr)
+Exception FADD_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FADD_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSUB_S(Hart *hart, const Instruction &instr)
+Exception FSUB_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSUB_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMUL_S(Hart *hart, const Instruction &instr)
+Exception FMUL_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMUL_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FDIV_S(Hart *hart, const Instruction &instr)
+Exception FDIV_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FDIV_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSGNJ_S(Hart *hart, const Instruction &instr)
+Exception FSGNJ_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSGNJ_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSGNJN_S(Hart *hart, const Instruction &instr)
+Exception FSGNJN_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSGNJN_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSGNJX_S(Hart *hart, const Instruction &instr)
+Exception FSGNJX_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSGNJX_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMIN_S(Hart *hart, const Instruction &instr)
+Exception FMIN_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMIN_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMAX_S(Hart *hart, const Instruction &instr)
+Exception FMAX_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMAX_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSQRT_S(Hart *hart, const Instruction &instr)
+Exception FSQRT_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSQRT_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FADD_D(Hart *hart, const Instruction &instr)
+Exception FADD_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FADD_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSUB_D(Hart *hart, const Instruction &instr)
+Exception FSUB_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSUB_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMUL_D(Hart *hart, const Instruction &instr)
+Exception FMUL_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMUL_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FDIV_D(Hart *hart, const Instruction &instr)
+Exception FDIV_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FDIV_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSGNJ_D(Hart *hart, const Instruction &instr)
+Exception FSGNJ_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSGNJ_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSGNJN_D(Hart *hart, const Instruction &instr)
+Exception FSGNJN_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSGNJN_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSGNJX_D(Hart *hart, const Instruction &instr)
+Exception FSGNJX_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSGNJX_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMIN_D(Hart *hart, const Instruction &instr)
+Exception FMIN_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMIN_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMAX_D(Hart *hart, const Instruction &instr)
+Exception FMAX_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMAX_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_S_D(Hart *hart, const Instruction &instr)
+Exception FCVT_S_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_S_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_D_S(Hart *hart, const Instruction &instr)
+Exception FCVT_D_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_D_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSQRT_D(Hart *hart, const Instruction &instr)
+Exception FSQRT_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSQRT_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FADD_Q(Hart *hart, const Instruction &instr)
+Exception FADD_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FADD_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSUB_Q(Hart *hart, const Instruction &instr)
+Exception FSUB_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSUB_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMUL_Q(Hart *hart, const Instruction &instr)
+Exception FMUL_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMUL_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FDIV_Q(Hart *hart, const Instruction &instr)
+Exception FDIV_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FDIV_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSGNJ_Q(Hart *hart, const Instruction &instr)
+Exception FSGNJ_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSGNJ_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSGNJN_Q(Hart *hart, const Instruction &instr)
+Exception FSGNJN_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSGNJN_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSGNJX_Q(Hart *hart, const Instruction &instr)
+Exception FSGNJX_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSGNJX_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMIN_Q(Hart *hart, const Instruction &instr)
+Exception FMIN_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMIN_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMAX_Q(Hart *hart, const Instruction &instr)
+Exception FMAX_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMAX_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_S_Q(Hart *hart, const Instruction &instr)
+Exception FCVT_S_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_S_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_Q_S(Hart *hart, const Instruction &instr)
+Exception FCVT_Q_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_Q_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_D_Q(Hart *hart, const Instruction &instr)
+Exception FCVT_D_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_D_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_Q_D(Hart *hart, const Instruction &instr)
+Exception FCVT_Q_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_Q_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSQRT_Q(Hart *hart, const Instruction &instr)
+Exception FSQRT_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSQRT_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FLE_S(Hart *hart, const Instruction &instr)
+Exception FLE_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FLE_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FLT_S(Hart *hart, const Instruction &instr)
+Exception FLT_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FLT_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FEQ_S(Hart *hart, const Instruction &instr)
+Exception FEQ_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FEQ_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FLE_D(Hart *hart, const Instruction &instr)
+Exception FLE_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FLE_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FLT_D(Hart *hart, const Instruction &instr)
+Exception FLT_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FLT_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FEQ_D(Hart *hart, const Instruction &instr)
+Exception FEQ_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FEQ_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FLE_Q(Hart *hart, const Instruction &instr)
+Exception FLE_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FLE_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FLT_Q(Hart *hart, const Instruction &instr)
+Exception FLT_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FLT_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FEQ_Q(Hart *hart, const Instruction &instr)
+Exception FEQ_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FEQ_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_W_S(Hart *hart, const Instruction &instr)
+Exception FCVT_W_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_W_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_WU_S(Hart *hart, const Instruction &instr)
+Exception FCVT_WU_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_WU_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_L_S(Hart *hart, const Instruction &instr)
+Exception FCVT_L_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_L_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_LU_S(Hart *hart, const Instruction &instr)
+Exception FCVT_LU_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_LU_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMV_X_W(Hart *hart, const Instruction &instr)
+Exception FMV_X_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMV_X_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCLASS_S(Hart *hart, const Instruction &instr)
+Exception FCLASS_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCLASS_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_W_D(Hart *hart, const Instruction &instr)
+Exception FCVT_W_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_W_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_WU_D(Hart *hart, const Instruction &instr)
+Exception FCVT_WU_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_WU_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_L_D(Hart *hart, const Instruction &instr)
+Exception FCVT_L_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_L_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_LU_D(Hart *hart, const Instruction &instr)
+Exception FCVT_LU_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_LU_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMV_X_D(Hart *hart, const Instruction &instr)
+Exception FMV_X_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMV_X_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCLASS_D(Hart *hart, const Instruction &instr)
+Exception FCLASS_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCLASS_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_W_Q(Hart *hart, const Instruction &instr)
+Exception FCVT_W_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_W_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_WU_Q(Hart *hart, const Instruction &instr)
+Exception FCVT_WU_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_WU_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_L_Q(Hart *hart, const Instruction &instr)
+Exception FCVT_L_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_L_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_LU_Q(Hart *hart, const Instruction &instr)
+Exception FCVT_LU_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_LU_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMV_X_Q(Hart *hart, const Instruction &instr)
+Exception FMV_X_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMV_X_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCLASS_Q(Hart *hart, const Instruction &instr)
+Exception FCLASS_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCLASS_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_S_W(Hart *hart, const Instruction &instr)
+Exception FCVT_S_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_S_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_S_WU(Hart *hart, const Instruction &instr)
+Exception FCVT_S_WU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_S_WU(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_S_L(Hart *hart, const Instruction &instr)
+Exception FCVT_S_L(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_S_L(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_S_LU(Hart *hart, const Instruction &instr)
+Exception FCVT_S_LU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_S_LU(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMV_W_X(Hart *hart, const Instruction &instr)
+Exception FMV_W_X(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMV_W_X(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_D_W(Hart *hart, const Instruction &instr)
+Exception FCVT_D_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_D_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_D_WU(Hart *hart, const Instruction &instr)
+Exception FCVT_D_WU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_D_WU(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_D_L(Hart *hart, const Instruction &instr)
+Exception FCVT_D_L(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_D_L(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_D_LU(Hart *hart, const Instruction &instr)
+Exception FCVT_D_LU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_D_LU(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMV_D_X(Hart *hart, const Instruction &instr)
+Exception FMV_D_X(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMV_D_X(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_Q_W(Hart *hart, const Instruction &instr)
+Exception FCVT_Q_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_Q_W(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_Q_WU(Hart *hart, const Instruction &instr)
+Exception FCVT_Q_WU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_Q_WU(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+    return Exception::NONE;
 }
 
-void FCVT_Q_L(Hart *hart, const Instruction &instr)
+Exception FCVT_Q_L(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_Q_L(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FCVT_Q_LU(Hart *hart, const Instruction &instr)
+Exception FCVT_Q_LU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FCVT_Q_LU(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMV_Q_X(Hart *hart, const Instruction &instr)
+Exception FMV_Q_X(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMV_Q_X(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FLW(Hart *hart, const Instruction &instr)
+Exception FLW(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FLW(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FLD(Hart *hart, const Instruction &instr)
+Exception FLD(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FLD(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FLQ(Hart *hart, const Instruction &instr)
+Exception FLQ(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FLQ(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSW(Hart *hart, const Instruction &instr)
+Exception FSW(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSW(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSD(Hart *hart, const Instruction &instr)
+Exception FSD(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSD(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FSQ(Hart *hart, const Instruction &instr)
+Exception FSQ(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FSQ(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMADD_S(Hart *hart, const Instruction &instr)
+Exception FMADD_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMADD_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMSUB_S(Hart *hart, const Instruction &instr)
+Exception FMSUB_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMSUB_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FNMSUB_S(Hart *hart, const Instruction &instr)
+Exception FNMSUB_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FNMSUB_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FNMADD_S(Hart *hart, const Instruction &instr)
+Exception FNMADD_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FNMADD_S(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMADD_D(Hart *hart, const Instruction &instr)
+Exception FMADD_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMADD_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMSUB_D(Hart *hart, const Instruction &instr)
+Exception FMSUB_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMSUB_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FNMSUB_D(Hart *hart, const Instruction &instr)
+Exception FNMSUB_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FNMSUB_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FNMADD_D(Hart *hart, const Instruction &instr)
+Exception FNMADD_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FNMADD_D(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMADD_Q(Hart *hart, const Instruction &instr)
+Exception FMADD_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMADD_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FMSUB_Q(Hart *hart, const Instruction &instr)
+Exception FMSUB_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FMSUB_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FNMSUB_Q(Hart *hart, const Instruction &instr)
+Exception FNMSUB_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FNMSUB_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void FNMADD_Q(Hart *hart, const Instruction &instr)
+Exception FNMADD_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
     std::cerr << "function iexec::FNMADD_Q(Hart *hart, const Instruction &instr) is not implemented yet!" << std::endl;
+
+    return Exception::NONE;
 }
 
-void INVALID([[maybe_unused]] Hart *hart, [[maybe_unused]] const Instruction &instr)
+Exception INVALID([[maybe_unused]] Hart *hart, [[maybe_unused]] const Instruction &instr)
 {
     // TODO(skurnevich): change abort to hart->SetException(InvalidInstr)
     err(EX_DATAERR, "Invalid instruction\n");
+
+    return Exception::NONE;
 }
 
 } // namespace iexec

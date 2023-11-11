@@ -68,6 +68,13 @@ std::make_signed_t<T> MakeSigned(T unsigned_value)
     return static_cast<std::make_signed_t<T>>(unsigned_value);
 }
 
+template <typename T>
+std::make_unsigned_t<T> MakeUnsigned(T signed_value)
+{
+    static_assert(std::is_signed_v<T>);
+    return static_cast<std::make_unsigned_t<T>>(signed_value);
+}
+
 dword_t Ones(bit_size_t high, bit_size_t low);
 dword_t GetBits(bit_size_t high, bit_size_t low, dword_t value);
 

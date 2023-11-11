@@ -6,9 +6,11 @@
 #include "common/macros.h"
 #include "common/config.h"
 #include "mmu/mmu.h"
-#include "csr.h"
+#include "hart/csr.h"
+#include "hart/exception.h"
 
 #include <functional>
+#include <optional>
 #include <cstdint>
 #include <cassert>
 #include <elf.h>
@@ -18,7 +20,7 @@ namespace rvsim {
 class Hart {
 public:
     struct ExceptionHandlers {
-        std::function<void(MMU::Exception, addr_t, uint8_t)> mmu_handler;
+        std::function<void(Exception, addr_t, uint8_t)> mmu_handler;
     };
 
 public:
@@ -28,11 +30,11 @@ public:
     explicit Hart(PhysMemoryCtl *memory) : memory_(memory) {};
     ~Hart() = default;
 
-    instr_size_t FetchInstruction();
+    Exception FetchInstruction(instr_size_t *raw_instr);
 
     void Interpret();
 
-    void DecodeAndExecute(Instruction *instr, instr_size_t raw_instr);
+    Exception DecodeAndExecute(Instruction *instr, instr_size_t raw_instr);
 
     bool IsIdle() const
     {
@@ -86,33 +88,53 @@ public:
         gpr_table_[reg_idx] = value;
     }
 
+    // TODO: remove page-fault handling + rwx_flags argument
     template <typename ValueType>
-    ValueType LoadFromMemory(vaddr_t src, uint8_t rwx_flags = 0 | PF_R | PF_W) const
+    Exception LoadFromMemory(vaddr_t src, ValueType *value, uint8_t rwx_flags = PF_W | PF_R) const
     {
+        static_assert((sizeof(ValueType) == sizeof(byte_t)) || sizeof(ValueType) == sizeof(hword_t) ||
+                      (sizeof(ValueType) == sizeof(word_t)) || sizeof(ValueType) == sizeof(dword_t));
+
+        if ((src & (sizeof(ValueType) - 1)) != 0) {
+            return Exception::MMU_ADDRESS_MISALIGNED;
+        }
+
         auto pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != MMU::Exception::NONE) {
+        if (pair_paddr.second != Exception::NONE) {
             handlers_.mmu_handler(pair_paddr.second, src, rwx_flags);
             pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
         }
 
         auto load_pair = memory_->Load<ValueType>(pair_paddr.first.value);
-        return load_pair.first;
+        *value = load_pair.first;
+
+        return Exception::NONE;
     }
 
+    // TODO: remove page-fault handling + rwx_flags argument
     template <typename ValueType>
-    void StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags = 0 | PF_R | PF_W) const
+    Exception StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags = PF_W | PF_R) const
     {
+        static_assert((sizeof(ValueType) == sizeof(byte_t)) || sizeof(ValueType) == sizeof(hword_t) ||
+                      (sizeof(ValueType) == sizeof(word_t)) || sizeof(ValueType) == sizeof(dword_t));
+
+        if ((dst & (sizeof(ValueType) - 1)) != 0) {
+            return Exception::MMU_ADDRESS_MISALIGNED;
+        }
+
         auto pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != MMU::Exception::NONE) {
+        if (pair_paddr.second != Exception::NONE) {
             handlers_.mmu_handler(pair_paddr.second, dst, rwx_flags);
             pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
         }
 
         memory_->Store<ValueType>(pair_paddr.first.value, value);
+
+        return Exception::NONE;
     }
 
-    void LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
-    void StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags = 0 | PF_R | PF_W) const;
+    Exception LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags = PF_R) const;
+    Exception StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags = PF_W) const;
 
 #ifdef DEBUG_HART
     template <typename T>
@@ -120,7 +142,7 @@ public:
     {
         out << "[DEBUG] [REGS_DUMP: Start]" << std::endl;
         for (size_t i = 0; i < N_GPR; ++i) {
-            out << "[DEBUG] [REGS_DUMP] X" << i << " = " << std::hex << gpr_table_[i] << std::dec << std::endl;
+            out << "[DEBUG] [REGS_DUMP] X" << i << " = 0x" << std::hex << gpr_table_[i] << std::dec << std::endl;
         }
         out << "[DEBUG] [REGS_DUMP: End]" << std::endl;
     }

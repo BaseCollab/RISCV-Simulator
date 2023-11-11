@@ -34,9 +34,8 @@ def set_invalid_id():
     print('/* Instruction wasn\'t found */\n' \
           'instr->id = InstructionId::INVALID_ID;\n' \
           '\n' \
-          'iexec::INVALID(this, *instr);\n' \
-          '\n' \
-          'return;')
+          'return iexec::INVALID(this, *instr);\n' \
+          )
 
 def write_fields_fill(decoder_leaf, fields, mode):
     instr_fields = decoder_leaf['fields']
@@ -91,7 +90,7 @@ def write_fields_fill(decoder_leaf, fields, mode):
     print(f'std::cerr << \"[DEBUG] [DECODE] \" << std::hex << \"{instr_name}: 0x\" << raw_instr << std::dec << std::endl;\n', end='')
     print(f'#endif // DEBUG_HART\n', end='')
 
-    print(f'\niexec::{instr_name}(this, *instr);\n', end='')
+    print(f'\nreturn iexec::{instr_name}(this, *instr);\n', end='')
 
 def recursive_parse(decoder_tree, fields, mode):
     if 'range' in decoder_tree:
@@ -117,7 +116,6 @@ def recursive_parse(decoder_tree, fields, mode):
         set_invalid_id()
     else:
         write_fields_fill(decoder_tree, fields, mode)
-        print('\nreturn;')
 
 recursive_parse.var_cnt = 0
 
@@ -133,11 +131,12 @@ def generate_decode_logic(yaml_dict):
     with open('execute.cpp', 'w') as fout:
         fout.write(COMMENT_NO_CHANGE_STR)
         fout.write('#include \"hart/hart.h\"\n')
+        fout.write('#include \"hart/exception.h\"\n')
         fout.write('#include \"common/utils/bit_ops.h\"\n')
         fout.write('#include \"instruction/instruction.h\"\n')
         fout.write('#include \"instruction/instruction_exec.h\"\n\n')
         fout.write('namespace rvsim {\n\n')
-        fout.write('void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)\n{\n')
+        fout.write('Exception Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)\n{\n')
 
         decode_gen(fout, yaml_dict)
 
@@ -156,6 +155,7 @@ def generate_execution_decls(yaml_dict):
         fout.write("#ifndef SIMULATOR_INSTRUCTION_EXEC_INSTRUCTION_EXEC_H\n"
                    "#define SIMULATOR_INSTRUCTION_EXEC_INSTRUCTION_EXEC_H\n\n")
         fout.write('#include \"hart/hart.h\"\n')
+        fout.write('#include \"hart/exception.h\"\n')
         fout.write('#include \"instruction.h\"\n\n')
 
         fout.write('namespace rvsim {\n'
@@ -165,7 +165,7 @@ def generate_execution_decls(yaml_dict):
         max_instr_len = max([len(instr) for instr in instrs_mnemonic_list])
 
         for i in range(len(instrs_mnemonic_list)):
-            fout.write(f'void {instrs_mnemonic_list[i]}' + \
+            fout.write(f'Exception {instrs_mnemonic_list[i]}' + \
                         ' ' * (max_instr_len - len(instrs_mnemonic_list[i])) + '(Hart &hart, const Instruction &instr);\n')
 
         fout.write('\n// clang-format on\n')
@@ -183,7 +183,7 @@ def generate_execution_decls(yaml_dict):
         max_instr_len = max([len(instr) for instr in instrs_mnemonic_list])
 
         for i in range(len(instrs_mnemonic_list)):
-            fout.write(f'void {instrs_mnemonic_list[i]}(Hart &hart, const Instruction &instr)\n'
+            fout.write(f'Exception {instrs_mnemonic_list[i]}(Hart &hart, const Instruction &instr)\n'
                         '{\n')
             fout.write('    (void) hart;\n')
             fout.write('    (void) instr;\n')

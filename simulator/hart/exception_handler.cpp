@@ -9,34 +9,37 @@
 
 namespace rvsim {
 
-void ExceptionHandler::MMUExceptionHandler(Hart *hart, PhysMemoryCtl *memory, MMU::Exception exception, addr_t vaddr,
+void ExceptionHandler::MMUExceptionHandler(Hart *hart, PhysMemoryCtl *memory, Exception exception, addr_t vaddr,
                                            uint8_t rwx_flags)
 {
-    if (exception == MMU::Exception::NONE) {
+    if (exception == Exception::NONE) {
         return;
     }
 
     switch (exception) {
-        case MMU::Exception::INVALID_PAGE_ENTRY:
+        case Exception::MMU_INVALID_PAGE_ENTRY:
             VirtualPageMapping(hart, memory, vaddr, rwx_flags);
             break;
 
-        case MMU::Exception::INVALID_PAGE_SIZE:
+        case Exception::MMU_INVALID_PAGE_SIZE:
             err(EX_SOFTWARE,
                 "Superpages, megapages, etc - are not supported (rwx != 0x0 for not final page table entry) [addr %lx]",
                 vaddr);
 
-        case MMU::Exception::PAGE_WRITE_NO_READ:
+        case Exception::MMU_PAGE_WRITE_NO_READ:
             err(EX_SOFTWARE, "Page invalid rights: write permission without read permission [addr %lx]", vaddr);
 
-        case MMU::Exception::PAGE_ACCESS_READ:
+        case Exception::MMU_PAGE_ACCESS_READ:
             err(EX_SOFTWARE, "Page access fault: read without read permission [addr %lx]", vaddr);
 
-        case MMU::Exception::PAGE_ACCESS_WRITE:
+        case Exception::MMU_PAGE_ACCESS_WRITE:
             err(EX_SOFTWARE, "Page access fault: write without write permission [addr %lx]", vaddr);
 
-        case MMU::Exception::PAGE_ACCESS_EXECUTE:
+        case Exception::MMU_PAGE_ACCESS_EXECUTE:
             err(EX_SOFTWARE, "Page access fault: execute without execute permission [addr %lx]", vaddr);
+
+        case Exception::MMU_ADDRESS_MISALIGNED:
+            err(EX_SOFTWARE, "Misaligned address: [addr %lx]", vaddr);
 
         default:
             break;
