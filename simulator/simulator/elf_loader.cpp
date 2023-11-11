@@ -102,7 +102,7 @@ void ElfLoader::LoadElf(const Simulator &sim, const Hart &hart)
             std::cerr << "[DEBUG] [ELF]    p_flags = " << segment_flags << std::endl;
 #endif
 
-            sim.MapVirtualRange(segment_vaddr, segment_vaddr + segment_mem_size);
+            sim.MapVirtualRange(segment_vaddr, segment_vaddr + segment_mem_size, PF_X | PF_R);
             hart.StoreToMemory(segment_vaddr, elf_buffer_ + segment_file_offset, segment_elf_size, segment_flags);
         }
     }

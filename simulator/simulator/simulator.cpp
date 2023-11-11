@@ -4,10 +4,12 @@
 #include <cstring>
 #include <cassert>
 #include <iostream>
+#include <bitset>
 
 namespace rvsim {
 
-Simulator::Simulator(Hart *hart, PhysMemoryCtl *memory) : hart_(hart), memory_(memory)
+Simulator::Simulator(Hart *hart, PhysMemoryCtl *memory, size_t n_stack_pages)
+    : n_stack_pages_(n_stack_pages), hart_(hart), memory_(memory)
 {
     assert(hart);
     assert(memory);
@@ -58,8 +60,8 @@ void Simulator::LoadElfFile(const std::string &elf_pathname)
 void Simulator::SetExceptionHandlers()
 {
     Hart::ExceptionHandlers handlers;
-    handlers.mmu_handler = std::bind(&ExceptionHandler::MMUExceptionHandler, hart_, memory_, std::placeholders::_1,
-                                     std::placeholders::_2);
+    handlers.mmu_handler =
+        std::bind(&ExceptionHandler::MMUExceptionHandler, hart_, memory_, std::placeholders::_1, std::placeholders::_2);
 
     hart_->SetExceptionHandlers(handlers);
 }
@@ -74,10 +76,6 @@ void Simulator::PreparePageTable()
     csr_t satp_reg = hart_->csr_regs.LoadCSR(CSR_SATP_IDX);
     csr_satp_t satp;
     std::memcpy(&satp, &satp_reg, sizeof(satp_reg));
-
-    //
-
-    // CreatePageTableWalk(satp, vaddr);
 }
 
 template <bool IsLastLevel>
@@ -89,6 +87,10 @@ dword_t Simulator::CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t rwx_
     memory_->Load(&pte, sizeof(pte), ppn_lvl * VPAGE_SIZE + vpn);
 
     if (pte.GetV() == 0) {
+#ifdef DEBUG_EXCEPTION
+        std::cerr << "[DEBUG] [MMU] Invalid PTE at 0x" << std::hex << ppn_lvl * VPAGE_SIZE + vpn << std::endl;
+#endif
+
         auto page_idx_pair = memory_->GetCleanPage();
         reg_t page_idx = page_idx_pair.first;
 
@@ -98,60 +100,80 @@ dword_t Simulator::CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t rwx_
         pte.SetPPN(page_idx);
         pte.SetV(1);
         ppn_new = page_idx;
-        
+
         if constexpr (IsLastLevel == true) {
             pte.SetR(!!(rwx_flags & PF_R));
             pte.SetW(!!(rwx_flags & PF_W));
             pte.SetX(!!(rwx_flags & PF_X));
         }
 
-        memory_->Store(ppn_new * VPAGE_SIZE + vpn, &pte, sizeof(pte));
+        memory_->Store(ppn_lvl * VPAGE_SIZE + vpn, &pte, sizeof(pte));
     }
 
     return ppn_new;
 }
 
 // clang-format off
-void Simulator::MapVirtualPage(vaddr_t page_vaddr) const
+void Simulator::MapVirtualPage(vaddr_t page_vaddr, uint8_t rwx_flags) const
 {
+#ifdef DEBUG_MMU
+    std::cerr << "[DEBUG] [PT alloc: Start mapping] " << std::endl;
+
+    std::bitset<bitops::BitSizeof<vaddr_t>()> vaddr_bitset(page_vaddr);
+    std::cerr << "[DEBUG] [PT alloc] vaddr = " << vaddr_bitset << std::endl;
+    std::cerr << "[DEBUG] [PT alloc] vaddr = 0x" << std::hex << page_vaddr.value << std::dec << std::endl;
+
+    std::cerr << "[DEBUG] [PT alloc] vaddr.offset = " << page_vaddr.GetPageOffset() << std::endl;
+#endif
+
     csr_t satp_reg = hart_->csr_regs.LoadCSR(CSR_SATP_IDX);
     csr_satp_t satp;
     std::memcpy(&satp, &satp_reg, sizeof(satp_reg));
+#ifdef DEBUG_EXCEPTION
+    std::cerr << "[DEBUG] [PT alloc] satp.ppn = 0x" << satp.ppn << std::endl;
+#endif
 
-    dword_t ppn_3 = CreatePageTableLVL<false>(satp.ppn, page_vaddr.GetVPN3());
-    dword_t ppn_2 = CreatePageTableLVL<false>(ppn_3,    page_vaddr.GetVPN2());
-    dword_t ppn_1 = CreatePageTableLVL<false>(ppn_2,    page_vaddr.GetVPN1());
-                    CreatePageTableLVL<true> (ppn_1,    page_vaddr.GetVPN0());
+    dword_t ppn_3 = CreatePageTableLVL<false>(satp.ppn, page_vaddr.GetVPN3(), rwx_flags);
+#ifdef DEBUG_EXCEPTION
+    std::cerr << "[DEBUG] [PT alloc] ppn_3 = 0x" << ppn_3 << std::endl;
+#endif
+
+    dword_t ppn_2 = CreatePageTableLVL<false>(ppn_3,    page_vaddr.GetVPN2(), rwx_flags);
+#ifdef DEBUG_EXCEPTION
+    std::cerr << "[DEBUG] [PT alloc] ppn_2 = 0x" << ppn_2 << std::endl;
+#endif
+
+    dword_t ppn_1 = CreatePageTableLVL<false>(ppn_2,    page_vaddr.GetVPN1(), rwx_flags);
+#ifdef DEBUG_EXCEPTION
+    std::cerr << "[DEBUG] [PT alloc] ppn_1 = 0x" << ppn_1 << std::endl;
+#endif
+
+    dword_t ppn_0 = CreatePageTableLVL<true> (ppn_1,    page_vaddr.GetVPN0(), rwx_flags);
+#ifdef DEBUG_EXCEPTION
+    std::cerr << "[DEBUG] [PT alloc] ppn_0 = 0x" << ppn_0 << std::endl;
+#else
+    (void)ppn_0;
+#endif
+
+#ifdef DEBUG_EXCEPTION
+    std::cerr << "[DEBUG] [PT alloc: End mapping]" << std::dec << std::endl;
+#endif
 }
 // clang-format on
 
 // TODO: rewrite the whole function
-void Simulator::MapVirtualRange(vaddr_t vaddr_start, vaddr_t vaddr_end) const
+void Simulator::MapVirtualRange(vaddr_t vaddr_start, vaddr_t vaddr_end, uint8_t rwx_flags) const
 {
-    addr_t vpage_padding = (VPAGE_SIZE - src.value % VPAGE_SIZE) % VPAGE_SIZE;
-
-    if (vpage_padding != 0) {
-        auto pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != Exception::NONE) {
-            handlers_.mmu_handler(pair_paddr.second, src.value);
-            pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
-        }
-
-        memory_->Load(dst, vpage_padding, pair_paddr.first.value);
+    addr_t vaddr = vaddr_start;
+    for (; vaddr < vaddr_end; vaddr += VPAGE_SIZE) {
+        MapVirtualPage(vaddr, rwx_flags);
     }
 
-    for (addr_t vpage_offset = 0; vpage_offset < dst_size - vpage_padding; vpage_offset += VPAGE_SIZE) {
-        auto pair_paddr = mmu_.VirtToPhysAddr(src.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != Exception::NONE) {
-            handlers_.mmu_handler(pair_paddr.second, src.value);
-            pair_paddr = mmu_.VirtToPhysAddr(src.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
-        }
+    addr_t vpage_padding = (VPAGE_SIZE - vaddr % VPAGE_SIZE) % VPAGE_SIZE;
+    vpage_padding = (vpage_padding == 0) ? VPAGE_SIZE : vpage_padding;
 
-        size_t load_size = VPAGE_SIZE;
-        if ((dst_size - vpage_padding - vpage_offset) < VPAGE_SIZE)
-            load_size = dst_size - vpage_padding - vpage_offset;
-
-        memory_->Load((char *)dst + vpage_padding + vpage_offset, load_size, pair_paddr.first.value);
+    if ((vaddr_end - vaddr + VPAGE_SIZE) > vpage_padding) {
+        MapVirtualPage(vaddr_end, rwx_flags);
     }
 }
 
