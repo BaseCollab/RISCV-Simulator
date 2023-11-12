@@ -76,6 +76,10 @@ void Simulator::PreparePageTable()
     csr_t satp_reg = hart_->csr_regs.LoadCSR(CSR_SATP_IDX);
     csr_satp_t satp;
     std::memcpy(&satp, &satp_reg, sizeof(satp_reg));
+
+    for (size_t i = 1; i <= n_stack_pages_; ++i) {
+        MapVirtualPage(STACK_PTR - VPAGE_SIZE * i);
+    }
 }
 
 template <bool IsLastLevel>
@@ -84,11 +88,13 @@ dword_t Simulator::CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t rwx_
     pte_t pte;
     dword_t ppn_new {0};
 
-    memory_->Load(&pte, sizeof(pte), ppn_lvl * VPAGE_SIZE + vpn);
+    pte_t pte_tmp;
+
+    memory_->Load(&pte, sizeof(pte), ppn_lvl * VPAGE_SIZE + vpn * sizeof(pte_t));
 
     if (pte.GetV() == 0) {
 #ifdef DEBUG_EXCEPTION
-        std::cerr << "[DEBUG] [MMU] Invalid PTE at 0x" << std::hex << ppn_lvl * VPAGE_SIZE + vpn << std::endl;
+        std::cerr << "[DEBUG] [PT alloc] Invalid PTE at 0x" << std::hex << ppn_lvl * VPAGE_SIZE + vpn * sizeof(pte_t) << std::endl;
 #endif
 
         auto page_idx_pair = memory_->GetCleanPage();
@@ -107,7 +113,9 @@ dword_t Simulator::CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t rwx_
             pte.SetX(!!(rwx_flags & PF_X));
         }
 
-        memory_->Store(ppn_lvl * VPAGE_SIZE + vpn, &pte, sizeof(pte));
+        memory_->Store(ppn_lvl * VPAGE_SIZE + vpn * sizeof(pte_t), &pte, sizeof(pte_t));
+    } else {
+        ppn_new = pte.GetPPN();
     }
 
     return ppn_new;
@@ -130,27 +138,31 @@ void Simulator::MapVirtualPage(vaddr_t page_vaddr, uint8_t rwx_flags) const
     csr_satp_t satp;
     std::memcpy(&satp, &satp_reg, sizeof(satp_reg));
 #ifdef DEBUG_EXCEPTION
-    std::cerr << "[DEBUG] [PT alloc] satp.ppn = 0x" << satp.ppn << std::endl;
+    std::bitset<bitops::BitSizeof<hword_t>()> vpn_3(page_vaddr.GetVPN3());
+    std::cerr << "[DEBUG] [PT alloc] 1) satp.ppn = 0x" << satp.ppn << ", vpn_3 = 0b" << vpn_3 << std::endl;
 #endif
 
-    dword_t ppn_3 = CreatePageTableLVL<false>(satp.ppn, page_vaddr.GetVPN3(), rwx_flags);
+    dword_t ppn_3 = CreatePageTableLVL<false>(satp.ppn, page_vaddr.GetVPN3());
 #ifdef DEBUG_EXCEPTION
-    std::cerr << "[DEBUG] [PT alloc] ppn_3 = 0x" << ppn_3 << std::endl;
+    std::bitset<bitops::BitSizeof<hword_t>()> vpn_2(page_vaddr.GetVPN2());
+    std::cerr << "[DEBUG] [PT alloc] 2) ppn_3 = 0x" << ppn_3 << ", vpn_2 = 0b" << vpn_2 << std::endl;
 #endif
 
-    dword_t ppn_2 = CreatePageTableLVL<false>(ppn_3,    page_vaddr.GetVPN2(), rwx_flags);
+    dword_t ppn_2 = CreatePageTableLVL<false>(ppn_3,    page_vaddr.GetVPN2());
 #ifdef DEBUG_EXCEPTION
-    std::cerr << "[DEBUG] [PT alloc] ppn_2 = 0x" << ppn_2 << std::endl;
+    std::bitset<bitops::BitSizeof<hword_t>()> vpn_1(page_vaddr.GetVPN1());
+    std::cerr << "[DEBUG] [PT alloc] 3) ppn_2 = 0x" << ppn_2 << ", vpn_1 = 0b" << vpn_1 << std::endl;
 #endif
 
-    dword_t ppn_1 = CreatePageTableLVL<false>(ppn_2,    page_vaddr.GetVPN1(), rwx_flags);
+    dword_t ppn_1 = CreatePageTableLVL<false>(ppn_2,    page_vaddr.GetVPN1());
 #ifdef DEBUG_EXCEPTION
-    std::cerr << "[DEBUG] [PT alloc] ppn_1 = 0x" << ppn_1 << std::endl;
+    std::bitset<bitops::BitSizeof<hword_t>()> vpn_0(page_vaddr.GetVPN0());
+    std::cerr << "[DEBUG] [PT alloc] 4) ppn_1 = 0x" << ppn_1 << ", vpn_0 = 0b" << vpn_0 << std::endl;
 #endif
 
     dword_t ppn_0 = CreatePageTableLVL<true> (ppn_1,    page_vaddr.GetVPN0(), rwx_flags);
 #ifdef DEBUG_EXCEPTION
-    std::cerr << "[DEBUG] [PT alloc] ppn_0 = 0x" << ppn_0 << std::endl;
+    std::cerr << "[DEBUG] [PT alloc] 5) ppn_0 = 0x" << ppn_0 << std::endl;
 #else
     (void)ppn_0;
 #endif

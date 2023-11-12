@@ -18,7 +18,7 @@ int Main(int argc, char *argv[])
 
     sim.LoadElfFile(parser.GetElfFileName());
 
-    // hart.Interpret();
+    hart.Interpret();
 
     return 0;
 }

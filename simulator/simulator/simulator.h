@@ -25,6 +25,7 @@ public:
     ~Simulator() = default;
 
     void LoadElfFile(const std::string &elf_pathname);
+
     void MapVirtualPage(vaddr_t page_vaddr, uint8_t rwx_flags = PF_R | PF_W) const;
     void MapVirtualRange(vaddr_t vaddr_start, vaddr_t vaddr_end, uint8_t rwx_flags = PF_R | PF_W) const;
 
@@ -32,9 +33,7 @@ private:
     void InitializeCSR(CSRs *csr_regs, reg_t root_page_idx);
 
     reg_t AllocRootPageTable();
-
     void SetExceptionHandlers();
-
     void PreparePageTable();
 
     template <bool IsLastLevel>

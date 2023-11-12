@@ -20,27 +20,27 @@ void ExceptionHandler::MMUExceptionHandler(Hart *hart, PhysMemoryCtl *memory, Ex
 
     switch (exception) {
         case Exception::MMU_INVALID_PAGE_ENTRY:
-            err(EX_SOFTWARE, "Page access fault: invalid page entry [addr %lx]", vaddr);
+            errx(EX_SOFTWARE, "Page access fault: invalid page entry [addr %lx]", vaddr);
 
         case Exception::MMU_INVALID_PAGE_SIZE:
-            err(EX_SOFTWARE,
+            errx(EX_SOFTWARE,
                 "Superpages, megapages, etc - are not supported (rwx != 0x0 for not final page table entry) [addr %lx]",
                 vaddr);
 
         case Exception::MMU_PAGE_WRITE_NO_READ:
-            err(EX_SOFTWARE, "Page invalid rights: write permission without read permission [addr %lx]", vaddr);
+            errx(EX_SOFTWARE, "Page invalid rights: write permission without read permission [addr %lx]", vaddr);
 
         case Exception::MMU_PAGE_ACCESS_READ:
-            err(EX_SOFTWARE, "Page access fault: read without read permission [addr %lx]", vaddr);
+            errx(EX_SOFTWARE, "Page access fault: read without read permission [addr %lx]", vaddr);
 
         case Exception::MMU_PAGE_ACCESS_WRITE:
-            err(EX_SOFTWARE, "Page access fault: write without write permission [addr %lx]", vaddr);
+            errx(EX_SOFTWARE, "Page access fault: write without write permission [addr %lx]", vaddr);
 
         case Exception::MMU_PAGE_ACCESS_EXECUTE:
-            err(EX_SOFTWARE, "Page access fault: execute without execute permission [addr %lx]", vaddr);
+            errx(EX_SOFTWARE, "Page access fault: execute without execute permission [addr %lx]", vaddr);
 
         case Exception::MMU_ADDRESS_MISALIGNED:
-            err(EX_SOFTWARE, "Misaligned address: [addr %lx]", vaddr);
+            errx(EX_SOFTWARE, "Misaligned address: [addr %lx]", vaddr);
 
         default:
             break;
