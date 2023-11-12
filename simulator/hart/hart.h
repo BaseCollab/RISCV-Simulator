@@ -90,7 +90,7 @@ public:
 
     // TODO: remove page-fault handling + rwx_flags argument
     template <typename ValueType>
-    Exception LoadFromMemory(vaddr_t src, ValueType *value, uint8_t rwx_flags = PF_W | PF_R) const
+    Exception LoadFromMemory(vaddr_t src, ValueType *value, uint8_t rwx_flags = PF_R) const
     {
         static_assert((sizeof(ValueType) == sizeof(byte_t)) || sizeof(ValueType) == sizeof(hword_t) ||
                       (sizeof(ValueType) == sizeof(word_t)) || sizeof(ValueType) == sizeof(dword_t));
@@ -99,13 +99,15 @@ public:
             return Exception::MMU_ADDRESS_MISALIGNED;
         }
 
-        auto pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != Exception::NONE) {
-            handlers_.mmu_handler(pair_paddr.second, src);
-            pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
+        paddr_t paddr {0};
+        Exception exception {Exception::NONE};
+
+        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
+        if (exception != Exception::NONE) {
+            return exception;
         }
 
-        auto load_pair = memory_->Load<ValueType>(pair_paddr.first.value);
+        auto load_pair = memory_->Load<ValueType>(paddr);
         *value = load_pair.first;
 
         return Exception::NONE;
@@ -113,7 +115,7 @@ public:
 
     // TODO: remove page-fault handling + rwx_flags argument
     template <typename ValueType>
-    Exception StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags = PF_W | PF_R) const
+    Exception StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags = PF_W) const
     {
         static_assert((sizeof(ValueType) == sizeof(byte_t)) || sizeof(ValueType) == sizeof(hword_t) ||
                       (sizeof(ValueType) == sizeof(word_t)) || sizeof(ValueType) == sizeof(dword_t));
@@ -122,13 +124,15 @@ public:
             return Exception::MMU_ADDRESS_MISALIGNED;
         }
 
-        auto pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != Exception::NONE) {
-            handlers_.mmu_handler(pair_paddr.second, dst);
-            pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
+        paddr_t paddr {0};
+        Exception exception {Exception::NONE};
+
+        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
+        if (exception != Exception::NONE) {
+            return exception;
         }
 
-        memory_->Store<ValueType>(pair_paddr.first.value, value);
+        memory_->Store<ValueType>(paddr, value);
 
         return Exception::NONE;
     }
