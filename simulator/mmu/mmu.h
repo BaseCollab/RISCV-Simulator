@@ -19,10 +19,11 @@ public:
     ~MMU() = default;
 
     std::pair<paddr_t, Exception> VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_flags, const CSRs &csr_regs,
-                                                 const PhysMemoryCtl &memory) const;
+                                                 const PhysMemoryCtl &memory, Mode mode) const;
 
 private:
-    Exception ValidatePTE(const pte_t &pte, uint8_t rwx_flags) const;
+    template <bool IsLastLevel>
+    Exception ValidatePTE(const pte_t &pte, const CSRs &csr_regs, Mode mode, uint8_t rwx_flags = 0) const;
 
     // TODO: TLB implementation
 };

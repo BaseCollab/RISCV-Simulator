@@ -12,7 +12,7 @@ Exception Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t 
     Exception exception {Exception::NONE};
 
     if (vpage_padding != 0) {
-        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
+        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_, mode_);
         if (exception != Exception::NONE) {
             return exception;
         }
@@ -21,7 +21,7 @@ Exception Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t 
     }
 
     for (addr_t vpage_offset = 0; vpage_offset < dst_size - vpage_padding; vpage_offset += VPAGE_SIZE) {
-        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(src + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
+        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(src + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_, mode_);
         if (exception != Exception::NONE) {
             return exception;
         }
@@ -44,7 +44,7 @@ Exception Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t r
     Exception exception {Exception::NONE};
 
     if (vpage_padding != 0) {
-        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
+        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_, mode_);
         if (exception != Exception::NONE) {
             return exception;
         }
@@ -53,7 +53,7 @@ Exception Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t r
     }
 
     for (addr_t vpage_offset = 0; vpage_offset < src_size - vpage_padding; vpage_offset += VPAGE_SIZE) {
-        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(dst + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
+        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(dst + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_, mode_);
         if (exception != Exception::NONE) {
             return exception;
         }

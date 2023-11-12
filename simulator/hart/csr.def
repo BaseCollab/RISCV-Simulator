@@ -3,3 +3,32 @@ DEFINE_CSR(SATP, satp, 0x180,
     csr_t asid : 16; // may be zero (unspecified)
     csr_t ppn : 44;  // physical page number (PPN) of the root page table
 )
+
+DEFINE_CSR(MSTATUS, mstatus, 0x300,
+    csr_t sd : 1;
+    csr_t wpri_1 : 25;
+    csr_t mbe : 1;
+    csr_t sbe : 1;
+    csr_t sxl : 2;
+    csr_t uxl : 2;
+    csr_t wpri_2 : 9;
+    csr_t tsr : 1;
+    csr_t tw : 1;
+    csr_t tvm : 1;
+    csr_t mxr : 1;
+    csr_t sum : 1;
+    csr_t mprv : 1;
+    csr_t xs : 2;
+    csr_t fs : 2;
+    csr_t mpp : 2;
+    csr_t vs : 2;
+    csr_t spp : 1;
+    csr_t mpie : 1;
+    csr_t ube : 1;
+    csr_t spie : 1;
+    csr_t wpri_3 : 1;
+    csr_t mie : 1;
+    csr_t wpri_4 : 1;
+    csr_t sie : 1;
+    csr_t wpri_5 : 1;
+)

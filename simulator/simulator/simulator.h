@@ -26,8 +26,8 @@ public:
 
     void LoadElfFile(const std::string &elf_pathname);
 
-    void MapVirtualPage(vaddr_t page_vaddr, uint8_t rwx_flags = PF_R | PF_W) const;
-    void MapVirtualRange(vaddr_t vaddr_start, vaddr_t vaddr_end, uint8_t rwx_flags = PF_R | PF_W) const;
+    void MapVirtualPage(vaddr_t page_vaddr, uint8_t urwx_flags = PF_U | PF_R | PF_W) const;
+    void MapVirtualRange(vaddr_t vaddr_start, vaddr_t vaddr_end, uint8_t urwx_flags = PF_U | PF_R | PF_W) const;
 
 private:
     void InitializeCSR(CSRs *csr_regs, reg_t root_page_idx);
@@ -37,7 +37,7 @@ private:
     void PreparePageTable();
 
     template <bool IsLastLevel>
-    dword_t CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t rwx_flags = PF_R | PF_W) const;
+    dword_t CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t urwx_flags = PF_U | PF_R | PF_W) const;
 
 private:
     static constexpr reg_t STACK_PTR = 0x600000000;

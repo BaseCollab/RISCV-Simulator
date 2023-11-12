@@ -62,7 +62,7 @@ public:
     }
 
 private:
-    csr_t csr_table_[N_CSR];
+    csr_t csr_table_[N_CSR]= {0};
 };
 
 #define DEFINE_CSR(name_caps, name, ...) \

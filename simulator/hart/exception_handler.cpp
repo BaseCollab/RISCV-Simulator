@@ -43,7 +43,7 @@ void ExceptionHandler::MMUExceptionHandler(Hart *hart, PhysMemoryCtl *memory, Ex
             errx(EX_SOFTWARE, "Misaligned address: [addr %lx]", vaddr);
 
         default:
-            break;
+            errx(EX_SOFTWARE, "Unknown exception type: [addr %lx]", vaddr);
     }
 }
 
