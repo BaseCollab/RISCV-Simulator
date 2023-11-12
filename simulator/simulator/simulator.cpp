@@ -17,18 +17,27 @@ Simulator::Simulator(Hart *hart, PhysMemoryCtl *memory, size_t n_stack_pages)
     SetExceptionHandlers();
 }
 
+// clang-format off
 void Simulator::InitializeCSR(CSRs *csr_regs, reg_t root_page_idx)
 {
     assert(csr_regs);
 
-    csr_satp_t satp = {.mode = 0x9, .asid = 0x0, .ppn = root_page_idx}; // 0x9 = Sv48
-    csr_t satp_reg;
-    std::memcpy(&satp_reg, &satp, sizeof(csr_satp_t));
+    CSRs::satp_t satp;
+    satp.fields.mode = 0x9; // 0x9 = Sv48
+    satp.fields.asid = 0x0;
+    satp.fields.ppn = root_page_idx;
 
-    csr_regs->StoreCSR(CSR_SATP_IDX, satp_reg);
+    CSRs::mstatus_t mstatus;
+    mstatus.fields.mxr = 0x1; // Make eXecutable Readable
+    mstatus.fields.sum = 0x1;
+    mstatus.fields.mprv = 0x0;
+
+    csr_regs->StoreCSR<CSRs::satp_t>   (CSRs::Index::SATP,    satp);
+    csr_regs->StoreCSR<CSRs::mstatus_t>(CSRs::Index::MSTATUS, mstatus);
 
     // TODO: map all CSRs to physical memory as specification requires
 }
+// clang-format on
 
 reg_t Simulator::AllocRootPageTable()
 {
@@ -73,17 +82,13 @@ void Simulator::PreparePageTable()
     reg_t root_page_idx = AllocRootPageTable();
     InitializeCSR(csr_regs, root_page_idx);
 
-    csr_t satp_reg = hart_->csr_regs.LoadCSR(CSR_SATP_IDX);
-    csr_satp_t satp;
-    std::memcpy(&satp, &satp_reg, sizeof(satp_reg));
-
     for (size_t i = 1; i <= n_stack_pages_; ++i) {
         MapVirtualPage(STACK_PTR - VPAGE_SIZE * i);
     }
 }
 
 template <bool IsLastLevel>
-dword_t Simulator::CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t rwx_flags) const
+dword_t Simulator::CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t urwx_flags) const
 {
     pte_t pte;
     dword_t ppn_new {0};
@@ -106,9 +111,10 @@ dword_t Simulator::CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t rwx_
         ppn_new = page_idx;
 
         if constexpr (IsLastLevel == true) {
-            pte.SetR(!!(rwx_flags & PF_R));
-            pte.SetW(!!(rwx_flags & PF_W));
-            pte.SetX(!!(rwx_flags & PF_X));
+            pte.SetR(!!(urwx_flags & PF_R));
+            pte.SetW(!!(urwx_flags & PF_W));
+            pte.SetX(!!(urwx_flags & PF_X));
+            pte.SetU(!!(urwx_flags & PF_U));
         }
 
         memory_->Store(ppn_lvl * VPAGE_SIZE + vpn * sizeof(pte_t), &pte, sizeof(pte_t));
@@ -120,8 +126,10 @@ dword_t Simulator::CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t rwx_
 }
 
 // clang-format off
-void Simulator::MapVirtualPage(vaddr_t page_vaddr, uint8_t rwx_flags) const
+void Simulator::MapVirtualPage(vaddr_t page_vaddr, uint8_t urwx_flags) const
 {
+    CSRs *csr_regs = &(hart_->csr_regs);
+
 #ifdef DEBUG_MMU
     std::cerr << "[DEBUG] [PT alloc: Start mapping] " << std::endl;
 
@@ -132,15 +140,13 @@ void Simulator::MapVirtualPage(vaddr_t page_vaddr, uint8_t rwx_flags) const
     std::cerr << "[DEBUG] [PT alloc] vaddr.offset = " << page_vaddr.GetPageOffset() << std::endl;
 #endif
 
-    csr_t satp_reg = hart_->csr_regs.LoadCSR(CSR_SATP_IDX);
-    csr_satp_t satp;
-    std::memcpy(&satp, &satp_reg, sizeof(satp_reg));
+    auto satp = csr_regs->LoadCSR<CSRs::satp_t>(CSRs::Index::SATP);
 #ifdef DEBUG_EXCEPTION
     std::bitset<bitops::BitSizeof<hword_t>()> vpn_3(page_vaddr.GetVPN3());
-    std::cerr << "[DEBUG] [PT alloc] 1) satp.ppn = 0x" << satp.ppn << ", vpn_3 = 0b" << vpn_3 << std::endl;
+    std::cerr << "[DEBUG] [PT alloc] 1) satp.ppn = 0x" << satp.fields.ppn << ", vpn_3 = 0b" << vpn_3 << std::endl;
 #endif
 
-    dword_t ppn_3 = CreatePageTableLVL<false>(satp.ppn, page_vaddr.GetVPN3());
+    dword_t ppn_3 = CreatePageTableLVL<false>(satp.fields.ppn, page_vaddr.GetVPN3());
 #ifdef DEBUG_EXCEPTION
     std::bitset<bitops::BitSizeof<hword_t>()> vpn_2(page_vaddr.GetVPN2());
     std::cerr << "[DEBUG] [PT alloc] 2) ppn_3 = 0x" << ppn_3 << ", vpn_2 = 0b" << vpn_2 << std::endl;
@@ -158,7 +164,7 @@ void Simulator::MapVirtualPage(vaddr_t page_vaddr, uint8_t rwx_flags) const
     std::cerr << "[DEBUG] [PT alloc] 4) ppn_1 = 0x" << ppn_1 << ", vpn_0 = 0b" << vpn_0 << std::endl;
 #endif
 
-    dword_t ppn_0 = CreatePageTableLVL<true> (ppn_1,    page_vaddr.GetVPN0(), rwx_flags);
+    dword_t ppn_0 = CreatePageTableLVL<true> (ppn_1,    page_vaddr.GetVPN0(), urwx_flags);
 #ifdef DEBUG_EXCEPTION
     std::cerr << "[DEBUG] [PT alloc] 5) ppn_0 = 0x" << ppn_0 << std::endl;
 #else
@@ -172,18 +178,18 @@ void Simulator::MapVirtualPage(vaddr_t page_vaddr, uint8_t rwx_flags) const
 // clang-format on
 
 // TODO: rewrite the whole function
-void Simulator::MapVirtualRange(vaddr_t vaddr_start, vaddr_t vaddr_end, uint8_t rwx_flags) const
+void Simulator::MapVirtualRange(vaddr_t vaddr_start, vaddr_t vaddr_end, uint8_t urwx_flags) const
 {
     addr_t vaddr = vaddr_start;
     for (; vaddr < vaddr_end; vaddr += VPAGE_SIZE) {
-        MapVirtualPage(vaddr, rwx_flags);
+        MapVirtualPage(vaddr, urwx_flags);
     }
 
     addr_t vpage_padding = (VPAGE_SIZE - vaddr % VPAGE_SIZE) % VPAGE_SIZE;
     vpage_padding = (vpage_padding == 0) ? VPAGE_SIZE : vpage_padding;
 
     if ((vaddr_end - vaddr + VPAGE_SIZE) > vpage_padding) {
-        MapVirtualPage(vaddr_end, rwx_flags);
+        MapVirtualPage(vaddr_end, urwx_flags);
     }
 }
 

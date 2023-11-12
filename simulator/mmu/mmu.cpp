@@ -8,30 +8,48 @@
 
 namespace rvsim {
 
-Exception MMU::ValidatePTE(const pte_t &pte, uint8_t rwx_flags) const
+template <bool IsLastLevel>
+Exception MMU::ValidatePTE(const pte_t &pte, const CSRs &csr_regs, Mode mode, uint8_t rwx_flags) const
 {
     if (pte.GetV() == 0) // not valid page table entry
         return Exception::MMU_INVALID_PAGE_ENTRY;
 
-    if (pte.GetW() == 1 && pte.GetR() == 0)
-        return Exception::MMU_PAGE_WRITE_NO_READ;
+    if constexpr (IsLastLevel == true) {
+        auto mstatus = csr_regs.LoadCSR<CSRs::mstatus_t>(CSRs::Index::MSTATUS);
 
-    if ((rwx_flags & PF_R) && (pte.GetR() == 0))
-        return Exception::MMU_PAGE_ACCESS_READ;
+        if (pte.GetW() == 1 && pte.GetR() == 0)
+            return Exception::MMU_PAGE_WRITE_NO_READ;
 
-    if ((rwx_flags & PF_W) && (pte.GetW() == 0))
-        return Exception::MMU_PAGE_ACCESS_WRITE;
+        if (mstatus.fields.mxr == 1) {
+            if ((rwx_flags & PF_R) && (pte.GetR() == 0) && (pte.GetX() == 0))
+                return Exception::MMU_PAGE_ACCESS_READ;
+        } else if ((rwx_flags & PF_R) && (pte.GetR() == 0)) {
+            return Exception::MMU_PAGE_ACCESS_READ;
+        }
 
-    if ((rwx_flags & PF_X) && (pte.GetX() == 0))
-        return Exception::MMU_PAGE_ACCESS_EXECUTE;
+        if (mstatus.fields.sum == 0) {
+            if ((mode == Mode::SUPERVISOR_MODE) && pte.GetU() == 1) {
+                return Exception::MMU_PAGE_SUPERVISOR_USER_ACCESS;
+            }
+        }
 
+        if (pte.GetW() == 1 && pte.GetR() == 0)
+            return Exception::MMU_PAGE_WRITE_NO_READ;
+
+        if ((rwx_flags & PF_W) && (pte.GetW() == 0))
+            return Exception::MMU_PAGE_ACCESS_WRITE;
+
+        if ((rwx_flags & PF_X) && (pte.GetX() == 0))
+            return Exception::MMU_PAGE_ACCESS_EXECUTE;
+    }
     // TODO: add all other possible exceptions
 
     return Exception::NONE;
 }
 
+// TODO: update A and D flags in final PTE
 std::pair<paddr_t, Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_flags, const CSRs &csr_regs,
-                                                  const PhysMemoryCtl &memory) const
+                                                  const PhysMemoryCtl &memory, Mode mode) const
 {
     paddr_t paddr = 0;
 
@@ -42,11 +60,9 @@ std::pair<paddr_t, Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_fla
 
     Exception exception;
 
-    csr_t satp_reg = csr_regs.LoadCSR(CSR_SATP_IDX);
-    csr_satp_t satp;
-    std::memcpy(&satp, &satp_reg, sizeof(satp_reg));
+    auto satp = csr_regs.LoadCSR<CSRs::satp_t>(CSRs::Index::SATP);
 
-    memory.Load(&pte_3, sizeof(pte_3), satp.ppn * VPAGE_SIZE + vaddr.GetVPN3() * sizeof(pte_t));
+    memory.Load(&pte_3, sizeof(pte_3), satp.fields.ppn * VPAGE_SIZE + vaddr.GetVPN3() * sizeof(pte_t));
 
 #ifdef DEBUG_MMU
     std::bitset<bitops::BitSizeof<vaddr_t>()> vaddr_bitset(vaddr.value);
@@ -55,14 +71,14 @@ std::pair<paddr_t, Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_fla
     std::cerr << "[DEBUG] [MMU] vaddr = 0x" << std::hex << vaddr.value << std::endl;
     std::cerr << "[DEBUG] [MMU] vaddr.offset = 0x" << vaddr.GetPageOffset() << std::dec << std::endl;
 
-    std::cerr << "[DEBUG] [MMU] 1) satp.ppn = 0x" << std::hex << satp.ppn << std::endl;
+    std::cerr << "[DEBUG] [MMU] 1) satp.ppn = 0x" << std::hex << satp.fields.ppn << std::endl;
     std::cerr << "[DEBUG] [MMU]    vaddr.vpn3 = 0x" << vaddr.GetVPN3() << std::endl;
-    std::cerr << "[DEBUG] [MMU]    pte_3_entry_addr = 0x" << satp.ppn * VPAGE_SIZE + vaddr.GetVPN3() << std::dec << std::endl;
+    std::cerr << "[DEBUG] [MMU]    pte_3_entry_addr = 0x" << satp.fields.ppn * VPAGE_SIZE + vaddr.GetVPN3() << std::dec << std::endl;
 #endif
 
     if (pte_3.GetX() == 0 && pte_3.GetW() == 0 && pte_3.GetR() == 0) // pointer to next level
     {
-        exception = ValidatePTE(pte_3, 0);
+        exception = ValidatePTE<false>(pte_3, csr_regs, mode);
         if (exception != Exception::NONE)
             return std::make_pair(paddr, exception);
 
@@ -76,7 +92,7 @@ std::pair<paddr_t, Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_fla
 
         if (pte_2.GetX() == 0 && pte_2.GetW() == 0 && pte_2.GetR() == 0) // pointer to next level
         {
-            exception = ValidatePTE(pte_2, 0);
+            exception = ValidatePTE<false>(pte_2, csr_regs, mode);
             if (exception != Exception::NONE)
                 return std::make_pair(paddr, exception);
 
@@ -91,7 +107,7 @@ std::pair<paddr_t, Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_fla
 
             if (pte_1.GetX() == 0 && pte_1.GetW() == 0 && pte_1.GetR() == 0) // pointer to next level
             {
-                exception = ValidatePTE(pte_1, 0);
+                exception = ValidatePTE<false>(pte_1, csr_regs, mode);
                 if (exception != Exception::NONE)
                     return std::make_pair(paddr, exception);
 
@@ -104,7 +120,7 @@ std::pair<paddr_t, Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_fla
                           << std::endl;
 #endif
 
-                exception = ValidatePTE(pte_0, rwx_flags);
+                exception = ValidatePTE<true>(pte_0, csr_regs, mode, rwx_flags);
 
 #ifdef DEBUG_MMU
                 std::cerr << "[DEBUG] [MMU] 5) pte_0_entry->ppn exception: " << (int)exception << std::endl;

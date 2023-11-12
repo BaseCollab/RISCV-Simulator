@@ -36,6 +36,9 @@ struct pte_t {
     dword_t GetPPN() const { return (value & mask_ppn) >> 10; }
     void SetPPN(dword_t ppn) { value = (value & ~mask_ppn) | (ppn << 10); }
 
+    dword_t GetU() const { return (value & mask_u) >> 4; }
+    void SetU(dword_t u) { value = (value & ~mask_u) | (u << 4); }
+
     dword_t GetX() const { return (value & mask_x) >> 3; }
     void SetX(dword_t x) { value = (value & ~mask_x) | (x << 3); }
 

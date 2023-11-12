@@ -6,6 +6,11 @@
 
 namespace rvsim {
 
+static constexpr uint8_t PF_X = (1 << 0); // Executable flag
+static constexpr uint8_t PF_W = (1 << 1); // Writable flag
+static constexpr uint8_t PF_R = (1 << 2); // Readable flag
+static constexpr uint8_t PF_U = (1 << 3); // User-mode flag
+
 // clang-format off
 
 using byte_t = uint8_t;

@@ -88,6 +88,11 @@ public:
         gpr_table_[reg_idx] = value;
     }
 
+    Mode GetMode() const
+    {
+        return mode_;
+    }
+
     // TODO: remove page-fault handling + rwx_flags argument
     template <typename ValueType>
     Exception LoadFromMemory(vaddr_t src, ValueType *value, uint8_t rwx_flags = PF_R) const
@@ -102,7 +107,7 @@ public:
         paddr_t paddr {0};
         Exception exception {Exception::NONE};
 
-        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
+        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_, mode_);
         if (exception != Exception::NONE) {
             return exception;
         }
@@ -127,7 +132,7 @@ public:
         paddr_t paddr {0};
         Exception exception {Exception::NONE};
 
-        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
+        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_, mode_);
         if (exception != Exception::NONE) {
             return exception;
         }
@@ -156,6 +161,8 @@ public:
     CSRs csr_regs;
 
 private:
+    Mode mode_ {Mode::USER_MODE};
+
     PhysMemoryCtl *memory_ {nullptr};
     MMU mmu_;
 
