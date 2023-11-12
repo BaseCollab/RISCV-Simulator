@@ -6,6 +6,7 @@
 #include "common/constants.h"
 #include "mmu/mmu.h"
 #include "memory/memory_controller.h"
+#include "simulator/simulator.h"
 
 #include <libelf.h>
 #include <gelf.h>
@@ -31,7 +32,7 @@ public:
     explicit ElfLoader(const std::string &elf_pathname);
     ~ElfLoader();
 
-    void LoadElf(const Hart &hart);
+    void LoadElf(const Simulator &sim, const Hart &hart);
 
     uint64_t GetElfEntryPoint() const
     {

@@ -4,71 +4,71 @@
 
 namespace rvsim {
 
-// TODO: remove page-fault handling + rwx_flags argument
 Exception Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags) const
 {
-    addr_t vpage_padding = (VPAGE_SIZE - src.value % VPAGE_SIZE) % VPAGE_SIZE;
+    addr_t vpage_padding = (VPAGE_SIZE - src % VPAGE_SIZE) % VPAGE_SIZE;
+
+    paddr_t paddr {0};
+    Exception exception {Exception::NONE};
 
     if (vpage_padding != 0) {
-        auto pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != Exception::NONE) {
-            handlers_.mmu_handler(pair_paddr.second, src.value, rwx_flags);
-            pair_paddr = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
+        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
+        if (exception != Exception::NONE) {
+            return exception;
         }
 
-        memory_->Load(dst, vpage_padding, pair_paddr.first.value);
+        memory_->Load(dst, vpage_padding, paddr);
     }
 
     for (addr_t vpage_offset = 0; vpage_offset < dst_size - vpage_padding; vpage_offset += VPAGE_SIZE) {
-        auto pair_paddr = mmu_.VirtToPhysAddr(src.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != Exception::NONE) {
-            handlers_.mmu_handler(pair_paddr.second, src.value, rwx_flags);
-            pair_paddr = mmu_.VirtToPhysAddr(src.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
+        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(src + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
+        if (exception != Exception::NONE) {
+            return exception;
         }
 
         size_t load_size = VPAGE_SIZE;
         if ((dst_size - vpage_padding - vpage_offset) < VPAGE_SIZE)
             load_size = dst_size - vpage_padding - vpage_offset;
 
-        memory_->Load((char *)dst + vpage_padding + vpage_offset, load_size, pair_paddr.first.value);
+        memory_->Load((char *)dst + vpage_padding + vpage_offset, load_size, paddr);
     }
 
     return Exception::NONE;
 }
 
-// TODO: remove page-fault handling + rwx_flags argument
 Exception Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags) const
 {
-    addr_t vpage_padding = (VPAGE_SIZE - dst.value % VPAGE_SIZE) % VPAGE_SIZE;
+    addr_t vpage_padding = (VPAGE_SIZE - dst % VPAGE_SIZE) % VPAGE_SIZE;
+
+    paddr_t paddr {0};
+    Exception exception {Exception::NONE};
 
     if (vpage_padding != 0) {
-        auto pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != Exception::NONE) {
-            handlers_.mmu_handler(pair_paddr.second, dst.value, rwx_flags);
-            pair_paddr = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
+        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
+        if (exception != Exception::NONE) {
+            return exception;
         }
 
-        memory_->Store(pair_paddr.first.value, src, vpage_padding);
+        memory_->Store(paddr, src, vpage_padding);
     }
 
     for (addr_t vpage_offset = 0; vpage_offset < src_size - vpage_padding; vpage_offset += VPAGE_SIZE) {
-        auto pair_paddr = mmu_.VirtToPhysAddr(dst.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
-        if (pair_paddr.second != Exception::NONE) {
-            handlers_.mmu_handler(pair_paddr.second, dst.value, rwx_flags);
-            pair_paddr = mmu_.VirtToPhysAddr(dst.value + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
+        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(dst + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_);
+        if (exception != Exception::NONE) {
+            return exception;
         }
 
         size_t store_size = VPAGE_SIZE;
         if ((src_size - vpage_padding - vpage_offset) < VPAGE_SIZE)
             store_size = src_size - vpage_padding - vpage_offset;
 
-        memory_->Store(pair_paddr.first.value, (char *)src + vpage_padding + vpage_offset, store_size);
+        memory_->Store(paddr, (char *)src + vpage_padding + vpage_offset, store_size);
     }
 
     return Exception::NONE;
 }
 
-Exception Hart::FetchInstruction(instr_size_t *raw_instr)
+Exception Hart::FetchInstruction(instr_size_t *raw_instr) const
 {
 #ifdef DEBUG_HART
 #ifdef DEBUG
@@ -94,13 +94,13 @@ void Hart::Interpret()
 
         exception = FetchInstruction(&raw_instr);
         if (exception != Exception::NONE) {
-            handlers_.mmu_handler(exception, vaddr_t(pc_), PF_R | PF_X);
+            handlers_.mmu_handler(exception, vaddr_t(pc_));
         }
 
         // TODO: rewrite exception handling here
         exception = DecodeAndExecute(&instr, raw_instr);
         if (exception != Exception::NONE) {
-            handlers_.mmu_handler(exception, vaddr_t(pc_), PF_R | PF_X);
+            handlers_.mmu_handler(exception, vaddr_t(pc_));
         }
 
 #ifdef DEBUG_HART
