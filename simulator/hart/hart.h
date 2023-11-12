@@ -30,7 +30,7 @@ public:
     explicit Hart(PhysMemoryCtl *memory) : memory_(memory) {};
     ~Hart() = default;
 
-    Exception FetchInstruction(instr_size_t *raw_instr);
+    Exception FetchInstruction(instr_size_t *raw_instr) const;
 
     void Interpret();
 
