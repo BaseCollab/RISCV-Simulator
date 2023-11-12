@@ -1,0 +1,5 @@
+DEFINE_CSR(SATP, satp, 0x180,
+    csr_t mode : 4;  // page virtual addressing mode
+    csr_t asid : 16; // may be zero (unspecified)
+    csr_t ppn : 44;  // physical page number (PPN) of the root page table
+)

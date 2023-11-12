@@ -42,11 +42,9 @@ std::pair<paddr_t, Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_fla
 
     Exception exception;
 
-    csr_t satp_reg = csr_regs.LoadCSR(CSR_SATP_IDX);
-    csr_satp_t satp;
-    std::memcpy(&satp, &satp_reg, sizeof(satp_reg));
+    auto satp = csr_regs.LoadCSR<CSRs::satp_t>(CSRs::Index::SATP);
 
-    memory.Load(&pte_3, sizeof(pte_3), satp.ppn * VPAGE_SIZE + vaddr.GetVPN3() * sizeof(pte_t));
+    memory.Load(&pte_3, sizeof(pte_3), satp.fields.ppn * VPAGE_SIZE + vaddr.GetVPN3() * sizeof(pte_t));
 
 #ifdef DEBUG_MMU
     std::bitset<bitops::BitSizeof<vaddr_t>()> vaddr_bitset(vaddr.value);
@@ -55,9 +53,9 @@ std::pair<paddr_t, Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_fla
     std::cerr << "[DEBUG] [MMU] vaddr = 0x" << std::hex << vaddr.value << std::endl;
     std::cerr << "[DEBUG] [MMU] vaddr.offset = 0x" << vaddr.GetPageOffset() << std::dec << std::endl;
 
-    std::cerr << "[DEBUG] [MMU] 1) satp.ppn = 0x" << std::hex << satp.ppn << std::endl;
+    std::cerr << "[DEBUG] [MMU] 1) satp.ppn = 0x" << std::hex << satp.fields.ppn << std::endl;
     std::cerr << "[DEBUG] [MMU]    vaddr.vpn3 = 0x" << vaddr.GetVPN3() << std::endl;
-    std::cerr << "[DEBUG] [MMU]    pte_3_entry_addr = 0x" << satp.ppn * VPAGE_SIZE + vaddr.GetVPN3() << std::dec << std::endl;
+    std::cerr << "[DEBUG] [MMU]    pte_3_entry_addr = 0x" << satp.fields.ppn * VPAGE_SIZE + vaddr.GetVPN3() << std::dec << std::endl;
 #endif
 
     if (pte_3.GetX() == 0 && pte_3.GetW() == 0 && pte_3.GetR() == 0) // pointer to next level

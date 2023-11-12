@@ -11,8 +11,36 @@ namespace rvsim {
 
 // Control and Status Register
 class CSRs {
-private:
-    csr_t csr_table_[N_CSR];
+public:
+    #define DEFINE_CSR(name_caps, name, index, ...) \
+        name_caps = index,
+
+    enum Index {
+        #include "csr.def"
+    };
+
+    #undef DEFINE_CSR
+
+    #define DEFINE_CSR(name_caps, name, index, struct_fields)                                      \
+        union name ## _t {                                                                         \
+            struct {                                                                               \
+                struct_fields                                                                      \
+            } fields;                                                                              \
+                                                                                                   \
+            csr_t value;                                                                           \
+                                                                                                   \
+            name ## _t(): value(0) {}                                                              \
+            name ## _t(csr_t name): value(name) {}                                                 \
+            name ## _t(const name ## _t &name) { value = name.value; }                              \
+                                                                                                   \
+            csr_t operator=(const csr_t &name) { value = name; return name; }                      \
+            name ## _t &operator=(const name ## _t &name) { value = name.value; return *this; }    \
+            operator csr_t() const { return value; }                                               \
+        };
+
+    #include "csr.def"
+
+    #undef DEFINE_CSR
 
 public:
     NO_COPY_SEMANTIC(CSRs);
@@ -21,26 +49,28 @@ public:
     CSRs() = default;
     ~CSRs() = default;
 
-    csr_t LoadCSR(csr_idx_t index) const
+    template <typename CSRType>
+    CSRType LoadCSR(csr_idx_t index) const
     {
-        return csr_table_[index];
+        return static_cast<CSRType>(csr_table_[index]);
     }
 
-    void StoreCSR(csr_idx_t index, csr_t reg)
+    template <typename CSRType>
+    void StoreCSR(csr_idx_t index, CSRType reg)
     {
-        csr_table_[index] = reg;
+        csr_table_[index] = static_cast<csr_t>(reg);
     }
+
+private:
+    csr_t csr_table_[N_CSR];
 };
 
-static constexpr csr_idx_t CSR_SATP_IDX = 0x180;
+#define DEFINE_CSR(name_caps, name, ...) \
+    static_assert(sizeof(CSRs::name ## _t) == sizeof(csr_t), "sizeof(CSRs::" #name "_t) != sizeof(csr_t)");
 
-struct csr_satp_t {
-    csr_t mode : 4;  // page virtual addressing mode
-    csr_t asid : 16; // may be zero (unspecified)
-    csr_t ppn : 44;  // physical page number (PPN) of the root page table
-};
+#include "csr.def"
 
-static_assert(sizeof(csr_satp_t) == sizeof(csr_t), "sizeof(csr_satp_t) != sizeof(csr_t)");
+#undef DEFINE_CSR
 
 } // namespace rvsim
 
