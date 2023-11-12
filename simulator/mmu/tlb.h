@@ -14,9 +14,13 @@ public:
 
     struct Data {
         void *host_addr = nullptr;
-        vaddr_t vaddr_t {0x1};
-        paddr_t paddr_t {0x0};
-    }
+        paddr_t paddr = 0x0;
+    };
+
+    using Tag = vaddr_t;
+
+    using Cache = utils::DirectMappedCache<Data, Tag, TLB_SIZE>;
+    class Error : Cache::Error {};
 
 public:
     NO_COPY_SEMANTIC(TLB);
@@ -25,10 +29,13 @@ public:
     TLB() = default;
     ~TLB() = default;
 
-
+    std::pair<const Data *, Error> LookUp(size_t offset, Tag tag)
+    {
+        return cache_.LookUp(offset, tag);
+    }
 
 private:
-    utils::DirectMappedCache<Data, vaddr_t, TLB_SIZE>;
+    Cache cache_;
 };
 
 } // namespace rvsim
