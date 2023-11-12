@@ -88,8 +88,6 @@ dword_t Simulator::CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t rwx_
     pte_t pte;
     dword_t ppn_new {0};
 
-    pte_t pte_tmp;
-
     memory_->Load(&pte, sizeof(pte), ppn_lvl * VPAGE_SIZE + vpn * sizeof(pte_t));
 
     if (pte.GetV() == 0) {
