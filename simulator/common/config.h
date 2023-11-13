@@ -31,6 +31,9 @@ using csr_t     = reg_t; // CSR = Control System Register
 using csr_idx_t = hword_t;
 static constexpr size_t N_CSR = 1 << 12;
 
+static constexpr size_t TLB_SIZE_LOG_2 = 7;
+static constexpr size_t TLB_SIZE = 1 << TLB_SIZE_LOG_2;
+
 enum class Mode : byte_t {
     USER_MODE       = 0,
     SUPERVISOR_MODE = 1,

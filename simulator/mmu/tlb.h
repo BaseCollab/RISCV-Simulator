@@ -8,35 +8,35 @@
 
 namespace rvsim {
 
+template <size_t SIZE_LOG_2>
 class TLB {
 public:
-    static constexpr size_t TLB_SIZE = 1 << 6;
+    static constexpr size_t SIZE = 1 << SIZE_LOG_2;
 
     struct Data {
         void *host_addr = nullptr;
         paddr_t paddr = 0x0;
     };
 
-    using Tag = vaddr_t;
-
-    using Cache = utils::DirectMappedCache<Data, Tag, TLB_SIZE>;
+    using Cache = utils::DirectMappedCache<Data, vaddr_t, SIZE>;
 
 public:
     NO_COPY_SEMANTIC(TLB);
     NO_MOVE_SEMANTIC(TLB);
 
+    // virtual address 0x1 is invalid
     TLB() : cache_(0x1, Data {}) {}
 
     ~TLB() = default;
 
-    const Data *LookUp(size_t offset, Tag tag) const
+    const Data *LookUp(vaddr_t vaddr) const
     {
-        return cache_.LookUp(offset, tag);
+        return cache_.LookUp(vaddr, vaddr);
     }
 
-    void Update(const Data &data, size_t offset, Tag tag)
+    void Update(Data data, vaddr_t vaddr)
     {
-        cache_.Update(data, offset, tag);
+        cache_.Update(data, vaddr, vaddr);
     }
 
 private:

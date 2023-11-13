@@ -1,4 +1,5 @@
-#include "mmu.h"
+#include "mmu/mmu.h"
+#include "hart/hart.h"
 
 #include <bitset>
 #include <optional>
@@ -49,15 +50,16 @@ Exception MMU::ValidatePTE(const pte_t &pte, const CSRs &csr_regs, Mode mode, ui
 
 // TODO: update A and D flags in final PTE
 std::pair<paddr_t, Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_flags, const CSRs &csr_regs,
-                                                  const PhysMemoryCtl &memory, Mode mode) const
+                                                  const PhysMemoryCtl &memory) const
 {
-    paddr_t paddr = 0;
+    Mode mode = hart_->GetMode();
 
     pte_t pte_3;
     pte_t pte_2;
     pte_t pte_1;
     pte_t pte_0;
 
+    paddr_t paddr = 0;
     Exception exception;
 
     auto satp = csr_regs.LoadCSR<CSRs::satp_t>(CSRs::Index::SATP);

@@ -32,7 +32,7 @@ public:
     explicit ElfLoader(const std::string &elf_pathname);
     ~ElfLoader();
 
-    void LoadElf(const Simulator &sim, const Hart &hart);
+    void LoadElf(const Simulator &sim, Hart *hart);
 
     uint64_t GetElfEntryPoint() const
     {

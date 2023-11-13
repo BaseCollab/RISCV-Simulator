@@ -6,6 +6,7 @@
 #include "common/macros.h"
 #include "common/config.h"
 #include "mmu/mmu.h"
+#include "mmu/tlb.h"
 #include "hart/csr.h"
 #include "hart/exception.h"
 
@@ -23,14 +24,16 @@ public:
         std::function<void(Exception, addr_t)> mmu_handler;
     };
 
+    using TLB_t = TLB<TLB_SIZE_LOG_2>;
+
 public:
     NO_COPY_SEMANTIC(Hart);
     NO_MOVE_SEMANTIC(Hart);
 
-    explicit Hart(PhysMemoryCtl *memory) : memory_(memory) {};
+    explicit Hart(PhysMemoryCtl *memory) : memory_(memory), mmu_(this) {};
     ~Hart() = default;
 
-    Exception FetchInstruction(instr_size_t *raw_instr) const;
+    Exception FetchInstruction(instr_size_t *raw_instr);
 
     void Interpret();
 
@@ -93,9 +96,9 @@ public:
         return mode_;
     }
 
-    // TODO: remove page-fault handling + rwx_flags argument
+    // TODO: change using vaddr.offset as tag
     template <typename ValueType>
-    Exception LoadFromMemory(vaddr_t src, ValueType *value, uint8_t rwx_flags = PF_R) const
+    Exception LoadFromMemory(vaddr_t src, ValueType *value, uint8_t rwx_flags = PF_R)
     {
         static_assert((sizeof(ValueType) == sizeof(byte_t)) || sizeof(ValueType) == sizeof(hword_t) ||
                       (sizeof(ValueType) == sizeof(word_t)) || sizeof(ValueType) == sizeof(dword_t));
@@ -107,20 +110,29 @@ public:
         paddr_t paddr {0};
         Exception exception {Exception::NONE};
 
-        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_, mode_);
-        if (exception != Exception::NONE) {
-            return exception;
+        vaddr_t src_page_addr = src & ~vaddr_t::mask_page_offset;
+
+        const TLB_t::Data *cached_addr = rtlb_.LookUp(src_page_addr);
+        if (cached_addr == nullptr) {
+            std::tie(paddr, exception) = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
+            if (exception != Exception::NONE) {
+                return exception;
+            }
+
+            rtlb_.Update(TLB_t::Data {.host_addr = nullptr, .paddr = (paddr & ~paddr_t::mask_page_offset)}, src_page_addr);
+        } else {
+            paddr = cached_addr->paddr + (src & vaddr_t::mask_page_offset);
         }
 
         auto load_pair = memory_->Load<ValueType>(paddr);
         *value = load_pair.first;
 
-        return Exception::NONE;
+        return exception;
     }
 
-    // TODO: remove page-fault handling + rwx_flags argument
+    // TODO: change using vaddr.offset as tag
     template <typename ValueType>
-    Exception StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags = PF_W) const
+    Exception StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags = PF_W)
     {
         static_assert((sizeof(ValueType) == sizeof(byte_t)) || sizeof(ValueType) == sizeof(hword_t) ||
                       (sizeof(ValueType) == sizeof(word_t)) || sizeof(ValueType) == sizeof(dword_t));
@@ -132,9 +144,18 @@ public:
         paddr_t paddr {0};
         Exception exception {Exception::NONE};
 
-        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_, mode_);
-        if (exception != Exception::NONE) {
-            return exception;
+        vaddr_t dst_page_addr = dst & ~vaddr_t::mask_page_offset;
+
+        const TLB_t::Data *cached_addr = wtlb_.LookUp(dst_page_addr);
+        if (cached_addr == nullptr) {
+            std::tie(paddr, exception) = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
+            if (exception != Exception::NONE) {
+                return exception;
+            }
+
+            wtlb_.Update(TLB_t::Data {.host_addr = nullptr, .paddr = (paddr & ~paddr_t::mask_page_offset)}, dst_page_addr);
+        } else {
+            paddr = cached_addr->paddr + (dst & vaddr_t::mask_page_offset);
         }
 
         memory_->Store<ValueType>(paddr, value);
@@ -142,8 +163,8 @@ public:
         return Exception::NONE;
     }
 
-    Exception LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags = PF_R) const;
-    Exception StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags = PF_W) const;
+    Exception LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags = PF_R);
+    Exception StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags = PF_W);
 
 #ifdef DEBUG_HART
     template <typename T>
@@ -164,7 +185,11 @@ private:
     Mode mode_ {Mode::USER_MODE};
 
     PhysMemoryCtl *memory_ {nullptr};
+
     MMU mmu_;
+    TLB_t itlb_;
+    TLB_t rtlb_;
+    TLB_t wtlb_;
 
     gpr_t gpr_table_[N_GPR] = {0};
 
