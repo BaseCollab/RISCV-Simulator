@@ -13,13 +13,6 @@ namespace rvsim::utils {
 template <typename DataType, typename TagType, size_t Size>
 class DirectMappedCache {
 public:
-    class Error {
-    public:
-        static const int NONE = -1;
-        static const int LOOKUP = 1;
-    };
-
-public:
     NO_COPY_SEMANTIC(DirectMappedCache);
     NO_MOVE_SEMANTIC(DirectMappedCache);
 
@@ -33,13 +26,19 @@ public:
 
     ~DirectMappedCache() = default;
 
-    std::pair<const DataType *, Error> LookUp(size_t offset, TagType tag)
+    const DataType *LookUp(size_t offset, TagType tag) const
     {
         if (cache_[offset % Size].tag == tag) {
-            return std::make_pair(&(cache_[offset % Size].data), Error::NONE);
+            return &(cache_[offset % Size].data);
         } else {
-            return std::make_pair(nullptr, Error::LOOKUP);
+            return nullptr;
         }
+    }
+
+    void Update(const DataType &data, size_t offset, TagType tag)
+    {
+        cache_[offset % Size].data = data;
+        cache_[offset % Size].tag = tag;
     }
 
 private:

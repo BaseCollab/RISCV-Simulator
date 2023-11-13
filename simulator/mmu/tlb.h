@@ -20,18 +20,23 @@ public:
     using Tag = vaddr_t;
 
     using Cache = utils::DirectMappedCache<Data, Tag, TLB_SIZE>;
-    class Error : Cache::Error {};
 
 public:
     NO_COPY_SEMANTIC(TLB);
     NO_MOVE_SEMANTIC(TLB);
 
-    TLB() = default;
+    TLB() : cache_(0x1, Data {}) {}
+
     ~TLB() = default;
 
-    std::pair<const Data *, Error> LookUp(size_t offset, Tag tag)
+    const Data *LookUp(size_t offset, Tag tag) const
     {
         return cache_.LookUp(offset, tag);
+    }
+
+    void Update(const Data &data, size_t offset, Tag tag)
+    {
+        cache_.Update(data, offset, tag);
     }
 
 private:
