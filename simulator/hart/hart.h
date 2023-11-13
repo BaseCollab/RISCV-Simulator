@@ -96,6 +96,7 @@ public:
         return mode_;
     }
 
+    // TODO: use host addresses
     template <typename ValueType>
     Exception LoadFromMemory(vaddr_t src, ValueType *value, uint8_t rwx_flags = PF_R)
     {
@@ -129,6 +130,7 @@ public:
         return exception;
     }
 
+    // TODO: use host addresses
     template <typename ValueType>
     Exception StoreToMemory(vaddr_t dst, ValueType value, uint8_t rwx_flags = PF_W)
     {

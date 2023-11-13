@@ -104,7 +104,8 @@ Exception Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t r
     return Exception::NONE;
 }
 
-// TODO: use own itlb instead of method using rtlb
+// TODO: create own fetch exceptions
+// TODO: use host addresses
 Exception Hart::FetchInstruction(instr_size_t *raw_instr)
 {
 #ifdef DEBUG_HART
@@ -116,7 +117,33 @@ Exception Hart::FetchInstruction(instr_size_t *raw_instr)
     std::cerr << "[DEBUG] [FETCH] PC = 0x" << std::hex << pc_ << std::dec << std::endl;
 #endif
 
-    return LoadFromMemory<instr_size_t>(vaddr_t(pc_), raw_instr, PF_R | PF_X);
+    vaddr_t pc = vaddr_t(pc_);
+
+    if ((pc & (sizeof(instr_size_t) - 1)) != 0) {
+        return Exception::MMU_ADDRESS_MISALIGNED;
+    }
+
+    paddr_t paddr {0};
+    Exception exception {Exception::NONE};
+
+    vaddr_t pc_page_addr = pc & ~vaddr_t::mask_page_offset;
+
+    const TLB_t::Data *cached_addr = itlb_.LookUp(pc_page_addr);
+    if (cached_addr == nullptr) {
+        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(pc, PF_R | PF_X, csr_regs, *memory_);
+        if (exception != Exception::NONE) {
+            return exception;
+        }
+
+        itlb_.Update(TLB_t::Data {.host_addr = nullptr, .paddr = (paddr & ~paddr_t::mask_page_offset)}, pc_page_addr);
+    } else {
+        paddr = cached_addr->paddr + (pc & vaddr_t::mask_page_offset);
+    }
+
+    auto load_pair = memory_->Load<instr_size_t>(paddr);
+    *raw_instr = load_pair.first;
+
+    return exception;
 }
 
 void Hart::Interpret()
