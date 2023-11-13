@@ -62,6 +62,8 @@ struct paddr_t {
     static constexpr dword_t mask_ppn         = bitops::Ones<55, 12>();
     static constexpr dword_t mask_page_offset = bitops::Ones<11, 0>();
 
+    static constexpr size_t n_offset_bits     = 12;
+
     paddr_t():           value(0)   {}
     paddr_t(addr_t val): value(val) {}
     paddr_t(const paddr_t &paddr)  { value = paddr.value; }
@@ -85,6 +87,8 @@ struct vaddr_t {
     static constexpr dword_t mask_vpn_1       = bitops::Ones<29, 21>();
     static constexpr dword_t mask_vpn_0       = bitops::Ones<20, 12>();
     static constexpr dword_t mask_page_offset = bitops::Ones<11, 0>();
+
+    static constexpr size_t n_offset_bits     = 12;
 
     vaddr_t():           value(0)   {}
     vaddr_t(addr_t val): value(val) {}

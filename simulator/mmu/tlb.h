@@ -31,12 +31,12 @@ public:
 
     const Data *LookUp(vaddr_t vaddr) const
     {
-        return cache_.LookUp(vaddr, vaddr);
+        return cache_.LookUp(vaddr >> vaddr_t::n_offset_bits, vaddr);
     }
 
     void Update(Data data, vaddr_t vaddr)
     {
-        cache_.Update(data, vaddr, vaddr);
+        cache_.Update(data, vaddr >> vaddr_t::n_offset_bits, vaddr);
     }
 
 private:
