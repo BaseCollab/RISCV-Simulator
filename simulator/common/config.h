@@ -21,7 +21,11 @@ using bit_size_t = reg_t;
 
 using gpr_t     = reg_t; // GPR = General Purpose Register
 using gpr_idx_t = byte_t;
-static constexpr size_t N_GPR = 1 << 5;
+
+// Number of GPR registers, 32 + 1 (sink register)
+static constexpr size_t N_GPR = (1 << 5) + 1;
+// Index of sink register in gpr_table
+static constexpr size_t SINK_REG_IDX = 1 << 5;
 
 using csr_t     = reg_t; // CSR = Control System Register
 using csr_idx_t = hword_t;
@@ -32,6 +36,11 @@ enum class Mode : byte_t {
     SUPERVISOR_MODE = 1,
     HYPERVISOR_MODE = 2,
     MACHINE_MODE    = 3
+};
+
+enum class PluginRegimes : int
+{
+    CoSimulation_run  = 1,
 };
 
 // clang-format on

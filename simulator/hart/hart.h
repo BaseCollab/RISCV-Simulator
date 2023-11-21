@@ -13,7 +13,12 @@
 #include <cassert>
 #include <elf.h>
 
+//#include "plugin/plugin.h"
+//#include "plugin/plugin_handler.h"
+
 namespace rvsim {
+
+class PluginHandler;
 
 class Hart {
 public:
@@ -31,6 +36,7 @@ public:
     instr_size_t FetchInstruction();
 
     void Interpret();
+    void InterpretWithPlugins();
 
     void DecodeAndExecute(Instruction *instr, instr_size_t raw_instr);
 
@@ -52,6 +58,16 @@ public:
     void SetExceptionHandlers(const ExceptionHandlers &handlers)
     {
         handlers_ = handlers;
+    }
+
+    void SetPluginHandler(PluginHandler *plugin_handler)
+    {
+        plugin_handler_ = plugin_handler;
+    }
+
+    const PluginHandler *GetPluginHandler() const
+    {
+        return plugin_handler_;
     }
 
     reg_t GetPC() const
@@ -127,6 +143,7 @@ private:
     reg_t pc_target_;
 
     ExceptionHandlers handlers_;
+    PluginHandler *plugin_handler_;
 
     // idle is true, when hart does not follow instructions
     bool is_idle_ {true};

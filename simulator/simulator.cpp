@@ -3,6 +3,8 @@
 #include "memory/memory_controller.h"
 #include "argparser/parser.h"
 
+#include "plugin/plugin_handler.h"
+
 namespace rvsim {
 
 int Main(int argc, char *argv[])
@@ -15,10 +17,15 @@ int Main(int argc, char *argv[])
     auto memory = PhysMemoryCtl();
     auto hart = Hart(&memory);
     auto supervisor = Supervisor(&hart, &memory);
-
     supervisor.LoadElfFile(parser.GetElfFileName());
 
-    hart.Interpret();
+    if (parser.GetPlugins().empty()) {
+        hart.Interpret();
+    } else {
+        auto plugin_hander = PluginHandler(parser.GetPlugins(), &hart);
+        hart.SetPluginHandler(&plugin_hander);
+        hart.InterpretWithPlugins();
+    }
 
     return 0;
 }

@@ -14,11 +14,7 @@ namespace rvsim {
 
 class PhysMemoryCtl {
 public:
-    enum class Error {
-        NONE = -1,
-        STORE_BOUNDARY_CHK = 0,
-        LOAD_BOUNDARY_CHK = 1
-    };
+    enum class Error { NONE = -1, STORE_BOUNDARY_CHK = 0, LOAD_BOUNDARY_CHK = 1 };
 
     using PageError = PagesController::Error;
 

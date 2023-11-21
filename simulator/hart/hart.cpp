@@ -1,4 +1,5 @@
 #include "hart.h"
+#include "plugin/plugin_handler.h"
 
 #include <iostream>
 
@@ -78,6 +79,27 @@ void Hart::Interpret()
 
         Instruction instr;
         DecodeAndExecute(&instr, raw_instr);
+
+        pc_ = pc_target_;
+    }
+}
+
+void Hart::InterpretWithPlugins()
+{
+    // start interpreting instructions
+    is_idle_ = false;
+
+    while (!is_idle_) {
+        instr_size_t raw_instr = FetchInstruction();
+
+        Instruction instr;
+        DecodeAndExecute(&instr, raw_instr);
+        if (instr.id == InstructionId::INVALID_ID) {
+            std::cerr << "[x] Found Instruction with invalid ID\n[x] Exit.\n";
+            exit(EXIT_FAILURE);
+        }
+        plugin_handler_->SetCurInstr(0, &instr);
+        plugin_handler_->CallPlugin(0, rvsim::PluginRegimes::CoSimulation_run);
 
         pc_ = pc_target_;
     }

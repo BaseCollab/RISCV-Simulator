@@ -12,12 +12,7 @@ namespace rvsim::utils {
 template <typename Type>
 class Stack {
 public:
-    enum class Error {
-        NONE = -1,
-        OVERFLOW = 0,
-        EMPTY_POP = 1,
-        EMPTY_TOP
-    };
+    enum class Error { NONE = -1, OVERFLOW = 0, EMPTY_POP = 1, EMPTY_TOP };
 
 public:
     NO_COPY_SEMANTIC(Stack);

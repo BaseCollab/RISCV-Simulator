@@ -7,8 +7,8 @@
 
 #include "hart/hart.h"
 #include "common/utils/bit_ops.h"
-#include "hart/instruction/instruction.h"
-#include "hart/instruction/instruction_exec.h"
+#include "instruction/instruction.h"
+#include "instruction/instruction_exec.h"
 
 namespace rvsim {
 
@@ -130,6 +130,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
         instr->attributes.is_branch = true;
 
         instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+        if (instr->rd == 0) {
+            instr->rd = SINK_REG_IDX;
+        }
+
         instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
         instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -144,6 +148,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
         instr->attributes.is_branch = true;
 
         instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+        if (instr->rd == 0) {
+            instr->rd = SINK_REG_IDX;
+        }
+
         instr->imm |= (bitops::GetBits<30, 21>(raw_instr)) << 1;
         instr->imm |= (bitops::GetBits<20, 20>(raw_instr)) << 11;
         instr->imm |= (bitops::GetBits<19, 12>(raw_instr)) << 12;
@@ -158,6 +166,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
         instr->id = InstructionId::LUI;
 
         instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+        if (instr->rd == 0) {
+            instr->rd = SINK_REG_IDX;
+        }
+
         instr->imm |= bitops::SignExtend<20, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 12>(raw_instr)) << 12;
 
         iexec::LUI(this, *instr);
@@ -169,6 +181,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
         instr->id = InstructionId::AUIPC;
 
         instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+        if (instr->rd == 0) {
+            instr->rd = SINK_REG_IDX;
+        }
+
         instr->imm |= bitops::SignExtend<20, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 12>(raw_instr)) << 12;
 
         iexec::AUIPC(this, *instr);
@@ -182,6 +198,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::ADDI;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -194,6 +214,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::SLLI;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -206,6 +230,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::SLTI;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -218,6 +246,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::SLTIU;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -230,6 +262,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::XORI;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -244,6 +280,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SRLI;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -256,6 +296,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SRAI;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -273,6 +317,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::ORI;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -285,6 +333,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::ANDI;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -306,6 +358,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::ADD;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -318,6 +374,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SLL;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -330,6 +390,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SLT;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -342,6 +406,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SLTU;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -354,6 +422,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::XOR;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -366,6 +438,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SRL;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -378,6 +454,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::OR;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -390,6 +470,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AND;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -409,6 +493,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SUB;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -421,6 +509,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SRA;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -440,6 +532,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::MUL;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -452,6 +548,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::MULH;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -464,6 +564,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::MULHSU;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -476,6 +580,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::MULHU;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -488,6 +596,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::DIV;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -500,6 +612,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::DIVU;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -512,6 +628,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::REM;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -524,6 +644,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::REMU;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -548,6 +672,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::ADDIW;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -560,6 +688,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::SLLIW;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -574,6 +706,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SRLIW;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -586,6 +722,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SRAIW;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -612,6 +752,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::ADDW;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -624,6 +768,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SLLW;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -636,6 +784,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SRLW;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -655,6 +807,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SUBW;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -667,6 +823,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SRAW;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -686,6 +846,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::MULW;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -698,6 +862,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::DIVW;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -710,6 +878,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::DIVUW;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -722,6 +894,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::REMW;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -734,6 +910,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::REMUW;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -760,6 +940,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->attributes.is_load = true;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -774,6 +958,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->attributes.is_load = true;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -788,6 +976,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->attributes.is_load = true;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -802,6 +994,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->attributes.is_load = true;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -816,6 +1012,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->attributes.is_load = true;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -830,6 +1030,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->attributes.is_load = true;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -844,6 +1048,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->attributes.is_load = true;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -934,6 +1142,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->imm |= (bitops::GetBits<23, 20>(raw_instr));
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
 
             iexec::FENCE(this, *instr);
 
@@ -946,6 +1157,9 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
 
             iexec::FENCE_I(this, *instr);
 
@@ -965,6 +1179,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOADD_W;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -978,6 +1196,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOADD_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -998,6 +1220,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOXOR_W;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1011,6 +1237,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOXOR_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1031,6 +1261,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOOR_W;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1044,6 +1278,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOOR_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1064,6 +1302,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOAND_W;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1077,6 +1319,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOAND_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1097,6 +1343,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOMIN_W;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1110,6 +1360,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOMIN_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1130,6 +1384,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOMAX_W;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1143,6 +1401,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOMAX_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1163,6 +1425,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOMINU_W;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1176,6 +1442,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOMINU_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1196,6 +1466,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOMAXU_W;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1209,6 +1483,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOMAXU_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1229,6 +1507,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOSWAP_W;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1242,6 +1524,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::AMOSWAP_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1264,6 +1550,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     instr->id = InstructionId::LR_W;
 
                     instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                    if (instr->rd == 0) {
+                        instr->rd = SINK_REG_IDX;
+                    }
+
                     instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                     instr->imm |=
                         bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1277,6 +1567,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     instr->id = InstructionId::LR_D;
 
                     instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                    if (instr->rd == 0) {
+                        instr->rd = SINK_REG_IDX;
+                    }
+
                     instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                     instr->imm |=
                         bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1302,6 +1596,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SC_W;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1315,6 +1613,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::SC_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
                 instr->imm |= bitops::SignExtend<7, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 25>(raw_instr));
@@ -1464,6 +1766,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::CSRRW;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -1476,6 +1782,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::CSRRS;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -1488,6 +1798,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::CSRRC;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -1500,6 +1814,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::CSRRWI;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -1512,6 +1830,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::CSRRSI;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -1524,6 +1846,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::CSRRCI;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -1543,6 +1869,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FADD_S;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
@@ -1556,6 +1886,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FSUB_S;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
@@ -1569,6 +1903,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FMUL_S;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
@@ -1582,6 +1920,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FDIV_S;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
@@ -1597,6 +1939,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FSGNJ_S;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -1609,6 +1955,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FSGNJN_S;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -1621,6 +1971,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FSGNJX_S;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -1640,6 +1994,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FMIN_S;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -1652,6 +2010,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FMAX_S;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -1669,6 +2031,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FSQRT_S;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -1681,6 +2047,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FADD_D;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
@@ -1694,6 +2064,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FSUB_D;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
@@ -1707,6 +2081,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FMUL_D;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
@@ -1720,6 +2098,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FDIV_D;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
@@ -1735,6 +2117,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FSGNJ_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -1747,6 +2133,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FSGNJN_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -1759,6 +2149,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FSGNJX_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -1778,6 +2172,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FMIN_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -1790,6 +2188,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FMAX_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -1809,6 +2211,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_S_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -1821,6 +2227,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_S_Q;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -1840,6 +2250,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_D_S;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -1852,6 +2266,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_D_Q;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -1869,6 +2287,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FSQRT_D;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -1881,6 +2303,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FADD_Q;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
@@ -1894,6 +2320,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FSUB_Q;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
@@ -1907,6 +2337,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FMUL_Q;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
@@ -1920,6 +2354,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FDIV_Q;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
@@ -1935,6 +2373,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FSGNJ_Q;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -1947,6 +2389,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FSGNJN_Q;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -1959,6 +2405,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FSGNJX_Q;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -1978,6 +2428,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FMIN_Q;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -1990,6 +2444,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FMAX_Q;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -2009,6 +2467,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_Q_S;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2021,6 +2483,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_Q_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2038,6 +2504,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FSQRT_Q;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2052,6 +2522,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FLE_S;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -2064,6 +2538,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FLT_S;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -2076,6 +2554,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FEQ_S;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -2095,6 +2577,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FLE_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -2107,6 +2593,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FLT_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -2119,6 +2609,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FEQ_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -2138,6 +2632,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FLE_Q;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -2150,6 +2648,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FLT_Q;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -2162,6 +2664,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FEQ_Q;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
 
@@ -2181,6 +2687,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_W_S;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2193,6 +2703,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_WU_S;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2205,6 +2719,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_L_S;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2217,6 +2735,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_LU_S;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2238,6 +2760,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     instr->id = InstructionId::FMV_X_W;
 
                     instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                    if (instr->rd == 0) {
+                        instr->rd = SINK_REG_IDX;
+                    }
+
                     instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
 
                     iexec::FMV_X_W(this, *instr);
@@ -2249,6 +2775,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     instr->id = InstructionId::FCLASS_S;
 
                     instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                    if (instr->rd == 0) {
+                        instr->rd = SINK_REG_IDX;
+                    }
+
                     instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
 
                     iexec::FCLASS_S(this, *instr);
@@ -2272,6 +2802,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_W_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2284,6 +2818,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_WU_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2296,6 +2834,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_L_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2308,6 +2850,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_LU_D;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2329,6 +2875,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     instr->id = InstructionId::FMV_X_D;
 
                     instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                    if (instr->rd == 0) {
+                        instr->rd = SINK_REG_IDX;
+                    }
+
                     instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
 
                     iexec::FMV_X_D(this, *instr);
@@ -2340,6 +2890,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     instr->id = InstructionId::FCLASS_D;
 
                     instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                    if (instr->rd == 0) {
+                        instr->rd = SINK_REG_IDX;
+                    }
+
                     instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
 
                     iexec::FCLASS_D(this, *instr);
@@ -2363,6 +2917,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_W_Q;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2375,6 +2933,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_WU_Q;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2387,6 +2949,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_L_Q;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2399,6 +2965,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_LU_Q;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2420,6 +2990,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     instr->id = InstructionId::FMV_X_Q;
 
                     instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                    if (instr->rd == 0) {
+                        instr->rd = SINK_REG_IDX;
+                    }
+
                     instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
 
                     iexec::FMV_X_Q(this, *instr);
@@ -2431,6 +3005,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                     instr->id = InstructionId::FCLASS_Q;
 
                     instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                    if (instr->rd == 0) {
+                        instr->rd = SINK_REG_IDX;
+                    }
+
                     instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
 
                     iexec::FCLASS_Q(this, *instr);
@@ -2454,6 +3032,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_S_W;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2466,6 +3048,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_S_WU;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2478,6 +3064,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_S_L;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2490,6 +3080,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_S_LU;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2507,6 +3101,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FMV_W_X;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
 
             iexec::FMV_W_X(this, *instr);
@@ -2520,6 +3118,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_D_W;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2532,6 +3134,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_D_WU;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2544,6 +3150,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_D_L;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2556,6 +3166,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_D_LU;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2573,6 +3187,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FMV_D_X;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
 
             iexec::FMV_D_X(this, *instr);
@@ -2586,6 +3204,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_Q_W;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2598,6 +3220,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_Q_WU;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2610,6 +3236,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_Q_L;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2622,6 +3252,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
                 instr->id = InstructionId::FCVT_Q_LU;
 
                 instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+                if (instr->rd == 0) {
+                    instr->rd = SINK_REG_IDX;
+                }
+
                 instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
                 instr->rm |= (bitops::GetBits<14, 12>(raw_instr));
 
@@ -2639,6 +3273,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FMV_Q_X;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
 
             iexec::FMV_Q_X(this, *instr);
@@ -2657,6 +3295,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FLW;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -2669,6 +3311,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FLD;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -2681,6 +3327,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FLQ;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->imm |= bitops::SignExtend<12, bitops::BitSizeof<word_t>()>(bitops::GetBits<31, 20>(raw_instr));
 
@@ -2752,6 +3402,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FMADD_S;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rs3 |= (bitops::GetBits<31, 27>(raw_instr));
@@ -2766,6 +3420,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FMADD_D;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rs3 |= (bitops::GetBits<31, 27>(raw_instr));
@@ -2780,6 +3438,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FMADD_Q;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rs3 |= (bitops::GetBits<31, 27>(raw_instr));
@@ -2801,6 +3463,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FMSUB_S;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rs3 |= (bitops::GetBits<31, 27>(raw_instr));
@@ -2815,6 +3481,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FMSUB_D;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rs3 |= (bitops::GetBits<31, 27>(raw_instr));
@@ -2829,6 +3499,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FMSUB_Q;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rs3 |= (bitops::GetBits<31, 27>(raw_instr));
@@ -2850,6 +3524,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FNMSUB_S;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rs3 |= (bitops::GetBits<31, 27>(raw_instr));
@@ -2864,6 +3542,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FNMSUB_D;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rs3 |= (bitops::GetBits<31, 27>(raw_instr));
@@ -2878,6 +3560,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FNMSUB_Q;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rs3 |= (bitops::GetBits<31, 27>(raw_instr));
@@ -2899,6 +3585,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FNMADD_S;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rs3 |= (bitops::GetBits<31, 27>(raw_instr));
@@ -2913,6 +3603,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FNMADD_D;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rs3 |= (bitops::GetBits<31, 27>(raw_instr));
@@ -2927,6 +3621,10 @@ void Hart::DecodeAndExecute(Instruction *instr, instr_size_t raw_instr)
             instr->id = InstructionId::FNMADD_Q;
 
             instr->rd |= (bitops::GetBits<11, 7>(raw_instr));
+            if (instr->rd == 0) {
+                instr->rd = SINK_REG_IDX;
+            }
+
             instr->rs1 |= (bitops::GetBits<19, 15>(raw_instr));
             instr->rs2 |= (bitops::GetBits<24, 20>(raw_instr));
             instr->rs3 |= (bitops::GetBits<31, 27>(raw_instr));
