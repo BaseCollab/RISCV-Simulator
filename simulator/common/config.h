@@ -38,6 +38,11 @@ enum class Mode : byte_t {
     MACHINE_MODE    = 3
 };
 
+enum class PluginRegimes : int
+{
+    CoSimulation_run  = 1,
+};
+
 // clang-format on
 
 } // namespace rvsim
