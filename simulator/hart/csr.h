@@ -7,6 +7,7 @@
 
 #include <cstdint>
 
+// clang-format off
 namespace rvsim {
 
 // Control and Status Register
@@ -31,7 +32,7 @@ public:
                                                                                                    \
             name ## _t(): value(0) {}                                                              \
             name ## _t(csr_t name): value(name) {}                                                 \
-            name ## _t(const name ## _t &name) { value = name.value; }                              \
+            name ## _t(const name ## _t &name) { value = name.value; }                             \
                                                                                                    \
             csr_t operator=(const csr_t &name) { value = name; return name; }                      \
             name ## _t &operator=(const name ## _t &name) { value = name.value; return *this; }    \
@@ -73,5 +74,6 @@ private:
 #undef DEFINE_CSR
 
 } // namespace rvsim
+// clang-format on
 
 #endif // SIMULATOR_CSR_CSR_H

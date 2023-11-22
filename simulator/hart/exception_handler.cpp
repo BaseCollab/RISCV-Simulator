@@ -23,7 +23,8 @@ void ExceptionHandler::MMUExceptionHandler(Hart *hart, PhysMemoryCtl *memory, Ex
             errx(EX_SOFTWARE, "Page access fault: invalid page entry [addr %lx]", vaddr);
 
         case Exception::MMU_INVALID_PAGE_SIZE:
-            errx(EX_SOFTWARE,
+            errx(
+                EX_SOFTWARE,
                 "Superpages, megapages, etc - are not supported (rwx != 0x0 for not final page table entry) [addr %lx]",
                 vaddr);
 
