@@ -8,11 +8,13 @@
 #include "mmu/mmu.h"
 #include "hart/csr.h"
 #include "hart/exception.h"
+#include "hart/basic_block.h"
 
 #include <functional>
 #include <optional>
 #include <cstdint>
 #include <cassert>
+#include <memory>
 #include <elf.h>
 
 namespace rvsim {
@@ -27,14 +29,20 @@ public:
     NO_COPY_SEMANTIC(Hart);
     NO_MOVE_SEMANTIC(Hart);
 
-    explicit Hart(PhysMemoryCtl *memory) : memory_(memory) {};
+    explicit Hart(PhysMemoryCtl *memory) : memory_(memory)
+    {
+        bb_manager_ = std::make_unique<BasicBlockManager>(this);
+    }
+
     ~Hart() = default;
 
     Exception FetchInstruction(instr_size_t *raw_instr) const;
 
+    void DecodeInstruction(Instruction *instr, instr_size_t raw_instr);
+
     void Interpret();
 
-    Exception DecodeAndExecute(Instruction *instr, instr_size_t raw_instr);
+    void ExecuteBasicBlock(BasicBlock *bb);
 
     bool IsIdle() const
     {
@@ -175,6 +183,8 @@ private:
 
     // idle is true, when hart does not follow instructions
     bool is_idle_ {true};
+
+    std::unique_ptr<BasicBlockManager> bb_manager_;
 };
 
 } // namespace rvsim

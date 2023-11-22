@@ -97,7 +97,8 @@ dword_t Simulator::CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t urwx
 
     if (pte.GetV() == 0) {
 #ifdef DEBUG_EXCEPTION
-        std::cerr << "[DEBUG] [PT alloc] Invalid PTE at 0x" << std::hex << ppn_lvl * VPAGE_SIZE + vpn * sizeof(pte_t) << std::endl;
+        std::cerr << "[DEBUG] [PT alloc] Invalid PTE at 0x" << std::hex << ppn_lvl * VPAGE_SIZE + vpn * sizeof(pte_t)
+                  << std::endl;
 #endif
 
         auto page_idx_pair = memory_->GetCleanPage();

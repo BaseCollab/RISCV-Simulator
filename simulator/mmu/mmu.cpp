@@ -73,7 +73,8 @@ std::pair<paddr_t, Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_fla
 
     std::cerr << "[DEBUG] [MMU] 1) satp.ppn = 0x" << std::hex << satp.fields.ppn << std::endl;
     std::cerr << "[DEBUG] [MMU]    vaddr.vpn3 = 0x" << vaddr.GetVPN3() << std::endl;
-    std::cerr << "[DEBUG] [MMU]    pte_3_entry_addr = 0x" << satp.fields.ppn * VPAGE_SIZE + vaddr.GetVPN3() << std::dec << std::endl;
+    std::cerr << "[DEBUG] [MMU]    pte_3_entry_addr = 0x" << satp.fields.ppn * VPAGE_SIZE + vaddr.GetVPN3() << std::dec
+              << std::endl;
 #endif
 
     if (pte_3.GetX() == 0 && pte_3.GetW() == 0 && pte_3.GetR() == 0) // pointer to next level
@@ -87,7 +88,8 @@ std::pair<paddr_t, Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_fla
 #ifdef DEBUG_MMU
         std::cerr << "[DEBUG] [MMU] 2) pte_3.ppn = 0x" << std::hex << pte_3.GetPPN() << std::endl;
         std::cerr << "[DEBUG] [MMU]    vaddr.vpn2 = 0x" << vaddr.GetVPN2() << std::endl;
-        std::cerr << "[DEBUG] [MMU]    pte_2_entry_addr = 0x" << pte_3.GetPPN() * VPAGE_SIZE + vaddr.GetVPN2() << std::dec << std::endl;
+        std::cerr << "[DEBUG] [MMU]    pte_2_entry_addr = 0x" << pte_3.GetPPN() * VPAGE_SIZE + vaddr.GetVPN2()
+                  << std::dec << std::endl;
 #endif
 
         if (pte_2.GetX() == 0 && pte_2.GetW() == 0 && pte_2.GetR() == 0) // pointer to next level
@@ -101,8 +103,8 @@ std::pair<paddr_t, Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_fla
 #ifdef DEBUG_MMU
             std::cerr << "[DEBUG] [MMU] 3) pte_2.ppn = 0x" << std::hex << pte_2.GetPPN() << std::endl;
             std::cerr << "[DEBUG] [MMU]    vaddr.vpn1 = 0x" << vaddr.GetVPN1() << std::endl;
-            std::cerr << "[DEBUG] [MMU]    pte_1_entry_addr = 0x" << pte_2.GetPPN() * VPAGE_SIZE + vaddr.GetVPN1() << std::dec
-                      << std::endl;
+            std::cerr << "[DEBUG] [MMU]    pte_1_entry_addr = 0x" << pte_2.GetPPN() * VPAGE_SIZE + vaddr.GetVPN1()
+                      << std::dec << std::endl;
 #endif
 
             if (pte_1.GetX() == 0 && pte_1.GetW() == 0 && pte_1.GetR() == 0) // pointer to next level
@@ -116,8 +118,8 @@ std::pair<paddr_t, Exception> MMU::VirtToPhysAddr(vaddr_t vaddr, uint8_t rwx_fla
 #ifdef DEBUG_MMU
                 std::cerr << "[DEBUG] [MMU] 4) pte_1.ppn = 0x" << std::hex << pte_1.GetPPN() << std::endl;
                 std::cerr << "[DEBUG] [MMU]    vaddr.vpn0 = 0x" << vaddr.GetVPN0() << std::endl;
-                std::cerr << "[DEBUG] [MMU]    pte_0_entry_addr = 0x" << pte_1.GetPPN() * VPAGE_SIZE + vaddr.GetVPN0() << std::dec
-                          << std::endl;
+                std::cerr << "[DEBUG] [MMU]    pte_0_entry_addr = 0x" << pte_1.GetPPN() * VPAGE_SIZE + vaddr.GetVPN0()
+                          << std::dec << std::endl;
 #endif
 
                 exception = ValidatePTE<true>(pte_0, csr_regs, mode, rwx_flags);

@@ -26,6 +26,8 @@ public:
     };
 
 public:
+    size_t pc {0};
+
     gpr_idx_t rs1 {0};
     gpr_idx_t rs2 {0};
     gpr_idx_t rs3 {0};
@@ -41,8 +43,8 @@ public:
     InstructionId id = InstructionId::INVALID_ID;
 
 public:
-    NO_COPY_SEMANTIC(Instruction);
-    NO_MOVE_SEMANTIC(Instruction);
+    DEFAULT_COPY_SEMANTIC(Instruction);
+    DEFAULT_MOVE_SEMANTIC(Instruction);
 
     Instruction() = default;
     ~Instruction() = default;
