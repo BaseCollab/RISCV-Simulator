@@ -25,7 +25,7 @@ int Main(int argc, char *argv[])
     } else {
         auto plugin_hander = PluginHandler(parser.GetPlugins(), &hart);
         hart.SetPluginHandler(&plugin_hander);
-        hart.InterpretWithPlugins();
+        hart.Interpret();
     }
 
     return 0;

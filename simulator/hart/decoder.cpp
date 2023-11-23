@@ -9,9 +9,7 @@
 
 #include "hart/hart.h"
 #include "common/utils/bit_ops.h"
-#include "hart/instruction/instruction.h"
-#include "hart/instruction/instruction_exec.h"
-
+#include "instruction/instruction.h"
 namespace rvsim {
 
 void Hart::DecodeInstruction(Instruction *instr, instr_size_t raw_instr)

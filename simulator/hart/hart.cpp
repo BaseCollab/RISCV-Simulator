@@ -128,9 +128,9 @@ void Hart::ExecuteBasicBlock(BasicBlock *bb)
     size_t instr_idx = 0;
     Exception exception = Exception::NONE;
 
-    for (auto it: instructions) {
-        std::cout << "[" << static_cast<int>(it.id) << std::endl;
-    }
+    // for (auto it: instructions) {
+    //     std::cout << "[" << static_cast<int>(it.id) << std::endl;
+    // }
 
     #define DISPATCH() goto *dispatch_table[static_cast<byte_t>(instructions[++instr_idx].id)];
 
@@ -139,10 +139,9 @@ void Hart::ExecuteBasicBlock(BasicBlock *bb)
 
     #define DEFINE_INSTR(instr)                                  \
     instr:                                                       \
-        std::cout << #instr << " " << static_cast<int>(instructions[instr_idx].id) << " " << instr_idx << std::endl; \
-        DumpRegs(std::cerr); \
         exception = iexec::instr(this, instructions[instr_idx]); \
-        DumpRegs(std::cerr); \
+        plugin_handler_->SetCurInstr(0, &(instructions[instr_idx])); \
+        plugin_handler_->CallPlugin(0, rvsim::PluginRegimes::CoSimulation_run); \
         if (UNLIKELY(exception != Exception::NONE)) {            \
             handlers_.mmu_handler(exception, vaddr_t(instructions[instr_idx].pc));      \
         }                                                        \
@@ -152,10 +151,9 @@ void Hart::ExecuteBasicBlock(BasicBlock *bb)
     // All basic blocks ends with branch instruction
     #define DEFINE_BRANCH_INSTR(instr)                           \
     instr:                    \
-        std::cout << "branch instr:" << #instr << " " << static_cast<int>(instructions[instr_idx].id) << std::endl; \
-        DumpRegs(std::cerr);                                    \
         exception = iexec::instr(this, instructions[instr_idx]); \
-        DumpRegs(std::cerr); \
+        plugin_handler_->SetCurInstr(0, &(instructions[instr_idx])); \
+        plugin_handler_->CallPlugin(0, rvsim::PluginRegimes::CoSimulation_run); \
         if (UNLIKELY(exception != Exception::NONE)) {            \
             handlers_.mmu_handler(exception, vaddr_t(instructions[instr_idx].pc));      \
         }                                                        \
@@ -178,24 +176,25 @@ BB_END:
 #pragma GCC diagnostic pop
 #endif
 
-void Hart::InterpretWithPlugins()
-{
-    // start interpreting instructions
-    is_idle_ = false;
+// void Hart::InterpretWithPlugins()
+// {
+//     // start interpreting instructions
+//     is_idle_ = false;
 
-    while (!is_idle_) {
-        instr_size_t raw_instr = FetchInstruction();
+//     while (!is_idle_) {
+//         instr_size_t raw_instr = 0;
+//         FetchInstruction(&raw_instr);
 
-        Instruction instr;
-        DecodeAndExecute(&instr, raw_instr);
-        if (instr.id == InstructionId::INVALID_ID) {
-            std::cerr << "[x] Found Instruction with invalid ID\n[x] Exit.\n";
-            exit(EXIT_FAILURE);
-        }
-        plugin_handler_->SetCurInstr(0, &instr);
-        plugin_handler_->CallPlugin(0, rvsim::PluginRegimes::CoSimulation_run);
+//         Instruction instr;
+//         DecodeAndExecute(&instr, raw_instr);
+//         if (instr.id == InstructionId::INVALID_ID) {
+//             std::cerr << "[x] Found Instruction with invalid ID\n[x] Exit.\n";
+//             exit(EXIT_FAILURE);
+//         }
+//         plugin_handler_->SetCurInstr(0, &instr);
+//         plugin_handler_->CallPlugin(0, rvsim::PluginRegimes::CoSimulation_run);
 
-        pc_ = pc_target_;
-    }
-}
+//         pc_ = pc_target_;
+//     }
+// }
 } // namespace rvsim

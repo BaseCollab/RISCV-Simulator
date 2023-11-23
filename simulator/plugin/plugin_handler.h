@@ -46,7 +46,7 @@ public:
     }
     std::vector<rvsim::reg_t> GetRegFile() const;
 
-    void SetCurInstr(int plugin_id, Instruction *instr);
+    void SetCurInstr(int plugin_id, const Instruction *instr);
 
     void CallPlugin(int plugin_id, rvsim::PluginRegimes regime) const;
 };

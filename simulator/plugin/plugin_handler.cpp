@@ -70,7 +70,7 @@ namespace rvsim {
         plugins_[plugin_id]->CallPlugin(regime);
     }
 
-    void PluginHandler::SetCurInstr(int plugin_id, Instruction *instr)
+    void PluginHandler::SetCurInstr(int plugin_id, const Instruction *instr)
     {
         plugins_[plugin_id]->SetCurInstr(instr);
     }

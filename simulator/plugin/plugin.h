@@ -26,7 +26,7 @@ private:
     int id_;
 
     /* cur instruction (in BB) */
-    Instruction *cur_instr_;
+    const Instruction *cur_instr_;
 
     /* class that handle all plugin */
     PluginHandler *handler_;
@@ -77,11 +77,11 @@ public:
         plugin_func_(*this, regime);
     };
 
-    void SetCurInstr(Instruction *instr)
+    void SetCurInstr(const Instruction *instr)
     {
         cur_instr_ = instr;
     }
-    Instruction *GetCurInstr()
+    const Instruction *GetCurInstr()
     {
         return cur_instr_;
     };
