@@ -14,7 +14,7 @@ public:
     static constexpr size_t SIZE = 1 << SIZE_LOG_2;
 
     struct Data {
-        void *host_addr = nullptr;
+        byte_t *host_addr = nullptr;
         paddr_t paddr = 0x0;
     };
 

@@ -107,27 +107,30 @@ public:
             return Exception::MMU_ADDRESS_MISALIGNED;
         }
 
-        paddr_t paddr {0};
+        byte_t *host_addr {nullptr};
         Exception exception {Exception::NONE};
 
         vaddr_t src_page_addr = src & ~vaddr_t::mask_page_offset;
 
         const TLB_t::Data *cached_addr = rtlb_.LookUp(src_page_addr);
         if (cached_addr == nullptr) {
+            paddr_t paddr {0};
             std::tie(paddr, exception) = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
             if (exception != Exception::NONE) {
                 return exception;
             }
 
-            rtlb_.Update(TLB_t::Data {.host_addr = nullptr, .paddr = (paddr & ~paddr_t::mask_page_offset)}, src_page_addr);
+            paddr_t tlb_paddr = (paddr & ~paddr_t::mask_page_offset);
+            rtlb_.Update(TLB_t::Data {.host_addr = (memory_->GetRAM() + tlb_paddr), .paddr = tlb_paddr}, src_page_addr);
+
+            host_addr = memory_->GetRAM() + tlb_paddr + (src & vaddr_t::mask_page_offset);
         } else {
-            paddr = cached_addr->paddr + (src & vaddr_t::mask_page_offset);
+            host_addr = cached_addr->host_addr + (src & vaddr_t::mask_page_offset);
         }
 
-        auto load_pair = memory_->Load<ValueType>(paddr);
-        *value = load_pair.first;
+        *value = *(reinterpret_cast<ValueType *>(host_addr));
 
-        return exception;
+        return Exception::NONE;
     }
 
     // TODO: use host addresses
@@ -141,24 +144,28 @@ public:
             return Exception::MMU_ADDRESS_MISALIGNED;
         }
 
-        paddr_t paddr {0};
+        byte_t *host_addr {nullptr};
         Exception exception {Exception::NONE};
 
         vaddr_t dst_page_addr = dst & ~vaddr_t::mask_page_offset;
 
         const TLB_t::Data *cached_addr = wtlb_.LookUp(dst_page_addr);
         if (cached_addr == nullptr) {
+            paddr_t paddr {0};
             std::tie(paddr, exception) = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
             if (exception != Exception::NONE) {
                 return exception;
             }
 
-            wtlb_.Update(TLB_t::Data {.host_addr = nullptr, .paddr = (paddr & ~paddr_t::mask_page_offset)}, dst_page_addr);
+            paddr_t tlb_paddr = (paddr & ~paddr_t::mask_page_offset);
+            wtlb_.Update(TLB_t::Data {.host_addr = (memory_->GetRAM() + tlb_paddr), .paddr = tlb_paddr}, dst_page_addr);
+
+            host_addr = memory_->GetRAM() + tlb_paddr + (dst & vaddr_t::mask_page_offset);
         } else {
-            paddr = cached_addr->paddr + (dst & vaddr_t::mask_page_offset);
+            host_addr = cached_addr->host_addr + (dst & vaddr_t::mask_page_offset);
         }
 
-        memory_->Store<ValueType>(paddr, value);
+        *(reinterpret_cast<ValueType *>(host_addr)) = value;
 
         return Exception::NONE;
     }
