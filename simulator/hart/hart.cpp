@@ -123,25 +123,28 @@ Exception Hart::FetchInstruction(instr_size_t *raw_instr)
         return Exception::MMU_ADDRESS_MISALIGNED;
     }
 
-    paddr_t paddr {0};
+    byte_t *host_addr {nullptr};
     Exception exception {Exception::NONE};
 
     vaddr_t pc_page_addr = pc & ~vaddr_t::mask_page_offset;
 
     const TLB_t::Data *cached_addr = itlb_.LookUp(pc_page_addr);
     if (cached_addr == nullptr) {
+        paddr_t paddr {0};
         std::tie(paddr, exception) = mmu_.VirtToPhysAddr(pc, PF_R | PF_X, csr_regs, *memory_);
         if (exception != Exception::NONE) {
             return exception;
         }
 
-        itlb_.Update(TLB_t::Data {.host_addr = nullptr, .paddr = (paddr & ~paddr_t::mask_page_offset)}, pc_page_addr);
+        paddr_t tlb_paddr = (paddr & ~paddr_t::mask_page_offset);
+        itlb_.Update(TLB_t::Data {.host_addr = (memory_->GetRAM() + tlb_paddr), .paddr = tlb_paddr}, pc_page_addr);
+
+        host_addr = memory_->GetRAM() + tlb_paddr + (pc & vaddr_t::mask_page_offset);
     } else {
-        paddr = cached_addr->paddr + (pc & vaddr_t::mask_page_offset);
+        host_addr = cached_addr->host_addr + (pc & vaddr_t::mask_page_offset);
     }
 
-    auto load_pair = memory_->Load<instr_size_t>(paddr);
-    *raw_instr = load_pair.first;
+    *raw_instr = *(reinterpret_cast<instr_size_t *>(host_addr));
 
     return exception;
 }
