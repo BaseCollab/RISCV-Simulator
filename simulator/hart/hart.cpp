@@ -105,7 +105,6 @@ Exception Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t r
 }
 
 // TODO: create own fetch exceptions
-// TODO: use host addresses
 Exception Hart::FetchInstruction(instr_size_t *raw_instr)
 {
 #ifdef DEBUG_HART
