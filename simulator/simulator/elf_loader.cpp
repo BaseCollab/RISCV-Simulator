@@ -55,7 +55,7 @@ ElfLoader::~ElfLoader()
     close(elf_fd_);
 }
 
-void ElfLoader::LoadElf(const Simulator &sim, const Hart &hart)
+void ElfLoader::LoadElf(const Simulator &sim, Hart *hart)
 {
     GElf_Ehdr elf_header;
     if (gelf_getehdr(elf_, &elf_header) == nullptr) {
@@ -103,7 +103,7 @@ void ElfLoader::LoadElf(const Simulator &sim, const Hart &hart)
 #endif
 
             sim.MapVirtualRange(segment_vaddr, segment_vaddr + segment_mem_size, PF_U | PF_X | PF_R);
-            Exception exception = hart.StoreToMemory(segment_vaddr, elf_buffer_ + segment_file_offset, segment_elf_size, segment_flags);
+            Exception exception = hart->StoreToMemory(segment_vaddr, elf_buffer_ + segment_file_offset, segment_elf_size, segment_flags);
             if (exception != Exception::NONE) {
                 errx(EX_SOFTWARE, "Exception while loading elf to virtual memory"); // TODO: add adequate exception handling
             }

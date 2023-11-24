@@ -16,15 +16,12 @@ namespace rvsim {
 // Class that simulate physical memory
 class PhysMemory {
 public:
-    static constexpr size_t DEFAULT_MEMORY_SIZE = 32 * MBYTE_SIZE; // 1 << 25
-
-public:
     NO_COPY_SEMANTIC(PhysMemory);
     NO_MOVE_SEMANTIC(PhysMemory);
 
-    explicit PhysMemory(size_t mem_size = DEFAULT_MEMORY_SIZE) : mem_size_(mem_size)
+    explicit PhysMemory(size_t mem_size = DEFAULT_PHYS_MEMORY_SIZE) : mem_size_(mem_size)
     {
-        ram_ = new uint8_t[mem_size];
+        ram_ = new byte_t[mem_size];
     }
 
     ~PhysMemory()
@@ -60,13 +57,18 @@ public:
         std::memcpy(dst, ram_ + src, dst_size);
     }
 
-    size_t GetMemorySize() const
+    size_t GetSize() const
     {
         return mem_size_;
     }
 
+    byte_t *GetRAM()
+    {
+        return ram_;
+    }
+
 private:
-    uint8_t *ram_ {nullptr};
+    byte_t *ram_ {nullptr};
 
     size_t mem_size_ {0};
 };

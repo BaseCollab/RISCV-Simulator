@@ -5,7 +5,7 @@ namespace rvsim {
 
 // clang-format off
 enum class Exception {
-    NONE                          = -1,
+    NONE                            = -1,
 
     // MMU permission exceptions
     MMU_INVALID_PAGE_ENTRY          = 0x01,

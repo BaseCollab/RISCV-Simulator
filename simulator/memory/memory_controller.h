@@ -26,7 +26,7 @@ public:
     NO_COPY_SEMANTIC(PhysMemoryCtl);
     NO_MOVE_SEMANTIC(PhysMemoryCtl);
 
-    explicit PhysMemoryCtl() : pages_controller_(memory_.GetMemorySize() / PPAGE_SIZE) {};
+    explicit PhysMemoryCtl() : pages_controller_(memory_.GetSize() / PPAGE_SIZE) {};
     ~PhysMemoryCtl() = default;
 
     template <typename ValueType>
@@ -85,10 +85,15 @@ public:
         return Store(page_idx * PPAGE_SIZE, src, src_size);
     }
 
+    byte_t *GetRAM()
+    {
+        return memory_.GetRAM();
+    }
+
 private:
     bool BoundaryCheck(addr_t dst, size_t value_size) const
     {
-        return (dst + value_size < memory_.GetMemorySize());
+        return (dst + value_size < memory_.GetSize());
     }
 
 private:

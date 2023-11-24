@@ -61,7 +61,7 @@ void Simulator::LoadElfFile(const std::string &elf_pathname)
     PreparePageTable();
 
     ElfLoader elf_loader(elf_pathname);
-    elf_loader.LoadElf(*this, *hart_);
+    elf_loader.LoadElf(*this, hart_);
 
     hart_->SetPC(elf_loader.GetElfEntryPoint());
 }

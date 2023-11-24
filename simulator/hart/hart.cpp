@@ -4,7 +4,7 @@
 
 namespace rvsim {
 
-Exception Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags) const
+Exception Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags)
 {
     addr_t vpage_padding = (VPAGE_SIZE - src % VPAGE_SIZE) % VPAGE_SIZE;
 
@@ -12,18 +12,36 @@ Exception Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t 
     Exception exception {Exception::NONE};
 
     if (vpage_padding != 0) {
-        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_, mode_);
-        if (exception != Exception::NONE) {
-            return exception;
+        vaddr_t src_page_addr = src & ~vaddr_t::mask_page_offset;
+        const TLB_t::Data *cached_addr = rtlb_.LookUp(src_page_addr);
+
+        if (cached_addr == nullptr) {
+            std::tie(paddr, exception) = mmu_.VirtToPhysAddr(src, rwx_flags, csr_regs, *memory_);
+            if (exception != Exception::NONE) {
+                return exception;
+            }
+
+            rtlb_.Update(TLB_t::Data {.host_addr = nullptr, .paddr = (paddr & ~paddr_t::mask_page_offset)}, src_page_addr);
+        } else {
+            paddr = cached_addr->paddr + (src & vaddr_t::mask_page_offset);
         }
 
         memory_->Load(dst, vpage_padding, paddr);
     }
 
     for (addr_t vpage_offset = 0; vpage_offset < dst_size - vpage_padding; vpage_offset += VPAGE_SIZE) {
-        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(src + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_, mode_);
-        if (exception != Exception::NONE) {
-            return exception;
+        vaddr_t page_addr = (src + vpage_padding + vpage_offset) & ~vaddr_t::mask_page_offset;
+        const TLB_t::Data *cached_addr = rtlb_.LookUp(page_addr);
+
+        if (cached_addr == nullptr) {
+            std::tie(paddr, exception) = mmu_.VirtToPhysAddr(page_addr, rwx_flags, csr_regs, *memory_);
+            if (exception != Exception::NONE) {
+                return exception;
+            }
+
+            rtlb_.Update(TLB_t::Data {.host_addr = nullptr, .paddr = paddr}, page_addr);
+        } else {
+            paddr = cached_addr->paddr;
         }
 
         size_t load_size = VPAGE_SIZE;
@@ -36,7 +54,7 @@ Exception Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t 
     return Exception::NONE;
 }
 
-Exception Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags) const
+Exception Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t rwx_flags)
 {
     addr_t vpage_padding = (VPAGE_SIZE - dst % VPAGE_SIZE) % VPAGE_SIZE;
 
@@ -44,18 +62,36 @@ Exception Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t r
     Exception exception {Exception::NONE};
 
     if (vpage_padding != 0) {
-        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_, mode_);
-        if (exception != Exception::NONE) {
-            return exception;
+        vaddr_t dst_page_addr = dst & ~vaddr_t::mask_page_offset;
+        const TLB_t::Data *cached_addr = wtlb_.LookUp(dst_page_addr);
+
+        if (cached_addr == nullptr) {
+            std::tie(paddr, exception) = mmu_.VirtToPhysAddr(dst, rwx_flags, csr_regs, *memory_);
+            if (exception != Exception::NONE) {
+                return exception;
+            }
+
+            wtlb_.Update(TLB_t::Data {.host_addr = nullptr, .paddr = (paddr & ~paddr_t::mask_page_offset)}, dst_page_addr);
+        } else {
+            paddr = cached_addr->paddr + (dst & vaddr_t::mask_page_offset);
         }
 
         memory_->Store(paddr, src, vpage_padding);
     }
 
     for (addr_t vpage_offset = 0; vpage_offset < src_size - vpage_padding; vpage_offset += VPAGE_SIZE) {
-        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(dst + vpage_padding + vpage_offset, rwx_flags, csr_regs, *memory_, mode_);
-        if (exception != Exception::NONE) {
-            return exception;
+        vaddr_t page_addr = (dst + vpage_padding + vpage_offset) & ~vaddr_t::mask_page_offset;
+        const TLB_t::Data *cached_addr = wtlb_.LookUp(page_addr);
+
+        if (cached_addr == nullptr) {
+            std::tie(paddr, exception) = mmu_.VirtToPhysAddr(page_addr, rwx_flags, csr_regs, *memory_);
+            if (exception != Exception::NONE) {
+                return exception;
+            }
+
+            wtlb_.Update(TLB_t::Data {.host_addr = nullptr, .paddr = paddr}, page_addr);
+        } else {
+            paddr = cached_addr->paddr;
         }
 
         size_t store_size = VPAGE_SIZE;
@@ -68,7 +104,8 @@ Exception Hart::StoreToMemory(vaddr_t dst, void *src, size_t src_size, uint8_t r
     return Exception::NONE;
 }
 
-Exception Hart::FetchInstruction(instr_size_t *raw_instr) const
+// TODO: create own fetch exceptions
+Exception Hart::FetchInstruction(instr_size_t *raw_instr)
 {
 #ifdef DEBUG_HART
 #ifdef DEBUG
@@ -79,7 +116,36 @@ Exception Hart::FetchInstruction(instr_size_t *raw_instr) const
     std::cerr << "[DEBUG] [FETCH] PC = 0x" << std::hex << pc_ << std::dec << std::endl;
 #endif
 
-    return LoadFromMemory<instr_size_t>(vaddr_t(pc_), raw_instr, PF_R | PF_X);
+    vaddr_t pc = vaddr_t(pc_);
+
+    if ((pc & (sizeof(instr_size_t) - 1)) != 0) {
+        return Exception::MMU_ADDRESS_MISALIGNED;
+    }
+
+    byte_t *host_addr {nullptr};
+    Exception exception {Exception::NONE};
+
+    vaddr_t pc_page_addr = pc & ~vaddr_t::mask_page_offset;
+
+    const TLB_t::Data *cached_addr = itlb_.LookUp(pc_page_addr);
+    if (cached_addr == nullptr) {
+        paddr_t paddr {0};
+        std::tie(paddr, exception) = mmu_.VirtToPhysAddr(pc, PF_R | PF_X, csr_regs, *memory_);
+        if (exception != Exception::NONE) {
+            return exception;
+        }
+
+        paddr_t tlb_paddr = (paddr & ~paddr_t::mask_page_offset);
+        itlb_.Update(TLB_t::Data {.host_addr = (memory_->GetRAM() + tlb_paddr), .paddr = tlb_paddr}, pc_page_addr);
+
+        host_addr = memory_->GetRAM() + tlb_paddr + (pc & vaddr_t::mask_page_offset);
+    } else {
+        host_addr = cached_addr->host_addr + (pc & vaddr_t::mask_page_offset);
+    }
+
+    memcpy(raw_instr, host_addr, sizeof(instr_size_t));
+
+    return exception;
 }
 
 void Hart::Interpret()
