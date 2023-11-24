@@ -127,7 +127,7 @@ public:
             host_addr = cached_addr->host_addr + (src & vaddr_t::mask_page_offset);
         }
 
-        memcpy(&value, host_addr, sizeof(ValueType));
+        memcpy(value, host_addr, sizeof(ValueType));
 
         return Exception::NONE;
     }
