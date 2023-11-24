@@ -143,7 +143,7 @@ Exception Hart::FetchInstruction(instr_size_t *raw_instr)
         host_addr = cached_addr->host_addr + (pc & vaddr_t::mask_page_offset);
     }
 
-    *raw_instr = *(reinterpret_cast<instr_size_t *>(host_addr));
+    memcpy(raw_instr, host_addr, sizeof(instr_size_t));
 
     return exception;
 }

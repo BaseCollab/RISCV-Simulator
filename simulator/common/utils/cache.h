@@ -4,9 +4,6 @@
 #include "common/macros.h"
 
 #include <cstddef>
-#include <optional>
-#include <utility>
-#include <cassert>
 
 namespace rvsim::utils {
 

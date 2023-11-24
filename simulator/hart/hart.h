@@ -127,7 +127,7 @@ public:
             host_addr = cached_addr->host_addr + (src & vaddr_t::mask_page_offset);
         }
 
-        *value = *(reinterpret_cast<ValueType *>(host_addr));
+        memcpy(&value, host_addr, sizeof(ValueType));
 
         return Exception::NONE;
     }
@@ -163,7 +163,7 @@ public:
             host_addr = cached_addr->host_addr + (dst & vaddr_t::mask_page_offset);
         }
 
-        *(reinterpret_cast<ValueType *>(host_addr)) = value;
+        memcpy(host_addr, &value, sizeof(ValueType));
 
         return Exception::NONE;
     }
