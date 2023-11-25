@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 set(SOURCES hart.cpp
-            basic_block.cpp
+            basic_block_manager.cpp
             exception_handler.cpp
 )
 

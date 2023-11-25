@@ -211,7 +211,8 @@ def generate_id_enum(yaml_dict, output_dir):
     for instr in instrs:
         instrs_mnemonic_list.append(instr['mnemonic'].upper().replace('.', '_'))
 
-    instrs_mnemonic_list.append('PSEUDO') # pseudo cmd for plugin implementation
+    instrs_mnemonic_list.append('BB_END')
+    instrs_mnemonic_list.append('PSEUDO') # pseudo cmd for plugin implementation, should be the last one
 
     file_location = os.path.join(output_dir, 'instruction_id.h')
 
@@ -231,7 +232,7 @@ def generate_id_enum(yaml_dict, output_dir):
 
         for i in range(len(instrs_mnemonic_list)):
             fout.write(f'    {instrs_mnemonic_list[i]}' + ' ' * (max_instr_len - len(instrs_mnemonic_list[i])) + \
-                       ' = ' + str(i + 1) + ',\n')
+                       ' = ' + str(i) + ',\n')
 
         fout.write("};\n\n"
                    "// clang-format on\n\n"
@@ -262,6 +263,8 @@ def generate_instr_def(yaml_dict, output_dir):
                 continue
             else:
                 fout.write(f'DEFINE_INSTR({instrs_mnemonic_list[i]})\n')
+
+        fout.write(f'DEFINE_BRANCH_INSTR(BB_END) // NOTE: branch instruction\n')  
 
 def parse_args():
     parser = argparse.ArgumentParser(prog='generate.py')

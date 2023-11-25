@@ -2007,6 +2007,13 @@ ALWAYS_INLINE Exception INVALID([[maybe_unused]] Hart *hart, [[maybe_unused]] co
     return Exception::NONE;
 }
 
+ALWAYS_INLINE Exception BB_END([[maybe_unused]] Hart *hart, [[maybe_unused]] const Instruction &instr)
+{
+    // Handler of pseudo instruction BB_END that is inserted at the end of the base block,
+    // in case it ends with a non-branch instruction
+    return Exception::NONE;
+}
+
 } // namespace iexec
 
 } // namespace rvsim

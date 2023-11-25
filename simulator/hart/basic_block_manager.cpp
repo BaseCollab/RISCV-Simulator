@@ -1,8 +1,6 @@
-#include "hart/basic_block.h"
 #include "hart/hart.h"
-
+#include "hart/basic_block_manager.h"
 #include <iostream>
-
 namespace rvsim {
 
 BasicBlock *BasicBlockManager::GetNextBB()
@@ -19,20 +17,28 @@ BasicBlock *BasicBlockManager::GetNextBB()
     basic_blocks_.push_back(std::move(bb_unique));
 
     bb->SetStartPC(start_pc);
-    instr_size_t raw_instr = 0;
+    // Set bb into cache only after start pc has been setted
+    bb_cache_.SetBBIntoCache(bb);
 
+    instr_size_t raw_instr = 0;
     size_t curr_pc = start_pc;
 
-    while (true) {
+    for (size_t instr_counter = 0;; ++instr_counter) {
         hart_->FetchInstruction(&raw_instr);
 
-        Instruction *instr = bb->AddInstruction();
+        Instruction *instr = bb->CreateEmptyInstruction();
+        assert(instr != nullptr);
+
         hart_->DecodeInstruction(instr, raw_instr);
-        instr->pc = curr_pc;
 
         if (instr->IsBranch()) {
             hart_->SetPC(start_pc);
             // Jump is the last instruction in the basic block
+            return bb;
+        }
+        if (instr_counter == BasicBlock::GetBBMaxSize() - 1) {
+            hart_->SetPC(start_pc);
+            bb->CreateBBEndInstruction();
             return bb;
         }
 

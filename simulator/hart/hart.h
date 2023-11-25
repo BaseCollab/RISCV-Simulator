@@ -9,7 +9,7 @@
 #include "mmu/tlb.h"
 #include "hart/csr.h"
 #include "hart/exception.h"
-#include "hart/basic_block.h"
+#include "hart/basic_block_manager.h"
 
 #include <functional>
 #include <optional>
@@ -45,7 +45,7 @@ public:
 
     void Interpret();
 
-    void ExecuteBasicBlock(BasicBlock *bb);
+    Exception ExecuteBasicBlock(const BasicBlock &bb);
 
     bool IsIdle() const
     {
@@ -135,7 +135,7 @@ public:
             host_addr = cached_addr->host_addr + (src & vaddr_t::mask_page_offset);
         }
 
-        memcpy(value, host_addr, sizeof(ValueType));
+        std::memcpy(value, host_addr, sizeof(ValueType));
 
         return Exception::NONE;
     }
@@ -171,7 +171,7 @@ public:
             host_addr = cached_addr->host_addr + (dst & vaddr_t::mask_page_offset);
         }
 
-        memcpy(host_addr, &value, sizeof(ValueType));
+        std::memcpy(host_addr, &value, sizeof(ValueType));
 
         return Exception::NONE;
     }

@@ -26,8 +26,6 @@ public:
     };
 
 public:
-    size_t pc {0};
-
     gpr_idx_t rs1 {0};
     gpr_idx_t rs2 {0};
     gpr_idx_t rs3 {0};
@@ -48,6 +46,8 @@ public:
 
     Instruction() = default;
     ~Instruction() = default;
+
+    explicit Instruction(InstructionId instr_id): id(instr_id) {}
 
     bool IsBranch() const
     {
