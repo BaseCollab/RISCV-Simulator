@@ -41,11 +41,13 @@ public:
     InstructionId id = InstructionId::INVALID_ID;
 
 public:
-    NO_COPY_SEMANTIC(Instruction);
-    NO_MOVE_SEMANTIC(Instruction);
+    DEFAULT_COPY_SEMANTIC(Instruction);
+    DEFAULT_MOVE_SEMANTIC(Instruction);
 
     Instruction() = default;
     ~Instruction() = default;
+
+    explicit Instruction(InstructionId instr_id): id(instr_id) {}
 
     bool IsBranch() const
     {

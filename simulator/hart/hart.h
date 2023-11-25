@@ -9,11 +9,13 @@
 #include "mmu/tlb.h"
 #include "hart/csr.h"
 #include "hart/exception.h"
+#include "hart/basic_block_manager.h"
 
 #include <functional>
 #include <optional>
 #include <cstdint>
 #include <cassert>
+#include <memory>
 #include <elf.h>
 
 namespace rvsim {
@@ -30,14 +32,20 @@ public:
     NO_COPY_SEMANTIC(Hart);
     NO_MOVE_SEMANTIC(Hart);
 
-    explicit Hart(PhysMemoryCtl *memory) : memory_(memory), mmu_(this) {};
+    explicit Hart(PhysMemoryCtl *memory) : memory_(memory), mmu_(this)
+    {
+        bb_manager_ = std::make_unique<BasicBlockManager>(this);
+    }
+
     ~Hart() = default;
 
     Exception FetchInstruction(instr_size_t *raw_instr);
 
+    void DecodeInstruction(Instruction *instr, instr_size_t raw_instr);
+
     void Interpret();
 
-    Exception DecodeAndExecute(Instruction *instr, instr_size_t raw_instr);
+    Exception ExecuteBasicBlock(const BasicBlock &bb);
 
     bool IsIdle() const
     {
@@ -127,7 +135,7 @@ public:
             host_addr = cached_addr->host_addr + (src & vaddr_t::mask_page_offset);
         }
 
-        memcpy(value, host_addr, sizeof(ValueType));
+        std::memcpy(value, host_addr, sizeof(ValueType));
 
         return Exception::NONE;
     }
@@ -163,7 +171,7 @@ public:
             host_addr = cached_addr->host_addr + (dst & vaddr_t::mask_page_offset);
         }
 
-        memcpy(host_addr, &value, sizeof(ValueType));
+        std::memcpy(host_addr, &value, sizeof(ValueType));
 
         return Exception::NONE;
     }
@@ -205,6 +213,8 @@ private:
 
     // idle is true, when hart does not follow instructions
     bool is_idle_ {true};
+
+    std::unique_ptr<BasicBlockManager> bb_manager_;
 };
 
 } // namespace rvsim

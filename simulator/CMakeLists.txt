@@ -18,6 +18,7 @@ add_subdirectory(hart)
 add_subdirectory(mmu)
 add_subdirectory(argparser)
 add_subdirectory(common)
+add_subdirectory(codegen)
 
 add_library(simulator_static STATIC)
 target_link_libraries(simulator_static PUBLIC
@@ -33,7 +34,7 @@ target_link_libraries(simulator_static PUBLIC
 
 file(GLOB_RECURSE ALL_SOURCES_FILES *.cpp *.h)
 
-find_program(CLANG_FORMAT_EXECUTABLE NAMES clang-format-14 clang-format)
+find_program(CLANG_FORMAT_EXECUTABLE NAMES clang-format-14)
 
 add_custom_target(clang-force-format
     COMMAND ${CLANG_FORMAT_EXECUTABLE}

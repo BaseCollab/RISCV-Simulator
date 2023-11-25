@@ -36,6 +36,9 @@ static constexpr size_t TLB_SIZE = 1 << TLB_SIZE_LOG_2;
 
 static constexpr size_t DEFAULT_PHYS_MEMORY_SIZE = (1 << 5) * MBYTE_SIZE;
 
+static constexpr size_t BASIC_BLOCK_MAX_SIZE = 1 << 3; 
+static constexpr size_t BB_CACHE_SIZE = 1 << 8;
+
 enum class Mode : byte_t {
     USER_MODE       = 0,
     SUPERVISOR_MODE = 1,

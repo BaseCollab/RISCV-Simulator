@@ -6,7 +6,7 @@
  */
 
 #include "common/utils/bit_ops.h"
-#include "hart/instruction/instruction_exec.h"
+#include "common/macros.h"
 #include "hart/exception.h"
 
 #include <err.h>
@@ -16,7 +16,7 @@
 namespace rvsim {
 namespace iexec {
 
-Exception BEQ(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception BEQ(Hart *hart, const Instruction &instr)
 {
     if (hart->GetGPR(instr.rs1) == hart->GetGPR(instr.rs2))
         hart->SetPCTarget(hart->GetPC() + instr.imm);
@@ -26,7 +26,7 @@ Exception BEQ(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception BNE(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception BNE(Hart *hart, const Instruction &instr)
 {
     if (hart->GetGPR(instr.rs1) != hart->GetGPR(instr.rs2))
         hart->SetPCTarget(hart->GetPC() + instr.imm);
@@ -36,7 +36,7 @@ Exception BNE(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception BLT(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception BLT(Hart *hart, const Instruction &instr)
 {
     auto rs1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
     auto rs2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
@@ -49,7 +49,7 @@ Exception BLT(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception BGE(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception BGE(Hart *hart, const Instruction &instr)
 {
     auto rs1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
     auto rs2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
@@ -62,7 +62,7 @@ Exception BGE(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception BLTU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception BLTU(Hart *hart, const Instruction &instr)
 {
     auto rs1 = hart->GetGPR(instr.rs1);
     auto rs2 = hart->GetGPR(instr.rs2);
@@ -75,7 +75,7 @@ Exception BLTU(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception BGEU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception BGEU(Hart *hart, const Instruction &instr)
 {
     auto rs1 = hart->GetGPR(instr.rs1);
     auto rs2 = hart->GetGPR(instr.rs2);
@@ -88,7 +88,7 @@ Exception BGEU(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception JALR(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception JALR(Hart *hart, const Instruction &instr)
 {
     hart->SetGPR(instr.rd, hart->GetPC() + sizeof(instr_size_t));
     hart->SetPCTarget((hart->GetGPR(instr.rs1) + instr.imm) & ~reg_t {1});
@@ -96,7 +96,7 @@ Exception JALR(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception JAL(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception JAL(Hart *hart, const Instruction &instr)
 {
     hart->SetGPR(instr.rd, hart->GetPC() + sizeof(instr_size_t));
     hart->SetPCTarget(hart->GetPC() + instr.imm);
@@ -104,7 +104,7 @@ Exception JAL(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception LUI(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception LUI(Hart *hart, const Instruction &instr)
 {
     hart->SetGPR(instr.rd, instr.imm);
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
@@ -112,7 +112,7 @@ Exception LUI(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AUIPC(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AUIPC(Hart *hart, const Instruction &instr)
 {
     hart->SetGPR(instr.rd, instr.imm + hart->GetPC());
     hart->SetPCTarget(hart->GetPC() + sizeof(instr_size_t));
@@ -120,7 +120,7 @@ Exception AUIPC(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception ADDI(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception ADDI(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
 
@@ -132,7 +132,7 @@ Exception ADDI(Hart *hart, const Instruction &instr)
 
 static constexpr bit_size_t RV_SH_UPPER_BIT_INDEX = 4;
 
-Exception SLLI(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SLLI(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
     auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.imm);
@@ -143,7 +143,7 @@ Exception SLLI(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SLTI(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SLTI(Hart *hart, const Instruction &instr)
 {
     auto rv1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
     auto imm = instr.imm;
@@ -154,7 +154,7 @@ Exception SLTI(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SLTIU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SLTIU(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
     auto imm = bitops::MakeUnsigned(instr.imm);
@@ -165,7 +165,7 @@ Exception SLTIU(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception XORI(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception XORI(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
 
@@ -176,7 +176,7 @@ Exception XORI(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SRLI(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SRLI(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
     auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.imm);
@@ -187,7 +187,7 @@ Exception SRLI(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SRAI(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SRAI(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
     auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.imm);
@@ -201,7 +201,7 @@ Exception SRAI(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception ORI(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception ORI(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
 
@@ -212,7 +212,7 @@ Exception ORI(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception ANDI(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception ANDI(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
 
@@ -223,7 +223,7 @@ Exception ANDI(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception ADD(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception ADD(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -234,7 +234,7 @@ Exception ADD(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SUB(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SUB(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -245,7 +245,7 @@ Exception SUB(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SLL(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SLL(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -256,7 +256,7 @@ Exception SLL(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SLT(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SLT(Hart *hart, const Instruction &instr)
 {
     auto rv1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
     auto rv2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
@@ -267,7 +267,7 @@ Exception SLT(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SLTU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SLTU(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -278,7 +278,7 @@ Exception SLTU(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception XOR(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception XOR(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -289,7 +289,7 @@ Exception XOR(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SRL(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SRL(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -300,7 +300,7 @@ Exception SRL(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SRA(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SRA(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -315,7 +315,7 @@ Exception SRA(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception OR(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception OR(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -326,7 +326,7 @@ Exception OR(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AND(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AND(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -337,7 +337,7 @@ Exception AND(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception ADDIW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception ADDIW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t res_w = bitops::GetBits<bitops::BitSizeof<word_t>() - 1, 0>(rv1 + instr.imm);
@@ -348,7 +348,7 @@ Exception ADDIW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SLLIW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SLLIW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.imm);
@@ -361,7 +361,7 @@ Exception SLLIW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SRLIW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SRLIW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.imm);
@@ -374,7 +374,7 @@ Exception SRLIW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SRAIW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SRAIW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     auto imm = bitops::GetBits<RV_SH_UPPER_BIT_INDEX, 0>(instr.imm);
@@ -387,7 +387,7 @@ Exception SRAIW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception ADDW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception ADDW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -400,7 +400,7 @@ Exception ADDW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SUBW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SUBW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -413,7 +413,7 @@ Exception SUBW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SLLW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SLLW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -427,7 +427,7 @@ Exception SLLW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SRLW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SRLW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -441,7 +441,7 @@ Exception SRLW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SRAW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SRAW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -456,7 +456,7 @@ Exception SRAW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception LB(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception LB(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
 
@@ -470,7 +470,7 @@ Exception LB(Hart *hart, const Instruction &instr)
     return exception;
 }
 
-Exception LH(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception LH(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
 
@@ -484,7 +484,7 @@ Exception LH(Hart *hart, const Instruction &instr)
     return exception;
 }
 
-Exception LW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception LW(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
 
@@ -498,7 +498,7 @@ Exception LW(Hart *hart, const Instruction &instr)
     return exception;
 }
 
-Exception LD(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception LD(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
 
@@ -512,7 +512,7 @@ Exception LD(Hart *hart, const Instruction &instr)
     return exception;
 }
 
-Exception LBU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception LBU(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
 
@@ -526,7 +526,7 @@ Exception LBU(Hart *hart, const Instruction &instr)
     return exception;
 }
 
-Exception LHU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception LHU(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
 
@@ -540,7 +540,7 @@ Exception LHU(Hart *hart, const Instruction &instr)
     return exception;
 }
 
-Exception LWU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception LWU(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
 
@@ -554,7 +554,7 @@ Exception LWU(Hart *hart, const Instruction &instr)
     return exception;
 }
 
-Exception SB(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SB(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
     byte_t rv2 = hart->GetGPR(instr.rs2);
@@ -565,7 +565,7 @@ Exception SB(Hart *hart, const Instruction &instr)
     return exception;
 }
 
-Exception SH(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SH(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
     hword_t rv2 = hart->GetGPR(instr.rs2);
@@ -576,7 +576,7 @@ Exception SH(Hart *hart, const Instruction &instr)
     return exception;
 }
 
-Exception SW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SW(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
     word_t rv2 = hart->GetGPR(instr.rs2);
@@ -587,7 +587,7 @@ Exception SW(Hart *hart, const Instruction &instr)
     return exception;
 }
 
-Exception SD(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SD(Hart *hart, const Instruction &instr)
 {
     auto rv1 = hart->GetGPR(instr.rs1);
     dword_t rv2 = hart->GetGPR(instr.rs2);
@@ -598,7 +598,7 @@ Exception SD(Hart *hart, const Instruction &instr)
     return exception;
 }
 
-Exception FENCE(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FENCE(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -607,7 +607,7 @@ Exception FENCE(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FENCE_I(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FENCE_I(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -616,7 +616,7 @@ Exception FENCE_I(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception MUL(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception MUL(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -627,7 +627,7 @@ Exception MUL(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception MULH(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception MULH(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -636,7 +636,7 @@ Exception MULH(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception MULHSU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception MULHSU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -645,7 +645,7 @@ Exception MULHSU(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception MULHU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception MULHU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -654,7 +654,7 @@ Exception MULHU(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception DIV(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception DIV(Hart *hart, const Instruction &instr)
 {
     auto rv1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
     auto rv2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
@@ -665,7 +665,7 @@ Exception DIV(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception DIVU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception DIVU(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -676,7 +676,7 @@ Exception DIVU(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception REM(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception REM(Hart *hart, const Instruction &instr)
 {
     auto rv1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
     auto rv2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
@@ -687,7 +687,7 @@ Exception REM(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception REMU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception REMU(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -698,7 +698,7 @@ Exception REMU(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception MULW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception MULW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -717,7 +717,7 @@ Exception MULW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception DIVW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception DIVW(Hart *hart, const Instruction &instr)
 {
     auto rv1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
     auto rv2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
@@ -736,7 +736,7 @@ Exception DIVW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception DIVUW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception DIVUW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -755,7 +755,7 @@ Exception DIVUW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception REMW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception REMW(Hart *hart, const Instruction &instr)
 {
     auto rv1 = bitops::MakeSigned(hart->GetGPR(instr.rs1));
     auto rv2 = bitops::MakeSigned(hart->GetGPR(instr.rs2));
@@ -774,7 +774,7 @@ Exception REMW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception REMUW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception REMUW(Hart *hart, const Instruction &instr)
 {
     reg_t rv1 = hart->GetGPR(instr.rs1);
     reg_t rv2 = hart->GetGPR(instr.rs2);
@@ -793,7 +793,7 @@ Exception REMUW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOADD_W(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOADD_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -802,7 +802,7 @@ Exception AMOADD_W(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOXOR_W(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOXOR_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -811,7 +811,7 @@ Exception AMOXOR_W(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOOR_W(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOOR_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -820,7 +820,7 @@ Exception AMOOR_W(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOAND_W(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOAND_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -829,7 +829,7 @@ Exception AMOAND_W(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOMIN_W(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOMIN_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -838,7 +838,7 @@ Exception AMOMIN_W(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOMAX_W(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOMAX_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -847,7 +847,7 @@ Exception AMOMAX_W(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOMINU_W(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOMINU_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -856,7 +856,7 @@ Exception AMOMINU_W(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOMAXU_W(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOMAXU_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -865,7 +865,7 @@ Exception AMOMAXU_W(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOSWAP_W(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOSWAP_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -874,7 +874,7 @@ Exception AMOSWAP_W(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception LR_W(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception LR_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -883,7 +883,7 @@ Exception LR_W(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SC_W(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SC_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -892,7 +892,7 @@ Exception SC_W(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOADD_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOADD_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -901,7 +901,7 @@ Exception AMOADD_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOXOR_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOXOR_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -910,7 +910,7 @@ Exception AMOXOR_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOOR_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOOR_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -919,7 +919,7 @@ Exception AMOOR_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOAND_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOAND_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -928,7 +928,7 @@ Exception AMOAND_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOMIN_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOMIN_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -937,7 +937,7 @@ Exception AMOMIN_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOMAX_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOMAX_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -946,7 +946,7 @@ Exception AMOMAX_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOMINU_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOMINU_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -955,7 +955,7 @@ Exception AMOMINU_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOMAXU_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOMAXU_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -964,7 +964,7 @@ Exception AMOMAXU_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception AMOSWAP_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception AMOSWAP_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -973,7 +973,7 @@ Exception AMOSWAP_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception LR_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception LR_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -982,7 +982,7 @@ Exception LR_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SC_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SC_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -991,14 +991,14 @@ Exception SC_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception ECALL(Hart *hart, [[maybe_unused]] const Instruction &instr)
+ALWAYS_INLINE Exception ECALL(Hart *hart, [[maybe_unused]] const Instruction &instr)
 {
     hart->SetIdleStatus(true);
 
     return Exception::NONE;
 }
 
-Exception EBREAK(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception EBREAK(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1007,7 +1007,7 @@ Exception EBREAK(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception URET(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception URET(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1016,7 +1016,7 @@ Exception URET(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SRET(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SRET(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1025,7 +1025,7 @@ Exception SRET(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception MRET(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception MRET(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1034,7 +1034,7 @@ Exception MRET(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception DRET(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception DRET(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1043,7 +1043,7 @@ Exception DRET(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception SFENCE_VMA(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception SFENCE_VMA(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1053,7 +1053,7 @@ Exception SFENCE_VMA(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception WFI(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception WFI(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1062,7 +1062,7 @@ Exception WFI(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception CSRRW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception CSRRW(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1071,7 +1071,7 @@ Exception CSRRW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception CSRRS(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception CSRRS(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1080,7 +1080,7 @@ Exception CSRRS(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception CSRRC(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception CSRRC(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1089,7 +1089,7 @@ Exception CSRRC(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception CSRRWI(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception CSRRWI(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1098,7 +1098,7 @@ Exception CSRRWI(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception CSRRSI(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception CSRRSI(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1107,7 +1107,7 @@ Exception CSRRSI(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception CSRRCI(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception CSRRCI(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1116,7 +1116,7 @@ Exception CSRRCI(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception HFENCE_VVMA(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception HFENCE_VVMA(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1126,7 +1126,7 @@ Exception HFENCE_VVMA(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception HFENCE_GVMA(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception HFENCE_GVMA(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1136,7 +1136,7 @@ Exception HFENCE_GVMA(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FADD_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FADD_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1145,7 +1145,7 @@ Exception FADD_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSUB_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSUB_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1154,7 +1154,7 @@ Exception FSUB_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMUL_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMUL_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1163,7 +1163,7 @@ Exception FMUL_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FDIV_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FDIV_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1172,7 +1172,7 @@ Exception FDIV_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSGNJ_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSGNJ_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1181,7 +1181,7 @@ Exception FSGNJ_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSGNJN_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSGNJN_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1190,7 +1190,7 @@ Exception FSGNJN_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSGNJX_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSGNJX_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1199,7 +1199,7 @@ Exception FSGNJX_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMIN_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMIN_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1208,7 +1208,7 @@ Exception FMIN_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMAX_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMAX_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1217,7 +1217,7 @@ Exception FMAX_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSQRT_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSQRT_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1226,7 +1226,7 @@ Exception FSQRT_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FADD_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FADD_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1235,7 +1235,7 @@ Exception FADD_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSUB_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSUB_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1244,7 +1244,7 @@ Exception FSUB_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMUL_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMUL_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1253,7 +1253,7 @@ Exception FMUL_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FDIV_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FDIV_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1262,7 +1262,7 @@ Exception FDIV_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSGNJ_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSGNJ_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1271,7 +1271,7 @@ Exception FSGNJ_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSGNJN_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSGNJN_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1280,7 +1280,7 @@ Exception FSGNJN_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSGNJX_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSGNJX_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1289,7 +1289,7 @@ Exception FSGNJX_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMIN_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMIN_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1298,7 +1298,7 @@ Exception FMIN_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMAX_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMAX_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1307,7 +1307,7 @@ Exception FMAX_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_S_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_S_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1316,7 +1316,7 @@ Exception FCVT_S_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_D_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_D_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1325,7 +1325,7 @@ Exception FCVT_D_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSQRT_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSQRT_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1334,7 +1334,7 @@ Exception FSQRT_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FADD_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FADD_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1343,7 +1343,7 @@ Exception FADD_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSUB_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSUB_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1352,7 +1352,7 @@ Exception FSUB_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMUL_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMUL_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1361,7 +1361,7 @@ Exception FMUL_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FDIV_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FDIV_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1370,7 +1370,7 @@ Exception FDIV_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSGNJ_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSGNJ_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1379,7 +1379,7 @@ Exception FSGNJ_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSGNJN_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSGNJN_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1388,7 +1388,7 @@ Exception FSGNJN_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSGNJX_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSGNJX_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1397,7 +1397,7 @@ Exception FSGNJX_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMIN_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMIN_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1406,7 +1406,7 @@ Exception FMIN_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMAX_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMAX_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1415,7 +1415,7 @@ Exception FMAX_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_S_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_S_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1424,7 +1424,7 @@ Exception FCVT_S_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_Q_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_Q_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1433,7 +1433,7 @@ Exception FCVT_Q_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_D_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_D_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1442,7 +1442,7 @@ Exception FCVT_D_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_Q_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_Q_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1451,7 +1451,7 @@ Exception FCVT_Q_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSQRT_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSQRT_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1460,7 +1460,7 @@ Exception FSQRT_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FLE_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FLE_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1469,7 +1469,7 @@ Exception FLE_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FLT_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FLT_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1478,7 +1478,7 @@ Exception FLT_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FEQ_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FEQ_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1487,7 +1487,7 @@ Exception FEQ_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FLE_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FLE_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1496,7 +1496,7 @@ Exception FLE_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FLT_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FLT_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1505,7 +1505,7 @@ Exception FLT_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FEQ_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FEQ_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1514,7 +1514,7 @@ Exception FEQ_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FLE_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FLE_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1523,7 +1523,7 @@ Exception FLE_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FLT_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FLT_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1532,7 +1532,7 @@ Exception FLT_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FEQ_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FEQ_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1541,7 +1541,7 @@ Exception FEQ_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_W_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_W_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1550,7 +1550,7 @@ Exception FCVT_W_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_WU_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_WU_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1559,7 +1559,7 @@ Exception FCVT_WU_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_L_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_L_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1568,7 +1568,7 @@ Exception FCVT_L_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_LU_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_LU_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1577,7 +1577,7 @@ Exception FCVT_LU_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMV_X_W(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMV_X_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1586,7 +1586,7 @@ Exception FMV_X_W(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCLASS_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCLASS_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1595,7 +1595,7 @@ Exception FCLASS_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_W_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_W_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1604,7 +1604,7 @@ Exception FCVT_W_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_WU_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_WU_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1613,7 +1613,7 @@ Exception FCVT_WU_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_L_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_L_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1622,7 +1622,7 @@ Exception FCVT_L_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_LU_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_LU_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1631,7 +1631,7 @@ Exception FCVT_LU_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMV_X_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMV_X_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1640,7 +1640,7 @@ Exception FMV_X_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCLASS_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCLASS_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1649,7 +1649,7 @@ Exception FCLASS_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_W_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_W_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1658,7 +1658,7 @@ Exception FCVT_W_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_WU_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_WU_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1667,7 +1667,7 @@ Exception FCVT_WU_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_L_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_L_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1676,7 +1676,7 @@ Exception FCVT_L_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_LU_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_LU_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1685,7 +1685,7 @@ Exception FCVT_LU_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMV_X_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMV_X_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1694,7 +1694,7 @@ Exception FMV_X_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCLASS_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCLASS_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1703,7 +1703,7 @@ Exception FCLASS_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_S_W(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_S_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1712,7 +1712,7 @@ Exception FCVT_S_W(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_S_WU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_S_WU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1721,7 +1721,7 @@ Exception FCVT_S_WU(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_S_L(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_S_L(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1730,7 +1730,7 @@ Exception FCVT_S_L(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_S_LU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_S_LU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1739,7 +1739,7 @@ Exception FCVT_S_LU(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMV_W_X(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMV_W_X(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1748,7 +1748,7 @@ Exception FMV_W_X(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_D_W(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_D_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1757,7 +1757,7 @@ Exception FCVT_D_W(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_D_WU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_D_WU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1766,7 +1766,7 @@ Exception FCVT_D_WU(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_D_L(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_D_L(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1775,7 +1775,7 @@ Exception FCVT_D_L(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_D_LU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_D_LU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1784,7 +1784,7 @@ Exception FCVT_D_LU(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMV_D_X(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMV_D_X(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1793,7 +1793,7 @@ Exception FMV_D_X(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_Q_W(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_Q_W(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1802,7 +1802,7 @@ Exception FCVT_Q_W(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_Q_WU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_Q_WU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1810,7 +1810,7 @@ Exception FCVT_Q_WU(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_Q_L(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_Q_L(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1819,7 +1819,7 @@ Exception FCVT_Q_L(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FCVT_Q_LU(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FCVT_Q_LU(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1828,7 +1828,7 @@ Exception FCVT_Q_LU(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMV_Q_X(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMV_Q_X(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1837,7 +1837,7 @@ Exception FMV_Q_X(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FLW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FLW(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1846,7 +1846,7 @@ Exception FLW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FLD(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FLD(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1855,7 +1855,7 @@ Exception FLD(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FLQ(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FLQ(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1864,7 +1864,7 @@ Exception FLQ(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSW(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSW(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1873,7 +1873,7 @@ Exception FSW(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSD(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSD(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1882,7 +1882,7 @@ Exception FSD(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FSQ(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FSQ(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1891,7 +1891,7 @@ Exception FSQ(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMADD_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMADD_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1900,7 +1900,7 @@ Exception FMADD_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMSUB_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMSUB_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1909,7 +1909,7 @@ Exception FMSUB_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FNMSUB_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FNMSUB_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1918,7 +1918,7 @@ Exception FNMSUB_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FNMADD_S(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FNMADD_S(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1927,7 +1927,7 @@ Exception FNMADD_S(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMADD_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMADD_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1936,7 +1936,7 @@ Exception FMADD_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMSUB_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMSUB_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1945,7 +1945,7 @@ Exception FMSUB_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FNMSUB_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FNMSUB_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1954,7 +1954,7 @@ Exception FNMSUB_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FNMADD_D(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FNMADD_D(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1963,7 +1963,7 @@ Exception FNMADD_D(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMADD_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMADD_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1972,7 +1972,7 @@ Exception FMADD_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FMSUB_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FMSUB_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1981,7 +1981,7 @@ Exception FMSUB_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FNMSUB_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FNMSUB_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1990,7 +1990,7 @@ Exception FNMSUB_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception FNMADD_Q(Hart *hart, const Instruction &instr)
+ALWAYS_INLINE Exception FNMADD_Q(Hart *hart, const Instruction &instr)
 {
     (void)hart;
     (void)instr;
@@ -1999,11 +1999,18 @@ Exception FNMADD_Q(Hart *hart, const Instruction &instr)
     return Exception::NONE;
 }
 
-Exception INVALID([[maybe_unused]] Hart *hart, [[maybe_unused]] const Instruction &instr)
+ALWAYS_INLINE Exception INVALID([[maybe_unused]] Hart *hart, [[maybe_unused]] const Instruction &instr)
 {
     // TODO(skurnevich): change abort to hart->SetException(InvalidInstr)
     err(EX_DATAERR, "Invalid instruction\n");
 
+    return Exception::NONE;
+}
+
+ALWAYS_INLINE Exception BB_END([[maybe_unused]] Hart *hart, [[maybe_unused]] const Instruction &instr)
+{
+    // Handler of pseudo instruction BB_END that is inserted at the end of the base block,
+    // in case it ends with a non-branch instruction
     return Exception::NONE;
 }
 
