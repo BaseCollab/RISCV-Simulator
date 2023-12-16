@@ -17,6 +17,7 @@
 #include <cassert>
 #include <memory>
 #include <elf.h>
+#include <gtest/gtest_prod.h>
 
 namespace rvsim {
 
@@ -215,6 +216,9 @@ private:
     bool is_idle_ {true};
 
     std::unique_ptr<BasicBlockManager> bb_manager_;
+
+private:
+    FRIEND_TEST(MMUTest, ComplexTest);
 };
 
 } // namespace rvsim

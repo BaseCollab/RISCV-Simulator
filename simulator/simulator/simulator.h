@@ -10,6 +10,7 @@
 #include "memory/memory_controller.h"
 
 #include <functional>
+#include <gtest/gtest_prod.h>
 
 namespace rvsim {
 
@@ -29,6 +30,8 @@ public:
     void MapVirtualPage(vaddr_t page_vaddr, uint8_t urwx_flags = PF_U | PF_R | PF_W) const;
     void MapVirtualRange(vaddr_t vaddr_start, vaddr_t vaddr_end, uint8_t urwx_flags = PF_U | PF_R | PF_W) const;
 
+    Hart *GetActiveHart();
+
 private:
     void InitializeCSR(CSRs *csr_regs, reg_t root_page_idx);
 
@@ -46,6 +49,9 @@ private:
     Hart *hart_ {nullptr};
 
     PhysMemoryCtl *memory_ {nullptr};
+
+private:
+    FRIEND_TEST(MMUTest, ComplexTest);
 };
 
 } // namespace rvsim

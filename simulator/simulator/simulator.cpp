@@ -153,19 +153,19 @@ void Simulator::MapVirtualPage(vaddr_t page_vaddr, uint8_t urwx_flags) const
     std::cerr << "[DEBUG] [PT alloc] 2) ppn_3 = 0x" << ppn_3 << ", vpn_2 = 0b" << vpn_2 << std::endl;
 #endif
 
-    dword_t ppn_2 = CreatePageTableLVL<false>(ppn_3,    page_vaddr.GetVPN2());
+    dword_t ppn_2 = CreatePageTableLVL<false>(ppn_3, page_vaddr.GetVPN2());
 #ifdef DEBUG_EXCEPTION
     std::bitset<bitops::BitSizeof<hword_t>()> vpn_1(page_vaddr.GetVPN1());
     std::cerr << "[DEBUG] [PT alloc] 3) ppn_2 = 0x" << ppn_2 << ", vpn_1 = 0b" << vpn_1 << std::endl;
 #endif
 
-    dword_t ppn_1 = CreatePageTableLVL<false>(ppn_2,    page_vaddr.GetVPN1());
+    dword_t ppn_1 = CreatePageTableLVL<false>(ppn_2, page_vaddr.GetVPN1());
 #ifdef DEBUG_EXCEPTION
     std::bitset<bitops::BitSizeof<hword_t>()> vpn_0(page_vaddr.GetVPN0());
     std::cerr << "[DEBUG] [PT alloc] 4) ppn_1 = 0x" << ppn_1 << ", vpn_0 = 0b" << vpn_0 << std::endl;
 #endif
 
-    dword_t ppn_0 = CreatePageTableLVL<true> (ppn_1,    page_vaddr.GetVPN0(), urwx_flags);
+    dword_t ppn_0 = CreatePageTableLVL<true> (ppn_1, page_vaddr.GetVPN0(), urwx_flags);
 #ifdef DEBUG_EXCEPTION
     std::cerr << "[DEBUG] [PT alloc] 5) ppn_0 = 0x" << ppn_0 << std::endl;
 #else
@@ -192,6 +192,11 @@ void Simulator::MapVirtualRange(vaddr_t vaddr_start, vaddr_t vaddr_end, uint8_t 
     if ((vaddr_end - vaddr + VPAGE_SIZE) > vpage_padding) {
         MapVirtualPage(vaddr_end, urwx_flags);
     }
+}
+
+Hart *Simulator::GetActiveHart()
+{
+    return hart_;
 }
 
 } // namespace rvsim
