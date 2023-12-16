@@ -18,6 +18,9 @@ enum class Exception {
 
     // Load/store exceptions
     MMU_ADDRESS_MISALIGNED          = 0x10,
+
+    // Decode exceptions
+    INVALID_INSTRUCTION_TYPE        = 0x20,
 };
 // clang-format on
 

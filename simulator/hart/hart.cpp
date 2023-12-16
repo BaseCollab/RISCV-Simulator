@@ -153,15 +153,21 @@ Exception Hart::FetchInstruction(instr_size_t *raw_instr)
     return exception;
 }
 
-void Hart::Interpret()
+Exception Hart::Interpret()
 {
     is_idle_ = false;
+    Exception exception = Exception::NONE;
+    BasicBlock *bb = nullptr;
 
     size_t counter = 0;
     const auto start {std::chrono::steady_clock::now()};
 
     while (true) {
-        BasicBlock *bb = bb_manager_->GetNextBB();
+        std::tie(bb, exception) = bb_manager_->GetNextBB();
+        if (UNLIKELY(exception != Exception::NONE)) {
+            handlers_.default_handler(exception, pc_);
+            break;
+        }
 
         assert(bb != nullptr);
         counter += bb->GetSize();
@@ -182,6 +188,8 @@ void Hart::Interpret()
     std::cout << "IPS  = " << counter / elapsed_seconds.count() << std::endl;
     std::cout << "MIPS = " << counter / elapsed_seconds.count() / 1000000.0 << std::endl;
     std::cout << "----------------------------------------------------------------------\n";
+
+    return exception;
 }
 
 // Disable warning because the function uses computed goto
@@ -195,7 +203,7 @@ void Hart::Interpret()
 
 // clang-format off
 Exception Hart::ExecuteBasicBlock(const BasicBlock &bb)
-{   
+{
     #define DEFINE_INSTR(instr) &&instr,
     #define DEFINE_BRANCH_INSTR(instr) &&instr,
 
@@ -229,7 +237,7 @@ Exception Hart::ExecuteBasicBlock(const BasicBlock &bb)
      * Define all branch instruction labels
      * 1) If we encounter a branch instruction, then this is necessarily the end of the base block.
      * 2) If basic block size more that BASIC_BLOCK_MAX_SIZE, then we trim basic block.
-     * 3) In the case when the basic block end with a non-branch instruction, we insert a 
+     * 3) In the case when the basic block end with a non-branch instruction, we insert a
      *    pseudo instruction BB_END to finish dispatching.
      * 4) In order not to complicate BB_END is also considered a branch instruction.
     */

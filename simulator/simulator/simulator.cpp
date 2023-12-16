@@ -69,8 +69,8 @@ void Simulator::LoadElfFile(const std::string &elf_pathname)
 void Simulator::SetExceptionHandlers()
 {
     Hart::ExceptionHandlers handlers;
-    handlers.mmu_handler =
-        std::bind(&ExceptionHandler::MMUExceptionHandler, hart_, memory_, std::placeholders::_1, std::placeholders::_2);
+    handlers.default_handler =
+        std::bind(&ExceptionHandler::CallExceptionHandler, hart_, memory_, std::placeholders::_1, std::placeholders::_2);
 
     hart_->SetExceptionHandlers(handlers);
 }

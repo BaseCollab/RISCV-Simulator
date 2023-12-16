@@ -12,7 +12,7 @@ namespace rvsim {
 
 class ExceptionHandler {
 public:
-    static void MMUExceptionHandler(Hart *hart, PhysMemoryCtl *memory, Exception exception, addr_t vaddr);
+    static void CallExceptionHandler(Hart *hart, PhysMemoryCtl *memory, Exception exception, addr_t vaddr);
 };
 
 } // namespace rvsim

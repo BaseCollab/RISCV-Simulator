@@ -25,7 +25,7 @@ public:
 
     ~BasicBlockManager() = default;
 
-    BasicBlock *GetNextBB();
+    std::pair<BasicBlock *, Exception> GetNextBB();
 
     static constexpr size_t GetCacheSize()
     {

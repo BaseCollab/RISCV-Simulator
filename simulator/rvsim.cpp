@@ -18,9 +18,12 @@ int Main(int argc, char *argv[])
 
     sim.LoadElfFile(parser.GetElfFileName());
 
-    hart.Interpret();
+    Exception exception = hart.Interpret();
+    if (exception != Exception::NONE) {
+        return EXIT_FAILURE;
+    }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 } // namespace rvsim
