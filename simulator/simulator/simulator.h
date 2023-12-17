@@ -40,7 +40,43 @@ private:
     void PreparePageTable();
 
     template <bool IsLastLevel>
-    dword_t CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t urwx_flags = PF_U | PF_R | PF_W) const;
+    dword_t CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t urwx_flags = PF_U | PF_R | PF_W) const
+    {
+        pte_t pte;
+        dword_t ppn_new {0};
+
+        memory_->Load(&pte, sizeof(pte), ppn_lvl * VPAGE_SIZE + vpn * sizeof(pte_t));
+
+        if (pte.GetV() == 0) {
+#ifdef DEBUG_EXCEPTION
+            std::cerr << "[DEBUG] [PT alloc] Invalid PTE at 0x" << std::hex << ppn_lvl * VPAGE_SIZE + vpn * sizeof(pte_t)
+                    << std::endl;
+#endif
+
+            auto page_idx_pair = memory_->GetCleanPage();
+            reg_t page_idx = page_idx_pair.first;
+
+            vpt_t vpt;
+            memory_->StoreByPageIdx(page_idx, &vpt, sizeof(vpt));
+
+            pte.SetPPN(page_idx);
+            pte.SetV(1);
+            ppn_new = page_idx;
+
+            if constexpr (IsLastLevel == true) {
+                pte.SetR(!!(urwx_flags & PF_R));
+                pte.SetW(!!(urwx_flags & PF_W));
+                pte.SetX(!!(urwx_flags & PF_X));
+                pte.SetU(!!(urwx_flags & PF_U));
+            }
+
+            memory_->Store(ppn_lvl * VPAGE_SIZE + vpn * sizeof(pte_t), &pte, sizeof(pte_t));
+        } else {
+            ppn_new = pte.GetPPN();
+        }
+
+        return ppn_new;
+    }
 
 private:
     static constexpr reg_t STACK_PTR = 0x600000000;
