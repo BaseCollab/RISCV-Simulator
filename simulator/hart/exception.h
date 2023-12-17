@@ -7,7 +7,7 @@ namespace rvsim {
 enum class Exception {
     NONE                            = -1,
 
-    // MMU permission exceptions
+    // MMU permission exceptions, managed by MMU
     MMU_INVALID_PAGE_ENTRY          = 0x01,
     MMU_INVALID_PAGE_SIZE           = 0x02, // not all types of memory are supported (such as superpages)
     MMU_PAGE_WRITE_NO_READ          = 0x03,
@@ -16,8 +16,11 @@ enum class Exception {
     MMU_PAGE_ACCESS_EXECUTE         = 0x06,
     MMU_PAGE_SUPERVISOR_USER_ACCESS = 0x07,
 
-    // Load/store exceptions
+    // Load/store exceptions, managed by Hart
     MMU_ADDRESS_MISALIGNED          = 0x10,
+
+    // Decode exceptions, managed by Hart
+    INVALID_INSTRUCTION_TYPE        = 0x20,
 };
 // clang-format on
 

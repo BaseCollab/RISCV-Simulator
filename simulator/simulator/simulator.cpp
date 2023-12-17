@@ -69,8 +69,8 @@ void Simulator::LoadElfFile(const std::string &elf_pathname)
 void Simulator::SetExceptionHandlers()
 {
     Hart::ExceptionHandlers handlers;
-    handlers.mmu_handler =
-        std::bind(&ExceptionHandler::MMUExceptionHandler, hart_, memory_, std::placeholders::_1, std::placeholders::_2);
+    handlers.default_handler =
+        std::bind(&ExceptionHandler::CallExceptionHandler, hart_, memory_, std::placeholders::_1, std::placeholders::_2);
 
     hart_->SetExceptionHandlers(handlers);
 }
@@ -85,45 +85,6 @@ void Simulator::PreparePageTable()
     for (size_t i = 1; i <= n_stack_pages_; ++i) {
         MapVirtualPage(STACK_PTR - VPAGE_SIZE * i);
     }
-}
-
-template <bool IsLastLevel>
-dword_t Simulator::CreatePageTableLVL(dword_t ppn_lvl, dword_t vpn, uint8_t urwx_flags) const
-{
-    pte_t pte;
-    dword_t ppn_new {0};
-
-    memory_->Load(&pte, sizeof(pte), ppn_lvl * VPAGE_SIZE + vpn * sizeof(pte_t));
-
-    if (pte.GetV() == 0) {
-#ifdef DEBUG_EXCEPTION
-        std::cerr << "[DEBUG] [PT alloc] Invalid PTE at 0x" << std::hex << ppn_lvl * VPAGE_SIZE + vpn * sizeof(pte_t)
-                  << std::endl;
-#endif
-
-        auto page_idx_pair = memory_->GetCleanPage();
-        reg_t page_idx = page_idx_pair.first;
-
-        vpt_t vpt;
-        memory_->StoreByPageIdx(page_idx, &vpt, sizeof(vpt));
-
-        pte.SetPPN(page_idx);
-        pte.SetV(1);
-        ppn_new = page_idx;
-
-        if constexpr (IsLastLevel == true) {
-            pte.SetR(!!(urwx_flags & PF_R));
-            pte.SetW(!!(urwx_flags & PF_W));
-            pte.SetX(!!(urwx_flags & PF_X));
-            pte.SetU(!!(urwx_flags & PF_U));
-        }
-
-        memory_->Store(ppn_lvl * VPAGE_SIZE + vpn * sizeof(pte_t), &pte, sizeof(pte_t));
-    } else {
-        ppn_new = pte.GetPPN();
-    }
-
-    return ppn_new;
 }
 
 // clang-format off
@@ -153,19 +114,19 @@ void Simulator::MapVirtualPage(vaddr_t page_vaddr, uint8_t urwx_flags) const
     std::cerr << "[DEBUG] [PT alloc] 2) ppn_3 = 0x" << ppn_3 << ", vpn_2 = 0b" << vpn_2 << std::endl;
 #endif
 
-    dword_t ppn_2 = CreatePageTableLVL<false>(ppn_3,    page_vaddr.GetVPN2());
+    dword_t ppn_2 = CreatePageTableLVL<false>(ppn_3, page_vaddr.GetVPN2());
 #ifdef DEBUG_EXCEPTION
     std::bitset<bitops::BitSizeof<hword_t>()> vpn_1(page_vaddr.GetVPN1());
     std::cerr << "[DEBUG] [PT alloc] 3) ppn_2 = 0x" << ppn_2 << ", vpn_1 = 0b" << vpn_1 << std::endl;
 #endif
 
-    dword_t ppn_1 = CreatePageTableLVL<false>(ppn_2,    page_vaddr.GetVPN1());
+    dword_t ppn_1 = CreatePageTableLVL<false>(ppn_2, page_vaddr.GetVPN1());
 #ifdef DEBUG_EXCEPTION
     std::bitset<bitops::BitSizeof<hword_t>()> vpn_0(page_vaddr.GetVPN0());
     std::cerr << "[DEBUG] [PT alloc] 4) ppn_1 = 0x" << ppn_1 << ", vpn_0 = 0b" << vpn_0 << std::endl;
 #endif
 
-    dword_t ppn_0 = CreatePageTableLVL<true> (ppn_1,    page_vaddr.GetVPN0(), urwx_flags);
+    dword_t ppn_0 = CreatePageTableLVL<true> (ppn_1, page_vaddr.GetVPN0(), urwx_flags);
 #ifdef DEBUG_EXCEPTION
     std::cerr << "[DEBUG] [PT alloc] 5) ppn_0 = 0x" << ppn_0 << std::endl;
 #else
@@ -192,6 +153,11 @@ void Simulator::MapVirtualRange(vaddr_t vaddr_start, vaddr_t vaddr_end, uint8_t 
     if ((vaddr_end - vaddr + VPAGE_SIZE) > vpage_padding) {
         MapVirtualPage(vaddr_end, urwx_flags);
     }
+}
+
+Hart *Simulator::GetActiveHart()
+{
+    return hart_;
 }
 
 } // namespace rvsim

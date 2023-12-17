@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.13)
 set(SOURCES main.cpp
             common/stack_test.cpp
             memory/memory_test.cpp
+            mmu/mmu_test.cpp
 )
 
 add_library(unit_tests_impl OBJECT ${SOURCES})

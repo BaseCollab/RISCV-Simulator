@@ -17,13 +17,14 @@
 #include <cassert>
 #include <memory>
 #include <elf.h>
+#include <gtest/gtest_prod.h>
 
 namespace rvsim {
 
 class Hart {
 public:
     struct ExceptionHandlers {
-        std::function<void(Exception, addr_t)> mmu_handler;
+        std::function<void(Exception, addr_t)> default_handler;
     };
 
     using TLB_t = TLB<TLB_SIZE_LOG_2>;
@@ -43,7 +44,7 @@ public:
 
     void DecodeInstruction(Instruction *instr, instr_size_t raw_instr);
 
-    void Interpret();
+    Exception Interpret();
 
     Exception ExecuteBasicBlock(const BasicBlock &bb);
 
@@ -215,6 +216,9 @@ private:
     bool is_idle_ {true};
 
     std::unique_ptr<BasicBlockManager> bb_manager_;
+
+private:
+    FRIEND_TEST(MMUTest, ComplexTest);
 };
 
 } // namespace rvsim

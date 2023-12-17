@@ -3,13 +3,13 @@
 #include <iostream>
 namespace rvsim {
 
-BasicBlock *BasicBlockManager::GetNextBB()
+std::pair<BasicBlock *, Exception> BasicBlockManager::GetNextBB()
 {
     size_t start_pc = hart_->GetPC();
 
     BasicBlock *bb = bb_cache_.GetBBFromCache(start_pc);
     if (bb != nullptr) {
-        return bb;
+        return std::make_pair(bb, Exception::NONE);
     }
 
     auto bb_unique = std::make_unique<BasicBlock>();
@@ -24,29 +24,35 @@ BasicBlock *BasicBlockManager::GetNextBB()
     size_t curr_pc = start_pc;
 
     for (size_t instr_counter = 0;; ++instr_counter) {
-        hart_->FetchInstruction(&raw_instr);
+        Exception fetch_exception = hart_->FetchInstruction(&raw_instr);
+        if (UNLIKELY(fetch_exception != Exception::NONE)) {
+            return std::make_pair(nullptr, fetch_exception);
+        }
 
         Instruction *instr = bb->CreateEmptyInstruction();
         assert(instr != nullptr);
 
         hart_->DecodeInstruction(instr, raw_instr);
+        if (UNLIKELY(instr->id == InstructionId::INVALID_ID)) {
+            std::make_pair(nullptr, Exception::INVALID_INSTRUCTION_TYPE);
+        }
 
         if (instr->IsBranch()) {
             hart_->SetPC(start_pc);
             // Jump is the last instruction in the basic block
-            return bb;
+            return std::make_pair(bb, Exception::NONE);
         }
         if (instr_counter == BasicBlock::GetBBMaxSize() - 1) {
             hart_->SetPC(start_pc);
             bb->CreateBBEndInstruction();
-            return bb;
+            return std::make_pair(bb, Exception::NONE);
         }
 
         curr_pc += sizeof(instr_size_t);
         hart_->SetPC(curr_pc);
     }
 
-    return nullptr;
+    return std::make_pair(nullptr, Exception::NONE);
 }
 
 } // namespace rvsim

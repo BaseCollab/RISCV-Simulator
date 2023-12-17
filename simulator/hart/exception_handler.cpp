@@ -9,7 +9,7 @@
 
 namespace rvsim {
 
-void ExceptionHandler::MMUExceptionHandler(Hart *hart, PhysMemoryCtl *memory, Exception exception, addr_t vaddr)
+void ExceptionHandler::CallExceptionHandler(Hart *hart, PhysMemoryCtl *memory, Exception exception, addr_t vaddr)
 {
     (void)hart;
     (void)memory;
@@ -42,6 +42,9 @@ void ExceptionHandler::MMUExceptionHandler(Hart *hart, PhysMemoryCtl *memory, Ex
 
         case Exception::MMU_ADDRESS_MISALIGNED:
             errx(EX_SOFTWARE, "Misaligned address: [addr %lx]", vaddr);
+
+        case Exception::INVALID_INSTRUCTION_TYPE:
+            errx(EX_SOFTWARE, "Invalid: instruction type [addr %lx]", vaddr);
 
         default:
             errx(EX_SOFTWARE, "Unknown exception type: [addr %lx]", vaddr);
