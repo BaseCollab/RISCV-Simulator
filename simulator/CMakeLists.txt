@@ -19,6 +19,8 @@ add_subdirectory(mmu)
 add_subdirectory(argparser)
 add_subdirectory(common)
 add_subdirectory(codegen)
+add_subdirectory(plugin)
+add_subdirectory(cosimulation)
 
 add_library(simulator_static STATIC)
 target_link_libraries(simulator_static PUBLIC
@@ -28,6 +30,8 @@ target_link_libraries(simulator_static PUBLIC
     simulator_impl
     parser_impl
     common_impl
+    plugin_impl dl
+    cosim_impl
 )
 
 # --------------------------clang-format--------------------------------------

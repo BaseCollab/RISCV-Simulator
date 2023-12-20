@@ -21,6 +21,8 @@
 
 namespace rvsim {
 
+class PluginHandler;
+
 class Hart {
 public:
     struct ExceptionHandlers {
@@ -45,8 +47,20 @@ public:
     void DecodeInstruction(Instruction *instr, instr_size_t raw_instr);
 
     Exception Interpret();
+    Exception InterpretWithPlugins();
 
     Exception ExecuteBasicBlock(const BasicBlock &bb);
+    Exception ExecuteBasicBlockWithPlugins(const BasicBlock &bb);
+
+    void SetPluginHandler(PluginHandler *plugin_handler)
+    {
+        plugin_handler_ = plugin_handler;
+    }
+
+    const PluginHandler *GetPluginHandler() const
+    {
+        return plugin_handler_;
+    }
 
     bool IsIdle() const
     {
@@ -205,12 +219,13 @@ private:
     TLB_t rtlb_;
     TLB_t wtlb_;
 
-    gpr_t gpr_table_[N_GPR] = {0};
+    gpr_t gpr_table_[N_GPR] = {};
 
     reg_t pc_;
     reg_t pc_target_;
 
     ExceptionHandlers handlers_;
+    PluginHandler *plugin_handler_;
 
     // idle is true, when hart does not follow instructions
     bool is_idle_ {true};
