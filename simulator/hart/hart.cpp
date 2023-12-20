@@ -1,6 +1,7 @@
 #include "hart/hart.h"
 #include "hart/basic_block.h"
 #include "hart/instruction/instruction_exec_inl.h"
+#include "plugin/plugin_handler.h"
 
 #include <chrono>
 #include <iostream>
@@ -153,6 +154,45 @@ Exception Hart::FetchInstruction(instr_size_t *raw_instr)
     return exception;
 }
 
+Exception Hart::InterpretWithPlugins()
+{
+    is_idle_ = false;
+    Exception exception = Exception::NONE;
+    BasicBlock *bb = nullptr;
+
+    size_t counter = 0;
+    const auto start {std::chrono::steady_clock::now()};
+
+    while (true) {
+        std::tie(bb, exception) = bb_manager_->GetNextBB();
+        if (UNLIKELY(exception != Exception::NONE)) {
+            handlers_.default_handler(exception, pc_);
+            break;
+        }
+
+        assert(bb != nullptr);
+        counter += bb->GetSize();
+
+        ExecuteBasicBlockWithPlugins(*bb);
+
+        if (pc_ == 0 || is_idle_) {
+            break;
+        }
+    }
+
+    const auto end {std::chrono::steady_clock::now()};
+    const std::chrono::duration<double> elapsed_seconds {end - start};
+
+    std::cout << "----------------------------------------------------------------------\n";
+    std::cout << "Full time   = " << elapsed_seconds.count() << std::endl;
+    std::cout << "Insn number = " << counter << std::endl;
+    std::cout << "IPS  = " << counter / elapsed_seconds.count() << std::endl;
+    std::cout << "MIPS = " << counter / elapsed_seconds.count() / 1000000.0 << std::endl;
+    std::cout << "----------------------------------------------------------------------\n";
+
+    return exception;
+}
+
 Exception Hart::Interpret()
 {
     is_idle_ = false;
@@ -200,6 +240,68 @@ Exception Hart::Interpret()
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #endif
+
+// clang-format off
+Exception Hart::ExecuteBasicBlockWithPlugins(const BasicBlock &bb)
+{   
+    #define DEFINE_INSTR(instr) &&instr,
+    #define DEFINE_BRANCH_INSTR(instr) &&instr,
+
+    static void *dispatch_table[] = {
+        #include "codegen/generated/instruction.def"
+    };
+
+    #undef DEFINE_INSTR
+    #undef DEFINE_BRANCH_INSTR
+
+    const auto &instructions = bb.GetInstructions();
+    size_t instr_idx = 0;
+    Exception exception = Exception::NONE;
+
+    #define DISPATCH() goto *dispatch_table[static_cast<byte_t>(instructions[++instr_idx].id)];
+
+    // dispatching entrypoint
+    goto *dispatch_table[static_cast<byte_t>(instructions[instr_idx].id)];
+
+    // Define all non-branch instruction labels
+    #define DEFINE_INSTR(instr)                                  \
+    instr:                                                       \
+        plugin_handler_->SetCurInstr(0, &instructions[instr_idx]);              \
+        plugin_handler_->CallPlugin(0, rvsim::PluginRegimes::COSIM_RUN);        \
+        exception = iexec::instr(this, instructions[instr_idx]);                \
+        if (UNLIKELY(exception != Exception::NONE)) {            \
+            return exception;                                    \
+        }                                                        \
+        pc_ = pc_target_;                                        \
+        DISPATCH();
+
+    /**
+     * Define all branch instruction labels
+     * 1) If we encounter a branch instruction, then this is necessarily the end of the base block.
+     * 2) If basic block size more that BASIC_BLOCK_MAX_SIZE, then we trim basic block.
+     * 3) In the case when the basic block end with a non-branch instruction, we insert a 
+     *    pseudo instruction BB_END to finish dispatching.
+     * 4) In order not to complicate BB_END is also considered a branch instruction.
+    */
+    #define DEFINE_BRANCH_INSTR(instr)                           \
+    instr:                                                       \
+        plugin_handler_->SetCurInstr(0, &instructions[instr_idx]);              \
+        plugin_handler_->CallPlugin(0, rvsim::PluginRegimes::COSIM_RUN);        \
+        exception = iexec::instr(this, instructions[instr_idx]); \
+        if (UNLIKELY(exception != Exception::NONE)) {            \
+            return exception;                                    \
+        }                                                        \
+        pc_ = pc_target_;                                        \
+        return Exception::NONE;
+
+    // Call defines for all instructions
+    #include "codegen/generated/instruction.def"
+
+    #undef DEFINE_INSTR
+    #undef DEFINE_BRANCH_INSTR
+
+    return Exception::NONE;
+}
 
 // clang-format off
 Exception Hart::ExecuteBasicBlock(const BasicBlock &bb)

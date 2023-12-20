@@ -3,6 +3,8 @@
 #include "memory/memory_controller.h"
 #include "argparser/parser.h"
 
+#include "plugin/plugin_handler.h"
+
 namespace rvsim {
 
 int Main(int argc, char *argv[])
@@ -18,9 +20,13 @@ int Main(int argc, char *argv[])
 
     sim.LoadElfFile(parser.GetElfFileName());
 
-    Exception exception = hart.Interpret();
-    if (exception != Exception::NONE) {
-        return EXIT_FAILURE;
+    if (parser.GetPlugins().empty()) {
+        hart.Interpret();
+    } else {
+        auto plugin_handler = PluginHandler(parser.GetPlugins(), &hart);
+        plugin_handler.GetPC();
+        hart.SetPluginHandler(&plugin_handler);
+        hart.InterpretWithPlugins();
     }
 
     return EXIT_SUCCESS;

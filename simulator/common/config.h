@@ -39,6 +39,11 @@ static constexpr size_t DEFAULT_PHYS_MEMORY_SIZE = (1 << 5) * MBYTE_SIZE;
 static constexpr size_t BASIC_BLOCK_MAX_SIZE = 1 << 3; 
 static constexpr size_t BB_CACHE_SIZE = 1 << 8;
 
+enum class PluginRegimes : int
+{
+    COSIM_RUN  = 1,
+};
+
 enum class Mode : byte_t {
     USER_MODE       = 0,
     SUPERVISOR_MODE = 1,
