@@ -1,4 +1,5 @@
 #include "plugin_handler.h"
+#include "plugin.h"
 #include "common/macros.h"
 #include "common/constants.h"
 #include "common/config.h"

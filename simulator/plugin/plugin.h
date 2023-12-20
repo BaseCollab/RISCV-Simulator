@@ -5,17 +5,13 @@
 #include "common/constants.h"
 #include "common/config.h"
 #include "memory/memory.h"
+#include "hart/hart.h"
 
 #include <inttypes.h>
 #include <vector>
 
-#include "hart/hart.h"
-#include "plugin_handler.h"
-
 namespace rvsim {
-
-class Plugin;
-// class PluginHandler;
+class PluginHandler;
 
 class Plugin {
 public:
@@ -94,7 +90,7 @@ public:
     }
 
     // Functions below depend on PluginHandler and Hart imlementation
-    rvsim::reg_t GetPC() const; 
+    rvsim::reg_t GetPC() const;
     rvsim::reg_t GetGPR(gpr_idx_t reg_idx) const;
     std::vector<rvsim::reg_t> GetRegFile() const;
 };

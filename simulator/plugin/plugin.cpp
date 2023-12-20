@@ -1,4 +1,5 @@
 #include "plugin.h"
+#include "plugin_handler.h"
 
 namespace rvsim {
 rvsim::reg_t Plugin::GetPC() const

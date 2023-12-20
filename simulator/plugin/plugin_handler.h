@@ -1,16 +1,13 @@
 #ifndef __PLUGIN_HANDLER__H_
 #define __PLUGIN_HANDLER__H_
 
-#include "plugin.h"
+#include "hart/hart.h"
 
 #include <dlfcn.h>
 #include <stdlib.h>
 #include <string>
 #include <utility>
 #include <vector>
-
-struct BasicBlock;
-class Hart;
 
 namespace rvsim {
 class Plugin;
@@ -44,6 +41,7 @@ public:
     {
         return hart_->GetGPR(reg_idx);
     }
+
     std::vector<rvsim::reg_t> GetRegFile() const;
 
     void SetCurInstr(int plugin_id, const Instruction *instr);
