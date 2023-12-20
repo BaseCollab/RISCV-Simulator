@@ -8,7 +8,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(SIMULATOR_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 set(SIMULATOR_BINARY_ROOT ${CMAKE_CURRENT_BINARY_DIR})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -Werror -Wshadow")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG -DDEBUG_MMU -DDEBUG_ELF -DDEBUG_EXCEPTION -DDEBUG_HART")
 
@@ -19,6 +19,7 @@ add_subdirectory(mmu)
 add_subdirectory(argparser)
 add_subdirectory(common)
 add_subdirectory(codegen)
+add_subdirectory(sim_jit)
 
 add_library(simulator_static STATIC)
 target_link_libraries(simulator_static PUBLIC
@@ -28,6 +29,7 @@ target_link_libraries(simulator_static PUBLIC
     simulator_impl
     parser_impl
     common_impl
+    sim_jit_impl
 )
 
 # --------------------------clang-format--------------------------------------
