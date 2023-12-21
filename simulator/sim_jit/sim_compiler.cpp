@@ -5,10 +5,9 @@
 
 namespace rvsim {
 
-using namespace asmjit;
 
 void Compiler::CompileBasicBlock() {
-    CodeHolder code;
+    asmjit::CodeHolder code;
     code.init(runtime_.environment(), runtime_.cpuFeatures());
     Generator sim_gen(&code);
     sim_gen.Initialize();
@@ -24,7 +23,8 @@ void Compiler::CompileBasicBlock() {
     sim_gen.Finalize();
     iexec::iexec_type entry = nullptr;
     runtime_.add(&entry, &code);
-    //hart_->setBBEntry(task.entrypoint, entry);
+    // BB: check is BB in cache, 
+    // if not, set to bb compiled entry;
 }
 
 
@@ -101,7 +101,7 @@ iexec::iexec_type InstrIdToExecutor(rvsim::InstructionId id)
         MAP_ID_TO_EXEC(REMW);
         MAP_ID_TO_EXEC(REMUW);
         default:
-            fprintf(stderr, "ERR in func InstrIdToExecutor: no mapping for instr id %d\n", id); // print error
+            fprintf(stderr, "ERR in func InstrIdToExecutor: no mapping for instr id %d\n", std::int32_t(id)); // print error
             return nullptr;
     }
 }
@@ -114,7 +114,7 @@ void Compiler::GenerateInstr(Generator &codegen, const Instruction &instr, size_
             codegen.GenerateADD(instr);
             return;
         default:
-            printf("[x] Generate Default for id: %d\n", instr.id);
+            printf("[x] Generate Default for id: %d\n", std::int32_t(instr.id));
             codegen.GenerateDefaultCall(InstrIdToExecutor(instr.id), instr_offset);
             return;
     }

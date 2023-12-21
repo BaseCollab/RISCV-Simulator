@@ -19,6 +19,8 @@
 #include <elf.h>
 #include <gtest/gtest_prod.h>
 
+#include "sim_jit/sim_compiler.h"
+
 namespace rvsim {
 
 class Hart {
@@ -33,7 +35,7 @@ public:
     NO_COPY_SEMANTIC(Hart);
     NO_MOVE_SEMANTIC(Hart);
 
-    explicit Hart(PhysMemoryCtl *memory) : memory_(memory), mmu_(this)
+    explicit Hart(PhysMemoryCtl *memory) : memory_(memory), mmu_(this), compiler_ (this)
     {
         bb_manager_ = std::make_unique<BasicBlockManager>(this);
     }
@@ -44,9 +46,12 @@ public:
 
     void DecodeInstruction(Instruction *instr, instr_size_t raw_instr);
 
+    Exception InterpretJIT();
     Exception Interpret();
 
+    Exception ExecuteBBManager(BasicBlock &bb);
     Exception ExecuteBasicBlock(const BasicBlock &bb);
+    
 
     bool IsIdle() const
     {
@@ -87,6 +92,9 @@ public:
     {
         pc_target_ = pc_target;
     }
+
+    static size_t GetGPROffset();
+    static size_t GetPCOffset();
 
     gpr_t GetGPR(gpr_idx_t reg_idx) const
     {
@@ -216,6 +224,8 @@ private:
     bool is_idle_ {true};
 
     std::unique_ptr<BasicBlockManager> bb_manager_;
+    Compiler compiler_;
+
 
 private:
     FRIEND_TEST(MMUTest, ComplexTest);

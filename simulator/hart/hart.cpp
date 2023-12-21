@@ -1,11 +1,40 @@
 #include "hart/hart.h"
 #include "hart/basic_block.h"
 #include "hart/instruction/instruction_exec_inl.h"
+#include "argparser/parser.h"
 
 #include <chrono>
 #include <iostream>
 
 namespace rvsim {
+
+// Disable warningto
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Winvalid-offsetof"
+#endif
+
+size_t Hart::GetGPROffset()
+{
+    return offsetof(Hart, gpr_table_);
+}
+size_t Hart::GetPCOffset()
+{
+    return offsetof(Hart, pc_);
+}
+
+// Disable warning
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
+
+
+
 
 Exception Hart::LoadFromMemory(void *dst, size_t dst_size, vaddr_t src, uint8_t rwx_flags)
 {
@@ -192,6 +221,46 @@ Exception Hart::Interpret()
     return exception;
 }
 
+
+Exception Hart::InterpretJIT()
+{
+    is_idle_ = false;
+    Exception exception = Exception::NONE;
+    BasicBlock *bb = nullptr;
+
+    size_t counter = 0;
+    const auto start {std::chrono::steady_clock::now()};
+
+    while (true) {
+        std::tie(bb, exception) = bb_manager_->GetNextBB();
+        if (UNLIKELY(exception != Exception::NONE)) {
+            handlers_.default_handler(exception, pc_);
+            break;
+        }
+
+        assert(bb != nullptr);
+        counter += bb->GetSize();
+
+        ExecuteBBManager(*bb);
+
+        if (pc_ == 0 || is_idle_) {
+            break;
+        }
+    }
+
+    const auto end {std::chrono::steady_clock::now()};
+    const std::chrono::duration<double> elapsed_seconds {end - start};
+
+    std::cout << "----------------------------------------------------------------------\n";
+    std::cout << "Full time   = " << elapsed_seconds.count() << std::endl;
+    std::cout << "Insn number = " << counter << std::endl;
+    std::cout << "IPS  = " << counter / elapsed_seconds.count() << std::endl;
+    std::cout << "MIPS = " << counter / elapsed_seconds.count() / 1000000.0 << std::endl;
+    std::cout << "----------------------------------------------------------------------\n";
+
+    return exception;
+}
+
 // Disable warning because the function uses computed goto
 #if defined(__clang__)
 #pragma clang diagnostic push
@@ -200,6 +269,23 @@ Exception Hart::Interpret()
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #endif
+
+Exception Hart::ExecuteBBManager(BasicBlock &bb) {
+
+    size_t hotness = bb.GetHotness();
+    if (hotness >= 10000) { // time to compile
+        // compile
+        compiler_.SetBB(&bb);
+        //compiler_.CompileBasicBlock();
+
+        // execute
+        bb.Execute(this);
+        return Exception::NONE;
+    }
+
+    bb.IncHotness();
+    return ExecuteBasicBlock(bb);
+}
 
 // clang-format off
 Exception Hart::ExecuteBasicBlock(const BasicBlock &bb)

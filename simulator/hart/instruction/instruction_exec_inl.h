@@ -16,6 +16,8 @@
 namespace rvsim {
 namespace iexec {
 
+using iexec_type = Exception (*)(Hart *hart, const Instruction &instr);
+
 ALWAYS_INLINE Exception BEQ(Hart *hart, const Instruction &instr)
 {
     if (hart->GetGPR(instr.rs1) == hart->GetGPR(instr.rs2))

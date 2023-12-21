@@ -1,7 +1,7 @@
 #ifndef COMPILER_H
 #define COMPILER_H
 
-// Disable warning because the function uses computed goto
+// Disable warning
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-label-as-value"
@@ -14,7 +14,7 @@
 
 #include "../asmjit/src/asmjit/asmjit.h"
 
-// Disable warning because the function uses computed goto
+// Disable warning
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #elif defined(__GNUC__)

@@ -43,15 +43,6 @@ public:
 private:
 
     asmjit::x86::Gp GenerateGetReg(size_t index);
-    void GenerateSetReg(size_t index, uint64_t imm);
-    void GenerateSetReg(size_t index, asmjit::x86::Gp reg);
-
-    asmjit::x86::Gp GenerateGetPC();
-    void GenerateSetPC(uint64_t imm);
-    void GenerateSetPC(asmjit::x86::Gp reg);
-    void GenerateIncrementPC();
-
-    void GeneratePrint(const char *str, asmjit::x86::Gp reg);
 
     asmjit::x86::Compiler compiler_;
     asmjit::x86::Gp hart_p_;

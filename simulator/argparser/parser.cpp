@@ -24,6 +24,8 @@ bool ArgParser::Parse()
             case OptNames::OPT_REGIME:
                 if (!strcmp(optarg, "llvm")) {
                     mode = SimModes::MODE_LLVM;
+                } else if (!strcmp(optarg, "asm_jit")) {
+                    mode = SimModes::MODE_JIT;
                 } else {
                     return false;
                 }

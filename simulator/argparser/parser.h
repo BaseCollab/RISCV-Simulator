@@ -16,7 +16,8 @@ public:
     // clang-format off
     enum class SimModes : int {
         MODE_INVALID = -1,
-        MODE_LLVM    = 0
+        MODE_LLVM    = 0,
+        MODE_JIT     = 1
     };
 
     enum class OptNames : int {

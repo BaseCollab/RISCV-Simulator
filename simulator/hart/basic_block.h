@@ -11,6 +11,9 @@
 
 namespace rvsim {
 
+class Hart;
+
+
 class BasicBlock {
 public:
     // +1 is necessary in case of trim the basic block with the BB_END instruction.
@@ -60,6 +63,10 @@ public:
         return BASIC_BLOCK_MAX_SIZE;
     }
 
+    size_t GetHotness() const { return hotness_; }
+    void IncHotness() { ++hotness_; }
+    void Execute(Hart* hart) { entry_(hart, instructions_.data()); }
+
 private:
     // PC in ELF file from which this basic block starts.
     size_t start_pc_ {0};
@@ -67,6 +74,10 @@ private:
     size_t size_ {0};
 
     InstrArray instructions_;
+
+    using JIT_entry = void (*)(Hart *, const Instruction *);
+    size_t hotness_ {0};
+    JIT_entry entry_ {nullptr};
 };
 
 } // namespace rvsim
